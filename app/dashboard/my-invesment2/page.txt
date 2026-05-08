@@ -1,0 +1,467 @@
+// "use client";
+
+// import React, { useEffect, useMemo, useState } from "react";
+// import { toast } from "sonner";
+// import {
+//   Line,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ComposedChart,
+//   Area,
+//   Customized,
+// } from "recharts";
+// import { TrendingUp, List, PieChart, DollarSign, ArrowUpRight, ArrowDownRight } from "lucide-react";
+
+// type Asset = {
+//   _id: string;
+//   name: string;
+//   symbol: string;
+//   type: string;
+//   quantity: number;
+//   price?: number;
+//   livePrice?: number;
+// };
+
+// type Investment = {
+//   _id: string;
+//   planName: string;
+//   amount: number;
+//   startDate: string;
+//   endDate?: string;
+//   assetSymbol?: string;
+//   sharesDeducted?: number;
+//   assetPriceAtPurchase?: number;
+//   expectedAnnualReturn?: number;
+//   status?: string;
+// };
+
+// const PLANS = [
+//   { planName: "Gold", minAmount: 10000, durationYears: 1, expectedReturn: 5 },
+//   { planName: "Silver", minAmount: 5000, durationYears: 3, expectedReturn: 8 },
+//   { planName: "Diamond", minAmount: 20000, durationYears: 5, expectedReturn: 12 },
+// ];
+
+// export default function MyInvestment() {
+//   // data/state
+//   const [assets, setAssets] = useState<Asset[]>([]);
+//   const [investments, setInvestments] = useState<Investment[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isClient, setIsClient] = useState(false);
+//   const [chartWidth, setChartWidth] = useState(900);
+
+//   // invest form state
+//   const [selectedPlan, setSelectedPlan] = useState(PLANS[0].planName);
+//   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
+//   const [amount, setAmount] = useState<number>(PLANS[0].minAmount);
+//   const [requiredShares, setRequiredShares] = useState<number>(0);
+//   const [error, setError] = useState<string | null>(null);
+//   const [submitting, setSubmitting] = useState(false);
+//   const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     fetchData();
+//     setIsClient(true);
+//     const onResize = () => setChartWidth(Math.max(700, Math.min(window.innerWidth - 120, 1400)));
+//     onResize();
+//     window.addEventListener("resize", onResize);
+//     return () => window.removeEventListener("resize", onResize);
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []);
+
+//   useEffect(() => {
+//     const plan = PLANS.find((p) => p.planName === selectedPlan);
+//     if (plan) setAmount(plan.minAmount);
+//   }, [selectedPlan]);
+
+//   useEffect(() => {
+//     const a = assets.find((x) => x.symbol === selectedAsset);
+//     const price = a?.livePrice ?? a?.price ?? 0;
+//     if (!price || !amount) {
+//       setRequiredShares(0);
+//       return;
+//     }
+//     const shares = Math.round((amount / price) * 1e8) / 1e8;
+//     setRequiredShares(shares);
+//   }, [amount, selectedAsset, assets]);
+
+//   async function fetchData() {
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/investment", { credentials: "include" });
+//       if (!res.ok) throw new Error("Failed to load investment data");
+//       const data = await res.json();
+//       setAssets(data.assets || []);
+//       setInvestments((data.investments || []).map((inv: any) => ({ ...inv, startDate: inv.startDate })));
+//       if ((data.assets || []).length > 0) setSelectedAsset((prev) => prev ?? data.assets[0].symbol);
+//     } catch (err) {
+//       console.error(err);
+//       toast.error("Failed to load investments. Try reloading.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+//   const canInvest = () => {
+//     setError(null);
+//     const plan = PLANS.find((p) => p.planName === selectedPlan);
+//     if (!plan) {
+//       setError("Select a valid plan");
+//       return false;
+//     }
+//     if (!amount || amount < plan.minAmount) {
+//       setError(`Amount must be >= ${plan.minAmount}`);
+//       return false;
+//     }
+//     const asset = assets.find((a) => a.symbol === selectedAsset);
+//     if (!asset) {
+//       setError("Select an asset");
+//       return false;
+//     }
+//     if (requiredShares <= 0) {
+//       setError("Amount too small for selected asset price");
+//       return false;
+//     }
+//     if (requiredShares > asset.quantity + 1e-8) {
+//       setError("Not enough asset quantity");
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   async function handleInvest() {
+//     if (!canInvest()) return;
+//     setSubmitting(true);
+//     try {
+//       const res = await fetch("/api/investment", {
+//         method: "POST",
+//         credentials: "include",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ planName: selectedPlan, amount, assetSymbol: selectedAsset }),
+//       });
+//       const json = await res.json().catch(() => ({}));
+//       if (!res.ok) {
+//         throw new Error(json?.message || `Request failed ${res.status}`);
+//       }
+//       if (json?.investment) setInvestments((prev) => [json.investment, ...prev]);
+//       if (json?.assets) setAssets(json.assets);
+//       await fetchData();
+//       toast.success("Investment successful");
+//     } catch (err: any) {
+//       const msg = err?.message ?? "Investment failed";
+//       setError(msg);
+//       toast.error(msg);
+//       console.error("Invest error:", err);
+//     } finally {
+//       setSubmitting(false);
+//     }
+//   }
+
+//   async function handleWithdraw(investmentId: string) {
+//     const investment = investments.find((i) => i._id === investmentId);
+//     if (!investment) return;
+//     if (!confirm(`Withdraw ${investment.planName}?`)) return;
+//     setWithdrawingId(investmentId);
+//     try {
+//       const res = await fetch("/api/investment", {
+//         method: "PATCH",
+//         credentials: "include",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ action: "withdraw", investmentId }),
+//       });
+//       const json = await res.json().catch(() => ({}));
+//       if (!res.ok) {
+//         toast.error(json?.message || `Failed (${res.status})`);
+//         return;
+//       }
+//       if (json?.investment) {
+//         setInvestments((prev) => prev.map((inv) => (inv._id === json.investment._id ? { ...inv, ...json.investment } : inv)));
+//       } else {
+//         await fetchData();
+//       }
+//       if (json?.usdt) {
+//         setAssets((prev) => {
+//           const idx = prev.findIndex((a) => a.symbol === "USDT");
+//           if (idx >= 0) {
+//             const next = [...prev];
+//             next[idx] = { ...next[idx], quantity: json.usdt.quantity, livePrice: next[idx].livePrice ?? 1 };
+//             return next;
+//           }
+//           return [{ _id: json.usdt._id, name: json.usdt.name || "Tether", symbol: "USDT", type: "Crypto", quantity: json.usdt.quantity, livePrice: 1 }, ...prev];
+//         });
+//       }
+//       toast.success(`Withdrawn $${json.refundAmount?.toFixed(2) || "0"} as USDT`);
+//     } catch (err) {
+//       console.error("Withdraw error:", err);
+//       toast.error("Withdrawal failed");
+//     } finally {
+//       setWithdrawingId(null);
+//     }
+//   }
+
+//   // build OHLC candlestick data from investments (12 months)
+//   const buildCandleData = () => {
+//     const months = Array.from({ length: 12 }, (_, i) => {
+//       const d = new Date();
+//       d.setMonth(d.getMonth() + i);
+//       return d.toLocaleString(undefined, { month: "short" });
+//     });
+
+//     return months.map((month, idx) => {
+//       let invested = 0;
+//       let projected = 0;
+//       let open = 0;
+//       let close = 0;
+//       let high = -Infinity;
+//       let low = Infinity;
+
+//       investments.forEach((inv) => {
+//         const amt = Number(inv.amount || 0);
+//         invested += amt;
+//         const annual = Number(inv.expectedAnnualReturn || 0) / 100;
+//         const monthlyRate = Math.pow(1 + annual, 1 / 12) - 1;
+//         const projectedValue = amt * Math.pow(1 + monthlyRate, idx + 1);
+//         projected += projectedValue;
+//         open += amt;
+//         close += projectedValue;
+//         high = Math.max(high, projectedValue, amt * 1.02);
+//         low = Math.min(low, projectedValue, amt * 0.98);
+//       });
+
+//       if (investments.length === 0) {
+//         open = close = high = low = 0;
+//       }
+
+//       open = Number(open || 0);
+//       close = Number(close || 0);
+//       high = Math.max(open, close, Number(high || 0));
+//       low = Math.min(open, close, Number(low || 0));
+
+//       return {
+//         month,
+//         open: Math.round(open * 100) / 100,
+//         close: Math.round(close * 100) / 100,
+//         high: Math.round(high * 100) / 100,
+//         low: Math.round(low * 100) / 100,
+//         invested: Math.round(invested * 100) / 100,
+//         projected: Math.round(projected * 100) / 100,
+//       };
+//     });
+//   };
+
+//   // Customized renderer for candlesticks using chart scales
+//   const renderCandles = (props: any) => {
+//     const { payload, xAxisMap, yAxisMap } = props;
+//     if (!payload || !xAxisMap || !yAxisMap) return null;
+//     const xScale = xAxisMap[0]?.scale;
+//     const yScale = yAxisMap[0]?.scale;
+//     if (typeof xScale !== "function" || typeof yScale !== "function") return null;
+
+//     let candleWidth = 14;
+//     if (payload.length >= 2) {
+//       const x0 = xScale(payload[0].month);
+//       const x1 = xScale(payload[1].month);
+//       const step = Math.abs(x1 - x0) || 20;
+//       candleWidth = Math.max(6, Math.min(28, Math.floor(step * 0.6)));
+//     }
+
+//     return (
+//       <g>
+//         {payload.map((entry: any, index: number) => {
+//           const x = xScale(entry.month);
+//           const cx = Number.isFinite(x) ? x : xScale(index);
+//           const openY = yScale(entry.open);
+//           const closeY = yScale(entry.close);
+//           const highY = yScale(entry.high);
+//           const lowY = yScale(entry.low);
+//           const top = Math.min(openY, closeY);
+//           const bottom = Math.max(openY, closeY);
+//           const bodyHeight = Math.max(1, bottom - top);
+//           const half = Math.floor(candleWidth / 2);
+//           const up = entry.close >= entry.open;
+//           const color = up ? "#10B981" : "#EF4444";
+
+//           return (
+//             <g key={`candle-${index}`} transform={`translate(${cx},0)`}>
+//               <line x1={0} y1={highY} x2={0} y2={lowY} stroke={color} strokeWidth={1.4} strokeLinecap="round" />
+//               <rect x={-half} y={top} width={candleWidth} height={bodyHeight} fill={color} stroke={color} strokeWidth={1} rx={2} />
+//             </g>
+//           );
+//         })}
+//       </g>
+//     );
+//   };
+
+//   const totalInvested = useMemo(() => investments.reduce((s, i) => s + Number(i.amount || 0), 0), [investments]);
+//   const totalAssetsValue = useMemo(() => assets.reduce((s, a) => s + (a.quantity * (a.livePrice ?? a.price ?? 0)), 0), [assets]);
+
+//   if (loading) {
+//     return <div className="p-6 max-w-7xl mx-auto text-white">Loading...</div>;
+//   }
+
+//   // -- New UI: split layout: left summary + actions, right chart + list --
+//   return (
+//     <div className="p-6 max-w-7xl mx-auto">
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* LEFT: summary & actions */}
+//         <aside className="col-span-1 space-y-6">
+//           <div className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 border border-white/5 rounded-xl p-5 shadow">
+//             <div className="flex items-center justify-between mb-4">
+//               <div>
+//                 <h2 className="text-lg font-semibold text-white">Portfolio</h2>
+//                 <p className="text-sm text-zinc-400">Overview & quick actions</p>
+//               </div>
+//               <PieChart className="w-8 h-8 text-yellow-400" />
+//             </div>
+
+//             <div className="space-y-3">
+//               <div className="flex items-center justify-between">
+//                 <div className="text-sm text-zinc-400">Total Invested</div>
+//                 <div className="font-semibold text-white">${totalInvested.toFixed(2)}</div>
+//               </div>
+
+//               <div className="flex items-center justify-between">
+//                 <div className="text-sm text-zinc-400">Assets Value</div>
+//                 <div className="font-semibold text-white">${totalAssetsValue.toFixed(2)}</div>
+//               </div>
+
+//               <div className="mt-4 flex gap-2">
+//                 <button
+//                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+//                   className="flex-1 px-3 py-2 bg-yellow-500 text-black rounded-lg font-medium"
+//                 >
+//                   New Investment
+//                 </button>
+//                 <button
+//                   onClick={() => { setSelectedPlan(PLANS[0].planName); setSelectedAsset(null); setAmount(PLANS[0].minAmount); setError(null); }}
+//                   className="px-3 py-2 bg-white/5 text-white rounded-lg"
+//                 >
+//                   Reset
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 border border-white/5 rounded-xl p-5 shadow">
+//             <h3 className="text-sm font-semibold text-zinc-300 mb-3">Assets</h3>
+//             <ul className="space-y-3 max-h-64 overflow-auto">
+//               {assets.length === 0 ? (
+//                 <li className="text-gray-400 text-sm">No assets</li>
+//               ) : (
+//                 assets.map((a) => (
+//                   <li key={a._id} className="flex items-center justify-between bg-zinc-900/40 p-3 rounded">
+//                     <div>
+//                       <div className="text-sm font-medium text-white">{a.name} ({a.symbol})</div>
+//                       <div className="text-xs text-zinc-400">Qty: {a.quantity.toFixed(8)}</div>
+//                     </div>
+//                     <div className="text-right">
+//                       <div className="text-sm font-semibold text-white">${((a.livePrice ?? a.price ?? 0) * a.quantity).toFixed(2)}</div>
+//                       <div className="text-xs text-zinc-400">${(a.livePrice ?? a.price ?? 0).toFixed(2)}</div>
+//                     </div>
+//                   </li>
+//                 ))
+//               )}
+//             </ul>
+//           </div>
+
+//           <div className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 border border-white/5 rounded-xl p-5 shadow">
+//             <h3 className="text-sm font-semibold text-zinc-300 mb-3">Quick Stats</h3>
+//             <div className="grid grid-cols-2 gap-3">
+//               <div className="p-3 bg-zinc-900/40 rounded">
+//                 <div className="text-xs text-zinc-400">Active Plans</div>
+//                 <div className="font-semibold text-white">{investments.length}</div>
+//               </div>
+//               <div className="p-3 bg-zinc-900/40 rounded">
+//                 <div className="text-xs text-zinc-400">Top Asset</div>
+//                 <div className="font-semibold text-white">{assets[0]?.symbol ?? "—"}</div>
+//               </div>
+//             </div>
+//           </div>
+//         </aside>
+
+//         {/* RIGHT: chart + investments list */}
+//         <main className="col-span-2 space-y-6">
+//           <div className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 border border-white/5 rounded-xl p-5 shadow">
+//             <div className="flex items-center justify-between mb-4">
+//               <div>
+//                 <h2 className="text-lg font-semibold text-white flex items-center gap-2"><TrendingUp /> Growth (12 months)</h2>
+//                 <p className="text-sm text-zinc-400">Projected growth with candlestick overview</p>
+//               </div>
+//               <div className="text-sm text-zinc-400">{new Date().toLocaleDateString()}</div>
+//             </div>
+
+//             <div className="w-full overflow-x-auto bg-zinc-900/50 rounded-lg p-4" style={{ minHeight: 420 }}>
+//               {isClient ? (
+//                 <ComposedChart
+//                   width={chartWidth}
+//                   height={380}
+//                   data={buildCandleData()}
+//                   margin={{ top: 20, right: 20, left: 60, bottom: 40 }}
+//                 >
+//                   <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+//                   <XAxis dataKey="month" stroke="#9ca3af" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+//                   <YAxis stroke="#9ca3af" tick={{ fill: "#9ca3af", fontSize: 12 }} label={{ value: "USD ($)", angle: -90, position: "insideLeft" }} />
+//                   <Tooltip contentStyle={{ backgroundColor: "#0b0b0b", border: "1px solid #1f2937", borderRadius: 8 }} formatter={(v: number) => [`$${Number(v).toFixed(2)}`]} />
+//                   <Customized component={renderCandles} />
+//                   <Area type="monotone" dataKey="projected" name="Projected" fillOpacity={0.06} stroke="#fbbf24" strokeWidth={2} />
+//                   <Line type="monotone" dataKey="invested" stroke="#3b82f6" strokeWidth={1.5} dot={false} name="Invested" />
+//                 </ComposedChart>
+//               ) : (
+//                 <div className="flex items-center justify-center h-[380px]"><p className="text-gray-400">Preparing chart...</p></div>
+//               )}
+//             </div>
+//           </div>
+
+//           <div className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/80 border border-white/5 rounded-xl p-5 shadow">
+//             <div className="flex items-center justify-between mb-4">
+//               <h3 className="text-lg font-semibold text-white flex items-center gap-2"><List /> My Investments</h3>
+//               <div className="text-sm text-zinc-400">Manage plans</div>
+//             </div>
+
+//             {investments.length === 0 ? (
+//               <div className="text-center py-12 text-zinc-400">No investments yet.</div>
+//             ) : (
+//               <div className="grid gap-4">
+//                 {investments.map((plan) => {
+//                   const currentPrice = assets.find((a) => a.symbol === plan.assetSymbol)?.livePrice || plan.assetPriceAtPurchase || 0;
+//                   const currentValue = (plan.sharesDeducted || 0) * currentPrice;
+//                   const gains = currentValue - (plan.amount || 0);
+//                   const normalizedStatus = (plan.status || "").toLowerCase();
+//                   const isCompleted = normalizedStatus === "completed" || normalizedStatus === "complete";
+
+//                   return (
+//                     <div key={plan._id} className="flex items-center justify-between bg-zinc-900/50 p-4 rounded">
+//                       <div>
+//                         <div className="text-sm font-semibold text-white">{plan.planName} <span className="text-xs text-zinc-400">• {plan.assetSymbol}</span></div>
+//                         <div className="text-xs text-zinc-400">Start: {new Date(plan.startDate).toLocaleDateString()}</div>
+//                       </div>
+
+//                       <div className="flex items-center gap-4">
+//                         <div className="text-right">
+//                           <div className={`text-sm font-semibold ${gains >= 0 ? "text-green-400" : "text-red-400"}`}>{gains >= 0 ? <ArrowUpRight className="inline w-4 h-4" /> : <ArrowDownRight className="inline w-4 h-4" />}${gains.toFixed(2)}</div>
+//                           <div className="text-xs text-zinc-400">Amount ${Number(plan.amount).toFixed(2)}</div>
+//                         </div>
+
+//                         <div className="flex gap-2">
+//                           {!isCompleted ? (
+//                             <button onClick={() => handleWithdraw(plan._id)} disabled={withdrawingId === plan._id} className="px-3 py-2 bg-red-600 text-white rounded-md text-sm disabled:opacity-50">
+//                               {withdrawingId === plan._id ? "Processing..." : "Withdraw"}
+//                             </button>
+//                           ) : (
+//                             <span className="px-3 py-2 bg-zinc-800 text-zinc-400 rounded-md text-sm">Completed</span>
+//                           )}
+//                           <button onClick={() => navigator.clipboard?.writeText(JSON.stringify(plan))} className="px-3 py-2 bg-white/5 text-white rounded-md text-sm">Details</button>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   );
+//                 })}
+//               </div>
+//             )}
+//           {/* </div> */}
+//         </main>
+//       </div>
+//     </div>
+//   );
+// }
