@@ -74,7 +74,7 @@ const navLinks = [
 /* ─── Helpers ───────────────────────────────────────────────── */
 const ThemeLine = () => <hr className="divider" />;
 
-const ThemeDot = ({ className = "" }: { className?: string }) => (
+const ThemeDot = ({ className = "" }) => (
   <span
     className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${className}`}
     style={{ background: "var(--vio-500)" }}
@@ -111,7 +111,7 @@ const Orbs = () => (
 );
 
 /* ─── Stat card ─────────────────────────────────────────────── */
-function StatCard({ value, label }: { value: string; label: string }) {
+function StatCard({ value, label }) {
   return (
     <div className="text-center px-8 py-6 border-l first:border-l-0"
          style={{ borderColor: "var(--surface-border)" }}>
@@ -124,17 +124,7 @@ function StatCard({ value, label }: { value: string; label: string }) {
 }
 
 /* ─── Feature card ──────────────────────────────────────────── */
-function FeatureCard({
-  icon: Icon,
-  title,
-  desc,
-  delay,
-}: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  delay: number;
-}) {
+function FeatureCard({ icon: Icon, title, desc, delay }) {
   return (
     <motion.div
       className="card group relative p-8"
@@ -179,7 +169,7 @@ function FeatureCard({
 }
 
 /* ─── Testimonial card ──────────────────────────────────────── */
-function TestimonialCard({ t, delay }: { t: (typeof testimonials)[0]; delay: number }) {
+function TestimonialCard({ t, delay }) {
   return (
     <motion.div
       className="card relative p-8"
