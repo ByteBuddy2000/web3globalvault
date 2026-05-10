@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
           signal: controller.signal,
           headers: {
             Accept: "application/json",
-            "User-Agent": "Genesis-Bank/1.0",
+            "User-Agent": "Web3GlobalVault/1.0",
           },
         });
 

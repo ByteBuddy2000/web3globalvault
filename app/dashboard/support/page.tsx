@@ -209,7 +209,7 @@ export default function SupportPage() {
                   Email
                 </span>
                 <span className="text-xs text-gray-300">
-                  support@genesis-bank.io
+                  support@Web3GlobalVault.io
                 </span>
               </div>
               <div className="flex flex-col gap-0.5 px-3 py-2.5 bg-white/[0.025] border border-white/[0.07] rounded-xl">

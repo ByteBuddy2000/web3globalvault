@@ -38,12 +38,12 @@ ${message}
     try {
       await sendEmail({
         to: email,
-        subject: 'Thank you for contacting Genesis Bank',
-        text: `Hi ${name},\n\nThank you for reaching out to us. We have received your message and will get back to you within 2 hours.\n\nBest regards,\nGenesis Bank Support Team`,
+        subject: 'Thank you for contacting Web3GlobalVault',
+        text: `Hi ${name},\n\nThank you for reaching out to us. We have received your message and will get back to you within 2 hours.\n\nBest regards,\nWeb3GlobalVault Support Team`,
         html: `
           <p>Hi ${name},</p>
           <p>Thank you for reaching out to us. We have received your message and will get back to you within 2 hours.</p>
-          <p>Best regards,<br>Genesis Bank Support Team</p>
+          <p>Best regards,<br>Web3GlobalVault Support Team</p>
         `,
       });
     } catch (confirmationError) {

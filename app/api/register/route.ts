@@ -93,19 +93,19 @@ export async function POST(req: Request) {
     try {
       await sendEmail({
         to: email,
-        subject: "Welcome to Genesis Bank! 🎉",
+        subject: "Welcome to Web3GlobalVault! 🎉",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(150deg, #050607 0%, #0a0c0f 55%, #090b0e 100%); color: #e2e8f0; padding: 40px 20px; border-radius: 12px;">
             
             <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #F5D78E; margin: 0; font-size: 28px;">Genesis Bank</h1>
+              <h1 style="color: #F5D78E; margin: 0; font-size: 28px;">Web3GlobalVault</h1>
               <p style="color: #94a3b8; margin: 5px 0 0 0;">Your Gateway to Wealth Management</p>
             </div>
 
             <div style="background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); padding: 30px; border-radius: 8px; margin-bottom: 30px;">
               <h2 style="color: #F5D78E; margin-top: 0;">Welcome, ${fullName}! 👋</h2>
               <p style="font-size: 16px; line-height: 1.6; color: #cbd5e1;">
-                Thank you for joining Genesis Bank. We're thrilled to have you as part of our community. Your account has been successfully created and is ready to use.
+                Thank you for joining Web3GlobalVault. We're thrilled to have you as part of our community. Your account has been successfully created and is ready to use.
               </p>
 
               <h3 style="color: #C9A84C; margin-top: 25px; margin-bottom: 15px;">Your Account Details:</h3>
@@ -138,22 +138,22 @@ export async function POST(req: Request) {
 
             <div style="background: rgba(201, 168, 76, 0.1); border-left: 4px solid #C9A84C; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
               <p style="margin: 0; color: #cbd5e1; font-size: 14px;">
-                <strong style="color: #F5D78E;">Security Tip:</strong> Never share your password or account details with anyone. Genesis Bank staff will never ask for your credentials via email.
+                <strong style="color: #F5D78E;">Security Tip:</strong> Never share your password or account details with anyone. Web3GlobalVault staff will never ask for your credentials via email.
               </p>
             </div>
 
             <div style="border-top: 1px solid rgba(148, 163, 184, 0.2); padding-top: 20px; text-align: center; font-size: 12px; color: #64748b;">
               <p>Questions? Visit our <a href="${process.env.NEXTAUTH_URL}/support" style="color: #F5D78E; text-decoration: none;">support center</a> or contact us at support@genesisbank.com</p>
-              <p style="margin: 10px 0 0 0;">© 2026 Genesis Bank. All rights reserved.</p>
+              <p style="margin: 10px 0 0 0;">© 2026 Web3GlobalVault. All rights reserved.</p>
             </div>
 
           </div>
         `,
-        text: `Welcome to Genesis Bank!
+        text: `Welcome to Web3GlobalVault!
 
 Hello ${fullName},
 
-Thank you for joining Genesis Bank. Your account has been successfully created!
+Thank you for joining Web3GlobalVault. Your account has been successfully created!
 
 Your Account Number: ${newUser.accountNumber}
 
@@ -170,7 +170,7 @@ Security Tip: Never share your password or account details with anyone.
 
 Questions? Contact us at support@genesisbank.com
 
-© 2026 Genesis Bank. All rights reserved.`,
+© 2026 Web3GlobalVault. All rights reserved.`,
       });
     } catch (emailError) {
       console.error("Failed to send welcome email:", emailError);

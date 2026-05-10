@@ -110,7 +110,7 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
           {/* Brand — hidden on desktop since sidebar shows it */}
           <div style={{ display: 'none' }} className="nb-brand">
             <div style={{ fontSize: 14, fontWeight: 800, color: '#f9fafb', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.01em', lineHeight: 1 }}>
-              Genesis Bank
+              Web3GlobalVault
             </div>
             <div style={{ fontSize: 9, color: '#fbbf24', letterSpacing: '0.12em', marginTop: 1 }}>
               DASHBOARD

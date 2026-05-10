@@ -59,7 +59,7 @@ const Footer = () => {
           <div className="flex-shrink-0">
             <span className="text-2xl font-bold block mb-2"
               style={{ fontFamily: "'Playfair Display', serif", background: 'linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Genesis Bank
+              Web3GlobalVault
             </span>
             <p className="text-sm text-gray-500">Where Finance Meets the Future.</p>
           </div>
@@ -127,7 +127,7 @@ const Footer = () => {
 
         {/* ── copyright ── */}
         <p className="text-center text-xs text-gray-600 mt-8">
-          © {new Date().getFullYear()} <span style={{ color: '#C9A84C' }}>Genesis Bank</span> · All Rights Reserved
+          © {new Date().getFullYear()} <span style={{ color: '#C9A84C' }}>Web3GlobalVault</span> · All Rights Reserved
         </p>
 
       </div>

@@ -33,7 +33,7 @@ const categories = ["All", "Accounts", "Transfers", "Investments", "Security"];
 const faqs = [
   {
     category: "Accounts",
-    q: "How do I open a Genesis Bank account?",
+    q: "How do I open a Web3GlobalVault account?",
     a: "Opening an account takes less than 5 minutes. Visit our website or download the Genesis app, click 'Open Account', provide your basic details, verify your identity with a government-issued ID, and you're set. No branch visits required.",
   },
   {
@@ -94,7 +94,7 @@ const faqs = [
   {
     category: "Security",
     q: "Are my deposits insured?",
-    a: "Yes. Genesis Bank deposits are insured up to the applicable regulatory limits in each jurisdiction. In Nigeria, this is up to$500,000 per depositor through the Federal Reserve. Details vary by country — check the app for your local coverage.",
+    a: "Yes. Web3GlobalVault deposits are insured up to the applicable regulatory limits in each jurisdiction. In Nigeria, this is up to$500,000 per depositor through the Federal Reserve. Details vary by country — check the app for your local coverage.",
   },
   {
     category: "Loans",
@@ -242,7 +242,7 @@ export default function FAQPage() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-lg text-gray-400 max-w-xl leading-relaxed mb-10"
         >
-          Everything you need to know about Genesis Bank. Can't find an answer? Our team is happy to help.
+          Everything you need to know about Web3GlobalVault. Can't find an answer? Our team is happy to help.
         </motion.p>
 
         {/* Search bar */}

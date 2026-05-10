@@ -18,7 +18,7 @@ export default function ReferralPage() {
   });
 
   const referralCode = "linda-draper";
-  const referralLink = `https://genesis-bank.com/referral/${referralCode}`;
+  const referralLink = `https://Web3GlobalVault.com/referral/${referralCode}`;
 
   useEffect(() => {
     fetchReferrals();
@@ -92,7 +92,7 @@ export default function ReferralPage() {
     const encoded = encodeURIComponent(referralLink);
     let url = '#';
     if (platform === 'facebook') url = `https://www.facebook.com/sharer/sharer.php?u=${encoded}`;
-    if (platform === 'twitter') url = `https://twitter.com/intent/tweet?url=${encoded}&text=${encodeURIComponent('Join me at Genesis Bank!')}`;
+    if (platform === 'twitter') url = `https://twitter.com/intent/tweet?url=${encoded}&text=${encodeURIComponent('Join me at Web3GlobalVault!')}`;
     if (platform === 'instagram') url = `https://www.instagram.com/`;
     window.open(url, '_blank', 'noopener');
   };

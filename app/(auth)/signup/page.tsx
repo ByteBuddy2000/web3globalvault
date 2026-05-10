@@ -113,7 +113,7 @@ export default function signupPage() {
               </div>
               <span className="text-lg font-bold"
                 style={{ fontFamily: "'Playfair Display', serif", background: 'linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Genesis Bank
+                Web3GlobalVault
               </span>
             </a>
 

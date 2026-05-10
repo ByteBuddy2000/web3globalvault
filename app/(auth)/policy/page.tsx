@@ -93,7 +93,7 @@ export default function policy() {
               </div>
               <span className="text-lg font-bold"
                 style={{ fontFamily: "'Playfair Display', serif", background: 'linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Genesis Bank
+                Web3GlobalVault
               </span>
             </Link>
 
@@ -185,7 +185,7 @@ export default function policy() {
 
         {/* bottom note */}
         <p className="text-center text-xs text-gray-700 mt-6">
-          By signing in to Genesis Bank, you agree to our{' '}
+          By signing in to Web3GlobalVault, you agree to our{' '}
           <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Terms</a>
           {' '}and{' '}
           <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Privacy Policy</a>.
