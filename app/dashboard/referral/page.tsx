@@ -472,7 +472,7 @@ export default function ReferralPage() {
           className="card rounded-lg p-3 sm:p-4 md:p-6 text-center"
         >
           <p className="text-xs text-muted">
-            By participating in the Genesis Referral Program, you agree to our{' '}
+            By participating in the Web3GlobalVaultReferral Program, you agree to our{' '}
             <a href="#" className="text-accent hover:underline">Terms & Conditions</a>.
             Rewards are subject to verification and may take up to 24 hours to process.
           </p>

@@ -117,9 +117,11 @@ export default function signupPage() {
               autoComplete="new-password"
               value={formData.password}
               onChange={handleChange}
-              toggle={<button type="button" onClick={() => setShowPassword(p => !p)} className="text-gray-500 hover:text-gray-300 transition-colors">
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>}
+              toggle={
+                <button type="button" onClick={() => setShowPassword(p => !p)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
 
             {/* confirm password */}
@@ -131,9 +133,11 @@ export default function signupPage() {
               autoComplete="new-password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              toggle={<button type="button" onClick={() => setShowConfirm(p => !p)} className="text-gray-500 hover:text-gray-300 transition-colors">
-                {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>}
+              toggle={
+                <button type="button" onClick={() => setShowConfirm(p => !p)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
 
             {/* password strength hint */}
@@ -145,10 +149,10 @@ export default function signupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none mt-2"
-              style={{
-                background: 'linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)',
-                color: '#btn-primary w-full inline-flex items-center justify-center gap-2 mt-2"<>
+              className="btn-primary w-full inline-flex items-center justify-center gap-2 mt-2"
+            >
+              {loading ? (
+                <>
                   <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
@@ -163,15 +167,7 @@ export default function signupPage() {
 
           {/* divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-            <span className="text-xs text-gray-600 tracking-widest uppercase">or</span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-          </div>
-
-          <p className="text-center text-sm text-gray-500">
-            Already have an account?{' '}
-            <a href="/signin"
-              className="font-semibold transition-colors durativar(--surface-border)' }} />
+            <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
             <span className="text-xs text-[var(--text-muted)] tracking-widest uppercase">or</span>
             <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
           </div>
@@ -180,18 +176,26 @@ export default function signupPage() {
             Already have an account?{' '}
             <a href="/signin"
               className="font-semibold transition-colors duration-200 hover:text-[var(--cyan-500)]"
-              style={{ color: 'var(--cyan-500)ur{' '}
-          <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Terms</a>
-          {' '}and{' '}
-          <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Privacy Policy</a>.
-        </p>
-      </div>
-    </div>
-  );[var(--text-muted)] mt-6">
+              style={{ color: 'var(--cyan-500)' }}>
+              Sign In
+            </a>
+          </p>
+        </div>
+
+        {/* bottom note */}
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
           By signuping, you agree to our{' '}
           <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Terms</a>
           {' '}and{' '}
-          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted) = null }: {
+          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Field Input ───────────────────────────────────────────── */
+function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, onChange, toggle = null }: {
   icon: any; type: string; name: string; placeholder: string;
   autoComplete: string; value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -203,15 +207,7 @@ export default function signupPage() {
     <div
       className="relative flex items-center rounded-xl transition-all duration-300"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: focused ? '1px solid rgba(201,168,76,0.5)' : '1px solid rgba(255,255,255,0.07)',
-        boxShadow: focused ? '0 0 0 3px rgba(201,168,76,0.07)' : 'none',
-      }}
-    >
-      <div className="pl-4 flex-shrink-0">
-        <Icon className="w-4 h-4" style={{ color: focused ? '#C9A84C' : '#4B5563', transition: 'color 0.2s' }} />
-      </div>
-      <inputvar(--input)',
+        background: 'var(--input)',
         border: focused ? '1px solid var(--cyan-500)' : '1px solid var(--border)',
         boxShadow: focused ? '0 0 0 3px rgba(0,229,255,0.1)' : 'none',
       }}
@@ -230,7 +226,15 @@ export default function signupPage() {
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full bg-transparent px-3 py-3.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]
+        className="w-full bg-transparent px-3 py-3.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
+      />
+      {toggle && <div className="pr-4 flex-shrink-0">{toggle}</div>}
+    </div>
+  );
+}
+
+/* ─── Password Strength ─────────────────────────────────────── */
+function PasswordStrength({ password }: { password: string }) {
   const checks = [
     password.length >= 8,
     /[A-Z]/.test(password),
@@ -239,15 +243,7 @@ export default function signupPage() {
   ];
   const score = checks.filter(Boolean).length;
   const label = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'][score];
-  const color = ['#EF4444', '#F97316', '#EAB308', '#84CC16', '#C9A84C'][score];
-
-  return (
-    <div className="space-y-1.5">
-      <div className="flex gap-1">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="flex-1 h-1 rounded-full transition-all duration-300"
-            style={{ background: i < score ? color : 'rgba(255,255,255,0.08)' }} />
-        ))}s = ['var(--mag-500)', 'var(--amber-500)', 'var(--vio-500)', 'var(--green-500)', 'var(--cyan-500)'];
+  const colors = ['var(--mag-500)', 'var(--amber-500)', 'var(--vio-500)', 'var(--green-500)', 'var(--cyan-500)'];
   const color = colors[score];
 
   return (
@@ -255,4 +251,10 @@ export default function signupPage() {
       <div className="flex gap-1">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="flex-1 h-1 rounded-full transition-all duration-300"
-            style={{ background: i < score ? color : 'var(--input
+            style={{ background: i < score ? color : 'var(--input)' }} />
+        ))}
+      </div>
+      <p className="text-xs" style={{ color }}>{label}</p>
+    </div>
+  );
+}

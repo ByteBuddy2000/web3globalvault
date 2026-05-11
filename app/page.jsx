@@ -56,7 +56,7 @@ const testimonials = [
   {
     name: "Natasha Smith",
     role: "Business Owner",
-    text: "I love the security features and the cashback offers provided. Genesis is my go-to bank.",
+    text: "I love the security features and the cashback offers provided. Web3GlobalVaultis my go-to bank.",
     avatar: "/asset/user3.jpg",
     rating: 5,
   },
@@ -557,7 +557,7 @@ export default function HomePage() {
             <span className="text-gradient">For Your Business</span>
           </h2>
           <p className="mb-8 text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            At Genesis Financial, we help clients unlock their full financial potential with
+            At Web3GlobalVaultFinancial, we help clients unlock their full financial potential with
             secure digital banking, automated investment tools, and trusted advisors —
             all at your fingertips.
           </p>
@@ -796,7 +796,7 @@ export default function HomePage() {
             Need a Loan?
           </h4>
           <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            Genesis offers quick personal and business loans with flexible repayment options,
+            Web3GlobalVaultoffers quick personal and business loans with flexible repayment options,
             low interest rates, and instant digital approval.
           </p>
           <a
