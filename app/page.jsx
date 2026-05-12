@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Lock,
   Zap,
+  Wifi,
 } from "lucide-react";
 import Image from "next/image";
 import Footer from "../components/footer/footer";
@@ -56,7 +57,7 @@ const testimonials = [
   {
     name: "Natasha Smith",
     role: "Business Owner",
-    text: "I love the security features and the cashback offers provided. Web3GlobalVaultis my go-to bank.",
+    text: "I love the security features and the cashback offers provided. Genesis is my go-to bank.",
     avatar: "/asset/user3.jpg",
     rating: 5,
   },
@@ -71,23 +72,32 @@ const navLinks = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-/* ─── Helpers ───────────────────────────────────────────────── */
-const ThemeLine = () => <hr className="divider" />;
-
-const ThemeDot = ({ className = "" }) => (
-  <span
-    className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${className}`}
-    style={{ background: "var(--vio-500)" }}
-  />
+/* ─── Section Divider ───────────────────────────────────────── */
+const SectionDivider = () => (
+  <div className="max-w-7xl mx-auto px-6">
+    <div
+      style={{
+        height: "1px",
+        background:
+          "linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-brand) 50%, var(--border-default) 80%, transparent 100%)",
+        margin: "0",
+      }}
+    />
+  </div>
 );
 
-/* ─── Floating orbs background ──────────────────────────────── */
+/* ─── Live indicator dot ────────────────────────────────────── */
+const LiveDot = () => (
+  <span className="status-dot status-dot-live" />
+);
+
+/* ─── Ambient Orbs ──────────────────────────────────────────── */
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%",  size: 400, delay: 0 },
-      { top: "60%", left: "75%", size: 500, delay: 2 },
-      { top: "40%", left: "40%", size: 300, delay: 4 },
+      { top: "8%",  left: "2%",  size: 560, delay: 0,  color: "var(--brand-500)" },
+      { top: "65%", left: "72%", size: 440, delay: 2.5, color: "var(--cyan-400)" },
+      { top: "38%", left: "42%", size: 320, delay: 5,  color: "var(--brand-700)" },
     ].map((o, i) => (
       <motion.div
         key={i}
@@ -97,70 +107,96 @@ const Orbs = () => (
           left: o.left,
           width: o.size,
           height: o.size,
-          background:
-            i % 2 === 0
-              ? "radial-gradient(circle, rgba(123,47,255,0.07) 0%, transparent 70%)"
-              : "radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%)",
-          filter: "blur(40px)",
+          background: `radial-gradient(circle, ${
+            i === 1
+              ? "rgba(34,211,238,0.07)"
+              : "rgba(59,130,246,0.08)"
+          } 0%, transparent 70%)`,
+          filter: "blur(50px)",
         }}
-        animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 8, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ scale: [1, 1.18, 1], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 9 + i * 2, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
       />
     ))}
   </div>
 );
 
-/* ─── Stat card ─────────────────────────────────────────────── */
+/* ─── Stat Card ─────────────────────────────────────────────── */
 function StatCard({ value, label }) {
   return (
-    <div className="text-center px-8 py-6 border-l first:border-l-0"
-         style={{ borderColor: "var(--surface-border)" }}>
-      <p className="stat-value text-4xl mb-1">{value}</p>
-      <p className="text-xs tracking-widest uppercase" style={{ color: "var(--text-muted)" }}>
+    <div
+      className="text-center px-8 py-6"
+      style={{ borderLeft: "1px solid var(--border-subtle)" }}
+    >
+      <p
+        className="text-4xl font-bold mb-1 text-gradient"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        {value}
+      </p>
+      <p
+        className="text-xs tracking-wider uppercase"
+        style={{ color: "var(--text-300)", letterSpacing: "var(--tracking-wider)" }}
+      >
         {label}
       </p>
     </div>
   );
 }
 
-/* ─── Feature card ──────────────────────────────────────────── */
-function FeatureCard({ icon: Icon, title, desc, delay }) {
+/* ─── Feature Card ──────────────────────────────────────────── */
+function FeatureCard({
+  icon: Icon,
+  title,
+  desc,
+  delay,
+}) {
   return (
     <motion.div
-      className="card group relative p-8"
+      className="card group relative p-8 overflow-hidden"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       viewport={{ once: true }}
       whileHover={{ y: -6 }}
     >
-      {/* hover glow */}
+      {/* hover top-glow */}
       <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{ background: "radial-gradient(circle at 50% 0%, rgba(123,47,255,0.10) 0%, transparent 60%)" }}
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 0%, var(--glass-brand-md) 0%, transparent 65%)",
+        }}
       />
 
-      {/* icon */}
+      {/* icon badge */}
       <div
         className="w-14 h-14 rounded-xl flex items-center justify-center mb-6"
         style={{
-          background: "linear-gradient(135deg, rgba(123,47,255,0.18), rgba(123,47,255,0.06))",
-          border: "1px solid rgba(123,47,255,0.30)",
+          background: "var(--glass-brand-sm)",
+          border: "1px solid var(--border-brand)",
         }}
       >
-        <Icon className="w-6 h-6" style={{ color: "var(--vio-300)" }} />
+        <Icon className="w-6 h-6" style={{ color: "var(--brand-400)" }} />
       </div>
 
-      <h4 className="text-xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>
+      <h4
+        className="text-xl font-bold mb-3"
+        style={{
+          fontFamily: "var(--font-display)",
+          color: "var(--text-0)",
+        }}
+      >
         {title}
       </h4>
-      <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+
+      <p style={{ color: "var(--text-200)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-normal)" }}>
         {desc}
       </p>
 
       <div
-        className="mt-6 inline-flex items-center gap-2 text-xs tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
-        style={{ color: "var(--cyan-500)" }}
+        className="mt-6 inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+        style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
       >
         Learn more <ArrowRight className="w-3 h-3" />
       </div>
@@ -168,8 +204,11 @@ function FeatureCard({ icon: Icon, title, desc, delay }) {
   );
 }
 
-/* ─── Testimonial card ──────────────────────────────────────── */
-function TestimonialCard({ t, delay }) {
+/* ─── Testimonial Card ──────────────────────────────────────── */
+function TestimonialCard({
+  t,
+  delay,
+}) {
   return (
     <motion.div
       className="card relative p-8"
@@ -182,7 +221,7 @@ function TestimonialCard({ t, delay }) {
       {/* decorative quote */}
       <span
         className="absolute top-4 right-6 text-6xl leading-none opacity-10 select-none"
-        style={{ color: "var(--vio-300)" }}
+        style={{ fontFamily: "Georgia, serif", color: "var(--brand-400)" }}
       >
         "
       </span>
@@ -190,11 +229,14 @@ function TestimonialCard({ t, delay }) {
       {/* stars */}
       <div className="flex gap-1 mb-4">
         {Array.from({ length: t.rating }).map((_, i) => (
-          <Star key={i} className="w-4 h-4 fill-current" style={{ color: "var(--cyan-500)" }} />
+          <Star key={i} className="w-4 h-4 fill-current" style={{ color: "var(--brand-400)" }} />
         ))}
       </div>
 
-      <p className="text-sm leading-relaxed mb-6 italic" style={{ color: "var(--text-secondary)" }}>
+      <p
+        className="text-sm italic mb-6"
+        style={{ color: "var(--text-100)", lineHeight: "var(--leading-normal)" }}
+      >
         "{t.text}"
       </p>
 
@@ -204,14 +246,14 @@ function TestimonialCard({ t, delay }) {
           alt={t.name}
           width={44}
           height={44}
-          className="rounded-full object-cover"
-          style={{ border: "2px solid rgba(123,47,255,0.40)" }}
+          className="rounded-full object-cover avatar-md"
+          style={{ border: "2px solid var(--border-brand)" }}
         />
         <div>
-          <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>
+          <p className="font-semibold text-sm" style={{ color: "var(--text-0)" }}>
             {t.name}
           </p>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+          <p className="text-xs" style={{ color: "var(--text-300)" }}>
             {t.role}
           </p>
         </div>
@@ -220,32 +262,41 @@ function TestimonialCard({ t, delay }) {
   );
 }
 
-/* ─── Globe visual ──────────────────────────────────────────── */
+/* ─── Globe Visual ──────────────────────────────────────────── */
 const GlobeVisual = () => (
   <div className="relative flex justify-center items-center w-72 h-72">
-    {[220, 180, 140].map((size, i) => (
+    {/* orbital rings */}
+    {[220, 175, 130].map((size, i) => (
       <motion.div
         key={i}
         className="absolute rounded-full"
         style={{
           width: size,
           height: size,
-          border: `1px solid rgba(123,47,255,${0.08 + i * 0.08})`,
+          border: `1px solid ${
+            i === 0
+              ? "var(--border-brand)"
+              : i === 1
+              ? "var(--border-cyan)"
+              : "var(--border-default)"
+          }`,
+          opacity: 0.5 + i * 0.15,
         }}
         animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-        transition={{ duration: 20 + i * 6, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 18 + i * 7, repeat: Infinity, ease: "linear" }}
       />
     ))}
 
-    {/* core */}
+    {/* core sphere */}
     <div
       className="relative w-24 h-24 rounded-full flex items-center justify-center"
       style={{
-        background: "var(--grad-primary)",
-        boxShadow: "var(--glow-vio)",
+        background:
+          "linear-gradient(135deg, var(--brand-600) 0%, var(--brand-400) 60%, var(--cyan-400) 100%)",
+        boxShadow: "var(--shadow-glow-brand)",
       }}
     >
-      <Globe2 className="w-10 h-10" style={{ color: "var(--void-0)" }} />
+      <Globe2 className="w-10 h-10" style={{ color: "#fff" }} />
     </div>
 
     {/* orbiting dots */}
@@ -254,18 +305,19 @@ const GlobeVisual = () => (
         key={i}
         className="absolute w-2 h-2 rounded-full"
         style={{
-          background: i % 2 === 0 ? "var(--vio-500)" : "var(--cyan-500)",
-          boxShadow: i % 2 === 0 ? "0 0 6px var(--vio-500)" : "0 0 6px var(--cyan-500)",
+          background: i % 2 === 0 ? "var(--brand-400)" : "var(--cyan-400)",
+          boxShadow: i % 2 === 0
+            ? "0 0 6px var(--brand-400)"
+            : "0 0 6px var(--cyan-400)",
           top: "50%",
           left: "50%",
           marginTop: -4,
           marginLeft: -4,
+          x: Math.cos((deg * Math.PI) / 180) * 105,
+          y: Math.sin((deg * Math.PI) / 180) * 105,
         }}
-        animate={{
-          x: Math.cos((deg * Math.PI) / 180) * 100,
-          y: Math.sin((deg * Math.PI) / 180) * 100,
-        }}
-        transition={{ duration: 0 }}
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2 + i * 0.4, repeat: Infinity, ease: "easeInOut" }}
       />
     ))}
   </div>
@@ -273,22 +325,24 @@ const GlobeVisual = () => (
 
 /* ─── Main Component ─────────────────────────────────────────── */
 export default function HomePage() {
-  const [typingIndex, setTypingIndex]     = useState(0);
+  const [typingIndex, setTypingIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
-  const [mobileOpen, setMobileOpen]       = useState(false);
-  const [scrolled, setScrolled]           = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const heroRef = useRef(null);
 
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  const heroY       = useTransform(scrollY, [0, 500], [0, 80]);
+  const heroY = useTransform(scrollY, [0, 500], [0, 80]);
 
+  /* scroll listener */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* typewriter */
   useEffect(() => {
     const phrase = companyPlans[typingIndex % companyPlans.length];
     let i = 0;
@@ -306,16 +360,25 @@ export default function HomePage() {
   }, [typingIndex]);
 
   return (
-    <div className="bg-app min-h-screen flex flex-col relative">
+    <div
+      className="min-h-screen flex flex-col relative"
+      style={{
+        background: "var(--surface-0)",
+        fontFamily: "var(--font-body)",
+        color: "var(--text-0)",
+      }}
+    >
       <Orbs />
 
-      {/* ── HEADER ───────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HEADER
+      ══════════════════════════════════════════════════════ */}
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
-          background: scrolled ? "rgba(7,6,15,0.88)" : "transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          borderBottom: scrolled ? "1px solid var(--surface-border)" : "none",
+          background: scrolled ? "rgba(6,7,10,0.88)" : "transparent",
+          backdropFilter: scrolled ? "blur(22px) saturate(140%)" : "none",
+          borderBottom: scrolled ? "1px solid var(--border-subtle)" : "none",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -324,24 +387,28 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-full overflow-hidden"
-              style={{ border: "2px solid rgba(123,47,255,0.45)" }}
+              style={{ border: "2px solid var(--border-brand)" }}
             >
-              <Image src="/asset/logo.jpeg" width={40} height={40} alt="Genesis" className="object-cover" />
+              <Image
+                src="/asset/logo.jpeg"
+                width={40}
+                height={40}
+                alt="Genesis"
+                className="object-cover"
+              />
             </div>
-            <span className="text-xl font-bold text-gradient">Web3GlobalVault</span>
+            <span
+              className="text-xl font-bold text-gradient"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Web3GlobalVault
+            </span>
           </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium tracking-wide transition-colors duration-200"
-                style={{ color: "var(--text-secondary)" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
-              >
+              <a key={item.label} href={item.href} className="nav-link">
                 {item.label}
               </a>
             ))}
@@ -349,13 +416,13 @@ export default function HomePage() {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <a href="/signup" className="hidden md:inline-flex items-center gap-2 btn-primary text-sm">
+            <a href="/signup" className="btn-primary btn-sm hidden md:inline-flex">
               Open Account <ArrowRight className="w-3.5 h-3.5" />
             </a>
             <button
-              className="md:hidden p-2"
-              style={{ color: "var(--text-secondary)" }}
+              className="md:hidden p-2 btn-ghost btn-icon"
               onClick={() => setMobileOpen((p) => !p)}
+              aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -371,22 +438,17 @@ export default function HomePage() {
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden overflow-hidden"
               style={{
-                background: "rgba(7,6,15,0.97)",
-                borderTop: "1px solid var(--surface-border)",
+                background: "rgba(6,7,10,0.97)",
+                borderTop: "1px solid var(--border-subtle)",
               }}
             >
-              <div className="px-6 py-6 flex flex-col gap-4">
+              <div className="px-6 py-6 flex flex-col gap-2">
                 {navLinks.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="text-sm py-1 transition-colors"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
+                  <Link key={item.label} href={item.href} className="nav-link">
                     {item.label}
                   </Link>
                 ))}
-                <Link href="/signup" className="mt-2 btn-primary text-center text-sm">
+                <Link href="/signup" className="btn-primary mt-3 text-center">
                   Open Account
                 </Link>
               </div>
@@ -395,7 +457,9 @@ export default function HomePage() {
         </AnimatePresence>
       </header>
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         ref={heroRef}
         className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 z-10"
@@ -406,75 +470,106 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="badge badge-vio mb-8"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+          style={{
+            border: "1px solid var(--border-brand)",
+            background: "var(--glass-brand-sm)",
+            color: "var(--brand-300)",
+            fontSize: "var(--text-xs)",
+            letterSpacing: "var(--tracking-wider)",
+            textTransform: "uppercase",
+          }}
         >
-          <ThemeDot /> Trusted by 2M+ customers worldwide
+          <LiveDot />
+          Trusted by 2M+ customers worldwide
         </motion.div>
 
+        {/* H1 */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 max-w-5xl"
+          className="font-bold leading-none mb-6 max-w-5xl"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+            letterSpacing: "var(--tracking-tight)",
+            color: "var(--text-0)",
+          }}
         >
           Where Finance{" "}
           <span className="text-gradient">Meets</span>{" "}
           the Future
         </motion.h1>
 
+        {/* Sub-heading */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-lg md:text-xl mb-4 max-w-xl leading-relaxed"
-          style={{ color: "var(--text-secondary)" }}
+          style={{ color: "var(--text-200)" }}
         >
           Your gateway to smart, secure, and modern financial solutions crafted for today's world.
         </motion.p>
 
-        {/* typewriter */}
+        {/* Typewriter */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.45 }}
           className="mb-10 h-8 flex items-center justify-center"
         >
-          <span className="text-base md:text-lg" style={{ color: "var(--vio-300)" }}>
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-base)",
+              color: "var(--brand-400)",
+            }}
+          >
             {displayedText}
             <span className="animate-pulse">▌</span>
           </span>
         </motion.div>
 
+        {/* CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55 }}
           className="flex flex-col sm:flex-row gap-4 items-center"
         >
-          <a
-            href="/signup"
-            className="btn-primary inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm"
-          >
+          <a href="/signup" className="btn-primary btn-lg">
             Get Started Free <ArrowRight className="w-4 h-4" />
           </a>
-          <a href="#" className="btn-ghost inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm">
+          <a href="#" className="btn-secondary btn-lg">
             Watch Demo
           </a>
         </motion.div>
 
-        {/* scroll hint */}
+        {/* Scroll hint */}
         <motion.div
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ color: "var(--text-faint)" }}
+          style={{ color: "var(--text-400)" }}
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <span className="text-xs tracking-widest uppercase">Scroll</span>
+          <span
+            style={{
+              fontSize: "var(--text-xs)",
+              letterSpacing: "var(--tracking-wider)",
+              textTransform: "uppercase",
+            }}
+          >
+            Scroll
+          </span>
           <ChevronDown className="w-4 h-4" />
         </motion.div>
       </motion.section>
 
-      {/* ── STATS STRIP ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          STATS STRIP
+      ══════════════════════════════════════════════════════ */}
       <motion.div
         className="relative z-10 max-w-5xl mx-auto w-full px-6 mb-4"
         initial={{ opacity: 0, y: 30 }}
@@ -482,23 +577,37 @@ export default function HomePage() {
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <div className="card rounded-2xl grid grid-cols-2 md:grid-cols-4">
+        <div
+          className="card rounded-2xl grid grid-cols-2 md:grid-cols-4"
+          style={{
+            /* override card border-radius for strip */
+            borderRadius: "var(--radius-xl)",
+          }}
+        >
+          {/* first child: no left border */}
           {[
             { value: "40+",  label: "Countries" },
             { value: "2M+",  label: "Customers" },
             { value: "14+",  label: "Years" },
-            { value: "$50B+", label: "Processed" },
-          ].map((s) => (
-            <StatCard key={s.label} {...s} />
+            { value: "$50B+",label: "Processed" },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              style={i === 0 ? { borderLeft: "none" } : {}}
+            >
+              <StatCard {...s} />
+            </div>
           ))}
         </div>
       </motion.div>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── HERO IMAGE + COPY ─────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HERO IMAGE + COPY
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center py-8 z-10"
+        className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center py-20 z-10"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -506,16 +615,18 @@ export default function HomePage() {
       >
         {/* Image */}
         <div className="relative">
+          {/* ambient glow behind image */}
           <div
-            className="absolute -inset-4 rounded-3xl"
+            className="absolute -inset-6 rounded-3xl pointer-events-none"
             style={{
-              background: "linear-gradient(135deg, rgba(123,47,255,0.14) 0%, transparent 60%)",
-              filter: "blur(20px)",
+              background:
+                "radial-gradient(ellipse at 40% 40%, var(--glass-brand-md) 0%, transparent 65%)",
+              filter: "blur(24px)",
             }}
           />
           <div
             className="relative rounded-2xl overflow-hidden"
-            style={{ border: "1px solid var(--surface-border)" }}
+            style={{ border: "1px solid var(--border-brand)" }}
           >
             <Image
               src="/asset/mps.jpeg"
@@ -528,79 +639,142 @@ export default function HomePage() {
             <div
               className="absolute bottom-4 left-4 right-4 rounded-xl p-4 flex items-center gap-3"
               style={{
-                background: "rgba(7,6,15,0.85)",
+                background: "rgba(6,7,10,0.85)",
                 backdropFilter: "blur(16px)",
-                border: "1px solid var(--surface-border)",
+                border: "1px solid var(--border-brand)",
               }}
             >
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: "rgba(123,47,255,0.15)" }}
+                style={{ background: "var(--glass-brand-md)" }}
               >
-                <TrendingUp className="w-5 h-5" style={{ color: "var(--vio-300)" }} />
+                <TrendingUp className="w-5 h-5" style={{ color: "var(--brand-400)" }} />
               </div>
               <div>
-                <p className="text-xs" style={{ color: "var(--text-muted)" }}>Portfolio Growth</p>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                <p style={{ fontSize: "var(--text-xs)", color: "var(--text-200)" }}>
+                  Portfolio Growth
+                </p>
+                <p className="font-semibold" style={{ fontSize: "var(--text-sm)", color: "var(--text-0)" }}>
                   +24.6% this quarter
                 </p>
               </div>
+              <span
+                className="badge badge-success ml-auto"
+              >
+                Live
+              </span>
             </div>
           </div>
         </div>
 
         {/* Copy */}
         <div>
-          <p className="text-xs tracking-widest uppercase mb-4 text-vio">About Genesis</p>
-          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-4"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            About Genesis
+          </p>
+          <h2
+            className="font-bold leading-tight mb-6"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
+          >
             Best Financial Company{" "}
             <span className="text-gradient">For Your Business</span>
           </h2>
-          <p className="mb-8 text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            At Web3GlobalVaultFinancial, we help clients unlock their full financial potential with
+          <p className="mb-8 leading-relaxed" style={{ color: "var(--text-200)" }}>
+            At Genesis Financial, we help clients unlock their full financial potential with
             secure digital banking, automated investment tools, and trusted advisors —
             all at your fingertips.
           </p>
 
-          <div className="flex gap-6 mb-8">
+          {/* Mini stats */}
+          <div className="flex gap-4 mb-8">
             {[
               { num: "76+", label: "Projects Completed" },
               { num: "14+", label: "Years of Experience" },
             ].map((s) => (
-              <div key={s.label} className="stat-tile text-center px-6 py-4 rounded-xl">
-                <p className="stat-value text-3xl">{s.num}</p>
-                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>{s.label}</p>
+              <div
+                key={s.label}
+                className="card-brand px-6 py-4 rounded-xl text-center"
+                style={{
+                  background: "var(--glass-brand-sm)",
+                  border: "1px solid var(--border-brand)",
+                }}
+              >
+                <p
+                  className="text-3xl font-bold text-gradient"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {s.num}
+                </p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-200)" }}>
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
 
-          <a href="/signin" className="btn-primary inline-flex items-center gap-2 text-sm px-6 py-3 rounded-full">
+          <a href="/signin" className="btn-primary">
             Plan Your Financial Future <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── PARTNERS ─────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          PARTNERS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         id="partners"
-        className="max-w-7xl mx-auto px-6 py-8 z-10"
+        className="max-w-7xl mx-auto px-6 py-20 z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-widest uppercase mb-2 text-vio">Ecosystem</p>
-          <h3 className="text-3xl font-bold">Our Trusted Partners</h3>
+        <div className="text-center mb-12">
+          <p
+            className="section-label mb-2"
+            style={{
+              fontSize: "var(--text-xs)",
+              letterSpacing: "var(--tracking-wider)",
+              textTransform: "uppercase",
+              color: "var(--brand-400)",
+              fontWeight: 600,
+            }}
+          >
+            Ecosystem
+          </p>
+          <h3
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Our Trusted Partners
+          </h3>
         </div>
-        <div className="flex flex-wrap justify-center gap-5">
+
+        <div className="flex flex-wrap justify-center gap-4">
           {partners.map((partner, idx) => (
             <motion.div
               key={idx}
-              className="card flex flex-col items-center gap-2 px-8 py-5 rounded-xl cursor-pointer transition-all duration-300 hover:-translate-y-1"
-              whileHover={{ borderColor: "rgba(0,229,255,0.35)" }}
+              className="flex flex-col items-center gap-2 px-8 py-5 rounded-xl cursor-pointer transition-base"
+              style={{
+                background: "var(--glass-white-xs)",
+                border: "1px solid var(--border-default)",
+                backdropFilter: "blur(12px)",
+              }}
+              whileHover={{
+                borderColor: "var(--border-brand)",
+                y: -4,
+                transition: { duration: 0.2 },
+              }}
             >
               <Image
                 src={partner.logo}
@@ -608,8 +782,11 @@ export default function HomePage() {
                 width={72}
                 height={36}
                 className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                style={{ filter: "brightness(0) invert(1)" }}
               />
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              <span
+                style={{ fontSize: "var(--text-xs)", color: "var(--text-300)" }}
+              >
                 {partner.name}
               </span>
             </motion.div>
@@ -617,14 +794,27 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── FEATURES ─────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-8 z-10">
-        <div className="text-center mb-14">
-          <p className="text-xs tracking-widest uppercase mb-2 text-vio">Why Us</p>
-          <h3 className="text-4xl font-bold">Why Choose Genesis?</h3>
+      {/* ══════════════════════════════════════════════════════
+          FEATURES
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Why Us
+          </p>
+          <h3
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Why Choose Genesis?
+          </h3>
         </div>
+
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
@@ -651,11 +841,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── IMAGE CARDS ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          IMAGE CARDS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-6"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-6"
         initial={{ opacity: 0, scale: 0.97 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
@@ -663,18 +855,18 @@ export default function HomePage() {
       >
         {[
           {
-            img:  "/asset/card1.jpeg",
-            tag:  "Advisory",
+            img: "/asset/card1.jpeg",
+            tag: "Advisory",
             title: "Expert Financial Advice",
-            desc:  "Talk to certified consultants about business growth and smart investments.",
-            icon:  Lock,
+            desc: "Talk to certified consultants about business growth and smart investments.",
+            icon: Lock,
           },
           {
-            img:  "/asset/card2.jpeg",
-            tag:  "Analytics",
+            img: "/asset/card2.jpeg",
+            tag: "Analytics",
             title: "Real-Time Investment Tracking",
-            desc:  "Track and grow your investments with real-time insights and powerful dashboards.",
-            icon:  TrendingUp,
+            desc: "Track and grow your investments with real-time insights and powerful dashboards.",
+            icon: TrendingUp,
           },
         ].map(({ img, tag, title, desc, icon: Icon }) => (
           <motion.div
@@ -682,6 +874,7 @@ export default function HomePage() {
             className="card group rounded-2xl overflow-hidden cursor-pointer"
             whileHover={{ y: -4 }}
           >
+            {/* image */}
             <div className="relative h-64 overflow-hidden">
               <Image
                 src={img}
@@ -694,25 +887,35 @@ export default function HomePage() {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(7,6,15,0.92) 0%, rgba(7,6,15,0.2) 60%, transparent 100%)",
+                    "linear-gradient(to top, var(--surface-0) 0%, rgba(6,7,10,0.15) 60%, transparent 100%)",
                 }}
               />
-              <span className="badge badge-vio absolute top-4 left-4">{tag}</span>
+              <span
+                className="badge badge-brand absolute top-4 left-4"
+              >
+                {tag}
+              </span>
             </div>
 
-            <div className="p-6" style={{ background: "rgba(255,255,255,0.015)" }}>
+            {/* content */}
+            <div className="p-6" style={{ background: "var(--glass-white-xs)" }}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "rgba(123,47,255,0.12)" }}
+                  style={{ background: "var(--glass-brand-sm)" }}
                 >
-                  <Icon className="w-4 h-4" style={{ color: "var(--vio-300)" }} />
+                  <Icon className="w-4 h-4" style={{ color: "var(--brand-400)" }} />
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
+                  <h4
+                    className="font-semibold mb-1"
+                    style={{ color: "var(--text-0)", fontFamily: "var(--font-display)" }}
+                  >
                     {title}
                   </h4>
-                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{desc}</p>
+                  <p style={{ fontSize: "var(--text-sm)", color: "var(--text-200)" }}>
+                    {desc}
+                  </p>
                 </div>
               </div>
             </div>
@@ -720,13 +923,25 @@ export default function HomePage() {
         ))}
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-8 z-10">
-        <div className="text-center mb-14">
-          <p className="text-xs tracking-widest uppercase mb-2 text-vio">Social Proof</p>
-          <h3 className="text-4xl font-bold">What Our Clients Say</h3>
+      {/* ══════════════════════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Social Proof
+          </p>
+          <h3
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            What Our Clients Say
+          </h3>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
@@ -735,20 +950,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── GLOBAL REACH ─────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          GLOBAL REACH
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-16 items-center"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-16 items-center"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
         <div>
-          <p className="text-xs tracking-widest uppercase mb-2 text-vio">Presence</p>
-          <h4 className="text-4xl font-bold mb-6 leading-tight">A Truly Global Bank</h4>
-          <p className="mb-6 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Presence
+          </p>
+          <h4
+            className="font-bold leading-tight mb-6"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 4vw, 2.8rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
+          >
+            A Truly Global Bank
+          </h4>
+          <p className="mb-6 leading-relaxed" style={{ color: "var(--text-200)" }}>
             Web3GlobalVault operates in over 40 countries, serving millions of customers with
             local expertise and global standards. No matter where you are, we're there.
           </p>
@@ -758,8 +990,15 @@ export default function HomePage() {
               "24/7 multilingual support in 12 languages",
               "International compliance & regulatory standards",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
-                <ThemeDot />
+              <li
+                key={item}
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "var(--text-100)" }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ background: "var(--brand-400)" }}
+                />
                 {item}
               </li>
             ))}
@@ -770,11 +1009,13 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── LOANS & OFFERS ───────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          LOANS & OFFERS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-6"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-6"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
@@ -782,37 +1023,49 @@ export default function HomePage() {
       >
         {/* Loans */}
         <div
-          className="p-8 rounded-2xl relative overflow-hidden group"
+          className="card-brand p-8 rounded-2xl relative overflow-hidden group"
           style={{
-            background: "linear-gradient(135deg, rgba(123,47,255,0.10), rgba(123,47,255,0.03))",
-            border: "1px solid rgba(123,47,255,0.22)",
+            background:
+              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-brand-xs) 100%)",
+            border: "1px solid var(--border-brand)",
           }}
         >
+          {/* decorative blob */}
           <div
-            className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-20 pointer-events-none"
-            style={{ background: "radial-gradient(circle, var(--vio-500), transparent)" }}
+            className="absolute -top-12 -right-12 w-40 h-40 rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, var(--brand-glow-sm), transparent)",
+            }}
           />
-          <h4 className="text-2xl font-bold mb-3" style={{ color: "var(--vio-100)" }}>
+          <h4
+            className="text-2xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+          >
             Need a Loan?
           </h4>
-          <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            Web3GlobalVaultoffers quick personal and business loans with flexible repayment options,
+          <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-200)" }}>
+            Genesis offers quick personal and business loans with flexible repayment options,
             low interest rates, and instant digital approval.
           </p>
           <a
             href="#"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition-colors"
-            style={{ color: "var(--vio-300)" }}
+            className="inline-flex items-center gap-2 text-sm font-semibold transition-base"
+            style={{ color: "var(--brand-400)" }}
           >
             Check your eligibility <ArrowRight className="w-4 h-4" />
           </a>
         </div>
 
         {/* Offers */}
-        <div className="card p-8 rounded-2xl">
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="w-5 h-5 fill-current" style={{ color: "var(--cyan-500)" }} />
-            <h4 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+        <div
+          className="card p-8 rounded-2xl relative overflow-hidden"
+        >
+          <div className="flex items-center gap-2 mb-5">
+            <Star className="w-5 h-5 fill-current" style={{ color: "var(--brand-400)" }} />
+            <h4
+              className="text-2xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+            >
               Best Offers for You
             </h4>
           </div>
@@ -822,8 +1075,15 @@ export default function HomePage() {
               "Free international transfer this month",
               "Refer & earn $250 instantly",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
-                <ThemeDot />
+              <li
+                key={item}
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "var(--text-100)" }}
+              >
+                <span
+                  className="status-dot"
+                  style={{ background: "var(--success-400)", boxShadow: "0 0 6px var(--success-400)" }}
+                />
                 {item}
               </li>
             ))}
@@ -831,57 +1091,78 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── CTA BANNER ───────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          CTA BANNER
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10"
+        className="max-w-7xl mx-auto px-6 py-20 z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
         <div
-          className="relative rounded-3xl p-12 md:p-16 text-center overflow-hidden"
+          className="relative rounded-3xl p-12 md:p-20 text-center overflow-hidden"
           style={{
-            background: "linear-gradient(135deg, rgba(123,47,255,0.14) 0%, rgba(0,229,255,0.05) 50%, rgba(123,47,255,0.10) 100%)",
-            border: "1px solid rgba(123,47,255,0.28)",
+            background:
+              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
+            border: "1px solid var(--border-brand)",
           }}
         >
+          {/* top glow overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse at 50% 0%, rgba(123,47,255,0.14) 0%, transparent 60%)",
+                "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
             }}
           />
-          <p className="text-xs tracking-widest uppercase mb-4 text-vio">Get Started Today</p>
-          <h3 className="text-4xl md:text-5xl font-bold mb-5 max-w-2xl mx-auto leading-tight">
-            Ready to Take Control of{" "}
-            <span className="text-gradient">Your Finances?</span>
+
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-4"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Get Started Today
+          </p>
+
+          <h3
+            className="font-bold mb-5 max-w-2xl mx-auto leading-tight"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 5vw, 3.2rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
+          >
+            Ready to Take Control of Your Finances?
           </h3>
-          <p className="mb-8 max-w-lg mx-auto" style={{ color: "var(--text-secondary)" }}>
+
+          <p className="mb-10 max-w-lg mx-auto" style={{ color: "var(--text-200)" }}>
             Join over 2 million customers who trust Web3GlobalVault for seamless, secure, and smart banking.
           </p>
-          <a
-            href="/signup"
-            className="btn-primary inline-flex items-center gap-2 px-10 py-4 rounded-full text-sm font-bold"
-          >
+
+          <a href="/signup" className="btn-primary btn-lg">
             Open Your Free Account <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </motion.section>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── NEWS ─────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          NEWS
+      ══════════════════════════════════════════════════════ */}
       <div className="z-10">
         <NewsSection />
       </div>
 
-      <ThemeLine />
+      <SectionDivider />
 
-      {/* ── FOOTER ───────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════════════════════ */}
       <div className="z-10">
         <Footer />
       </div>

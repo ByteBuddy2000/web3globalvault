@@ -34,7 +34,7 @@ const faqs = [
   {
     category: "Accounts",
     q: "How do I open a Web3GlobalVault account?",
-    a: "Opening an account takes less than 5 minutes. Visit our website or download the Web3GlobalVaultapp, click 'Open Account', provide your basic details, verify your identity with a government-issued ID, and you're set. No branch visits required.",
+    a: "Opening an account takes less than 5 minutes. Visit our website or download the Genesis app, click 'Open Account', provide your basic details, verify your identity with a government-issued ID, and you're set. No branch visits required.",
   },
   {
     category: "Accounts",
@@ -49,7 +49,7 @@ const faqs = [
   {
     category: "Accounts",
     q: "Can I have multiple accounts?",
-    a: "Yes. You can hold a personal current account, a savings account, and a business account simultaneously under a single Web3GlobalVaultprofile, all managed from one dashboard.",
+    a: "Yes. You can hold a personal current account, a savings account, and a business account simultaneously under a single Genesis profile, all managed from one dashboard.",
   },
   {
     category: "Transfers",
@@ -64,12 +64,12 @@ const faqs = [
   {
     category: "Transfers",
     q: "Which countries can I send money to?",
-    a: "Web3GlobalVaultsupports transfers to 40+ countries across Africa, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
+    a: "Genesis supports transfers to 40+ countries across Africa, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
   },
   {
     category: "Investments",
-    q: "What types of investments does Web3GlobalVaultoffer?",
-    a: "We offer a diversified range including equities (stocks), Cryptos, fixed income (bonds), money market funds, and cryptocurrency. All investment products are accessible directly from the Web3GlobalVaultapp with real-time pricing and portfolio analytics.",
+    q: "What types of investments does Genesis offer?",
+    a: "We offer a diversified range including equities (stocks), Cryptos, fixed income (bonds), money market funds, and cryptocurrency. All investment products are accessible directly from the Genesis app with real-time pricing and portfolio analytics.",
   },
   {
     category: "Investments",
@@ -83,7 +83,7 @@ const faqs = [
   },
   {
     category: "Security",
-    q: "How does Web3GlobalVaultprotect my account?",
+    q: "How does Genesis protect my account?",
     a: "We use multiple layers of security including 256-bit AES encryption, biometric and two-factor authentication, real-time AI-powered fraud monitoring, device fingerprinting, and instant transaction alerts. Your data is never sold to third parties.",
   },
   {
@@ -99,11 +99,11 @@ const faqs = [
   {
     category: "Loans",
     q: "How quickly can I get a personal loan approved?",
-    a: "Our fully digital loan process typically provides instant pre-approval within minutes. Final approval and disbursement to your Web3GlobalVaultaccount can happen in as little as 24 hours, depending on verification requirements.",
+    a: "Our fully digital loan process typically provides instant pre-approval within minutes. Final approval and disbursement to your Genesis account can happen in as little as 24 hours, depending on verification requirements.",
   },
   {
     category: "Loans",
-    q: "What are the interest rates on Web3GlobalVaultloans?",
+    q: "What are the interest rates on Genesis loans?",
     a: "Interest rates depend on your credit profile, loan amount, and repayment term. Rates start from as low as 8% per annum. You can check your personalised rate offer before committing — no impact on your credit score.",
   },
   {
