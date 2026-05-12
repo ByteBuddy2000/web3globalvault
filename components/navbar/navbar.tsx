@@ -72,77 +72,34 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
         @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
       `}</style>
 
-      <nav style={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 20px',
-        height: 56,
-        background: 'rgba(10,11,14,0.95)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        backdropFilter: 'blur(20px)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 30,
-        gap: 12,
-        fontFamily: "'DM Mono', monospace",
-        flexShrink: 0,
-      }}>
+      <nav className="w-full flex items-center px-5 h-14 bg-surface-100/95 border-b border-border backdrop-blur-xl sticky top-0 z-30 gap-3 font-mono flex-shrink-0">
 
         {/* Left — mobile menu + brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        <div className="flex items-center gap-2.5 flex-shrink-0">
           <button
             onClick={onMenu}
             aria-label="Open sidebar"
-            style={{
-              display: 'none',
-              width: 34, height: 34, borderRadius: 9,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.07)',
-              alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', outline: 'none', color: '#9ca3af',
-            }}
-            className="nb-menu-btn"
+            className="nb-menu-btn hidden w-8 h-8 rounded-lg bg-glass-white-xs border border-border items-center justify-center cursor-pointer outline-none text-muted-foreground hover:text-foreground hover:bg-glass-white-sm"
           >
             <Menu size={15} />
           </button>
 
           {/* Brand — hidden on desktop since sidebar shows it */}
-          <div style={{ display: 'none' }} className="nb-brand">
-            <div style={{ fontSize: 14, fontWeight: 800, color: '#f9fafb', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.01em', lineHeight: 1 }}>
+          <div className="nb-brand hidden text-[11px] font-bold text-foreground font-display leading-tight">
+            <div className="text-xs font-bold text-foreground tracking-tight leading-tight">
               Web3GlobalVault
             </div>
-            <div style={{ fontSize: 9, color: '#fbbf24', letterSpacing: '0.12em', marginTop: 1 }}>
+            <div className="text-[8px] text-brand-400 tracking-widest mt-0.5">
               DASHBOARD
             </div>
           </div>
         </div>
 
         {/* Center — search */}
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', minWidth: 0 }}>
-
+        <div className="flex-1 flex justify-center min-w-0">
           {/* Desktop search */}
-          <div
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              width: '100%', maxWidth: 440,
-              background: searchFocused ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.03)',
-              border: `1px solid ${searchFocused ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.06)'}`,
-              borderRadius: 10, padding: '0 14px', height: 36,
-              transition: 'all 0.2s',
-              boxShadow: searchFocused ? '0 0 0 3px rgba(251,191,36,0.06)' : 'none',
-            }}
-            className="nb-search-wrap"
-          >
-
-            <kbd style={{
-              fontSize: 9, color: '#374151',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 4, padding: '2px 5px',
-              fontFamily: "'DM Mono', monospace",
-              letterSpacing: '0.04em',
-            }}>
+          <div className="nb-search-wrap flex items-center gap-2.5 w-full max-w-md bg-glass-white-xs border border-border hover:border-border-strong rounded-lg p-3.5 h-9 transition-all focus-within:border-brand-400 focus-within:shadow-brand-sm">
+            <kbd className="text-xs text-muted-foreground bg-glass-white-xs border border-border rounded px-1.5 py-0.5 font-mono tracking-wider">
               ⌘K
             </kbd>
           </div>
@@ -152,41 +109,20 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
             <button
               onClick={() => setShowMobileSearch(true)}
               aria-label="Search"
-              className="nb-mobile-search-btn"
-              style={{
-                display: 'none', width: 34, height: 34, borderRadius: 9,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.07)',
-                alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', outline: 'none', color: '#9ca3af',
-              }}
+              className="nb-mobile-search-btn hidden w-8 h-8 rounded-lg bg-glass-white-xs border border-border items-center justify-center cursor-pointer outline-none text-muted-foreground hover:text-foreground"
             >
               <Search size={14} />
             </button>
           ) : (
-            <div
-              className="nb-mobile-search-open"
-              style={{
-                display: 'none', alignItems: 'center', gap: 8,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(251,191,36,0.25)',
-                borderRadius: 10, padding: '0 12px', height: 36,
-                flex: 1,
-              }}
-            >
-              <Search size={13} color="#fbbf24" />
+            <div className="nb-mobile-search-open hidden items-center gap-2 bg-glass-white-xs border border-brand-400/25 rounded-lg px-3 h-9 flex-1">
+              <Search size={13} color="var(--brand-400)" />
               <input
                 autoFocus
                 type="text"
                 placeholder="Search..."
-                className="nb-search"
-                style={{
-                  flex: 1, background: 'transparent', border: 'none',
-                  fontSize: 12, color: '#9ca3af',
-                  fontFamily: "'DM Mono', monospace",
-                }}
+                className="nb-search flex-1 bg-transparent border-none text-xs text-muted-foreground font-mono outline-none placeholder:text-muted-foreground"
               />
-              <button onClick={() => setShowMobileSearch(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', padding: 0 }}>
+              <button onClick={() => setShowMobileSearch(false)} className="bg-transparent border-none cursor-pointer text-muted-foreground p-0 leading-none">
                 <X size={13} />
               </button>
             </div>
@@ -194,151 +130,74 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
         </div>
 
         {/* Right — clock + notif + profile */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
 
           {/* Live clock */}
-          <div
-            className="nb-clock"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              padding: '0 10px', height: 30,
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 8,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', display: 'inline-block', animation: 'pulse-dot 2s infinite', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: '#4b5563', letterSpacing: '0.06em' }}>{currentTime}</span>
+          <div className="nb-clock hidden flex items-center gap-1.5 px-2.5 h-7 bg-glass-white-xs border border-border rounded-lg">
+            <span className="w-1 h-1 rounded-full bg-success-500 inline-block animate-pulse flex-shrink-0" />
+            <span className="text-[10px] text-muted-foreground tracking-widest">{currentTime}</span>
           </div>
 
           {/* Notifications */}
           <button
             aria-label="Notifications"
-            style={{
-              width: 34, height: 34, borderRadius: 9,
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', outline: 'none', color: '#6b7280',
-              transition: 'all 0.18s', position: 'relative',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.06)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#f9fafb';
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)';
-              (e.currentTarget as HTMLButtonElement).style.color = '#6b7280';
-            }}
+            className="w-8 h-8 rounded-lg bg-glass-white-xs border border-border flex items-center justify-center cursor-pointer outline-none text-muted-foreground hover:text-foreground hover:bg-glass-white-sm hover:border-brand-400/25 transition-all relative"
           >
             <Bell size={14} />
             {/* unread dot */}
-            <span style={{
-              position: 'absolute', top: 7, right: 7,
-              width: 5, height: 5, borderRadius: '50%',
-              background: '#fbbf24',
-              border: '1.5px solid #0a0b0e',
-            }} />
+            <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-warning-500 border border-surface-100" />
           </button>
 
           {/* Profile */}
-          <div ref={profileRef} style={{ position: 'relative' }}>
+          <div ref={profileRef} className="relative">
             <button
               onClick={() => setShowProfileMenu(s => !s)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                padding: '0 10px 0 6px', height: 34, borderRadius: 10,
-                background: showProfileMenu ? 'rgba(251,191,36,0.08)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${showProfileMenu ? 'rgba(251,191,36,0.25)' : 'rgba(255,255,255,0.06)'}`,
-                cursor: 'pointer', outline: 'none',
-                transition: 'all 0.18s',
-              }}
-              onMouseEnter={e => {
-                if (!showProfileMenu) {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)';
-                }
-              }}
-              onMouseLeave={e => {
-                if (!showProfileMenu) {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)';
-                }
-              }}
+              className={`flex items-center gap-2 px-2.5 py-0 h-8 rounded-lg transition-all outline-none cursor-pointer ${
+                showProfileMenu 
+                  ? 'bg-glass-brand-sm border border-brand-400/30' 
+                  : 'bg-glass-white-xs border border-border hover:bg-glass-white-sm'
+              }`}
             >
               {/* Avatar */}
-              <div style={{
-                width: 24, height: 24, borderRadius: 7, flexShrink: 0,
-                background: 'rgba(251,191,36,0.15)',
-                border: '1px solid rgba(251,191,36,0.25)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 10, fontWeight: 700, color: '#fbbf24',
-                letterSpacing: '0.04em',
-              }}>
+              <div className="w-5 h-5 rounded-md flex-shrink-0 bg-brand-500/15 border border-brand-400/25 flex items-center justify-center text-[8px] font-bold text-brand-400 tracking-wide">
                 {initials}
               </div>
 
               {/* Name — desktop only */}
-              <div style={{ display: 'none', flexDirection: 'column', textAlign: 'left' }} className="nb-profile-name">
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#f9fafb', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+              <div className="nb-profile-name hidden flex-col text-left">
+                <span className="text-xs font-semibold text-foreground leading-tight whitespace-nowrap">
                   {user?.fullName || 'Loading...'}
                 </span>
-                <span style={{ fontSize: 10, color: '#4b5563', lineHeight: 1, whiteSpace: 'nowrap' }}>
+                <span className="text-[9px] text-muted-foreground leading-tight whitespace-nowrap">
                   @{user?.email?.split('@')[0] || '—'}
                 </span>
               </div>
 
               <ChevronDown
                 size={11}
-                color="#4b5563"
+                color="var(--text-300)"
                 style={{ transition: 'transform 0.2s', transform: showProfileMenu ? 'rotate(180deg)' : 'rotate(0deg)' }}
               />
             </button>
 
             {/* Dropdown */}
             {showProfileMenu && (
-              <div
-                className="nb-dropdown"
-                style={{
-                  position: 'absolute', right: 0, top: 'calc(100% + 8px)',
-                  width: 200,
-                  background: '#111318',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 14,
-                  overflow: 'hidden',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-                  zIndex: 50,
-                }}
-              >
+              <div className="nb-dropdown absolute right-0 top-full mt-1 w-48 bg-surface-100 border border-border rounded-xl overflow-hidden shadow-lg z-50">
                 {/* User info header */}
-                <div style={{
-                  padding: '14px 16px 12px',
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
-                }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#f9fafb' }}>
+                <div className="px-4 py-3 border-b border-border">
+                  <div className="text-xs font-semibold text-foreground">
                     {user?.fullName || '—'}
                   </div>
-                  <div style={{ fontSize: 10, color: '#4b5563', marginTop: 2 }}>
+                  <div className="text-[9px] text-muted-foreground mt-0.5">
                     {user?.email || '—'}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ padding: '8px' }}>
+                <div className="p-2">
                   <a
                     href="/dashboard/setting"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '9px 10px', borderRadius: 8,
-                      textDecoration: 'none', color: '#9ca3af',
-                      fontSize: 12, transition: 'all 0.15s', cursor: 'pointer',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.04)';
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#f9fafb';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#9ca3af';
-                    }}
+                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-muted-foreground text-xs transition-colors hover:bg-glass-white-xs hover:text-foreground"
                   >
                     <Settings size={13} />
                     Settings
@@ -346,16 +205,7 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
 
                   <button
                     onClick={handleSignOut}
-                    style={{
-                      width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '9px 10px', borderRadius: 8,
-                      background: 'transparent', border: 'none',
-                      color: '#f87171', fontSize: 12,
-                      fontFamily: "'DM Mono', monospace",
-                      cursor: 'pointer', outline: 'none', transition: 'all 0.15s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'rgba(248,113,113,0.07)'}
-                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-transparent border-none text-danger-400 text-xs font-body cursor-pointer outline-none transition-all hover:bg-danger-500/10"
                   >
                     <LogOut size={13} />
                     Sign out

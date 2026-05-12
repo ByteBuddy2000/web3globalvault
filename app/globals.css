@@ -221,6 +221,26 @@
   --z-toast: 400;
   --z-top: 500;
 
+  /* ── Backwards Compatibility Aliases ──────── */
+  /* These map legacy variable names to the new token system */
+  --text-primary: var(--text-0);
+  --text-secondary: var(--text-100);
+  --text-muted: var(--text-200);
+  --text-faint: var(--text-300);
+  
+  --vio-300: var(--brand-300);
+  --vio-500: var(--brand-500);
+  
+  --green-500: var(--success-500);
+  --amber-500: var(--warning-500);
+  --mag-500: var(--danger-500);
+  
+  --surface-border: var(--border-default);
+  --void-50: var(--surface-50);
+  
+  /* Gradient for active state - violet to cyan */
+  --grad-primary: linear-gradient(90deg, var(--brand-500), var(--cyan-500));
+
   /* =========================================
      SHADCN / TAILWIND SEMANTIC TOKENS
      Maps to the design tokens above so that

@@ -41,42 +41,42 @@ export default function PricingPlans() {
   ];
 
   return (
-    <div className="min-h-screen text-[#000] bg-gray-50 bg-[url('/pattern.svg')] bg-cover bg-center flex flex-col items-center py-16 px-4">
+    <div className="min-h-screen text-foreground bg-surface-100 bg-[url('/pattern.svg')] bg-cover bg-center flex flex-col items-center py-16 px-4 font-body">
       
       {/* Heading */}
       <div className="text-center mb-12 max-w-xl">
-        <h2 className="text-3xl md:text-4xl font-bold mb-2">The Right Plan for Your Business</h2>
-        <p className="text-[#000]">Choose the plan that suits your needs and scale with confidence.</p>
+        <h2 className="text-3xl md:text-4xl font-bold mb-2 font-display">The Right Plan for Your Business</h2>
+        <p className="text-muted-foreground">Choose the plan that suits your needs and scale with confidence.</p>
       </div>
 
       {/* Toggle */}
       <div className="flex items-center gap-2 mb-10">
-        <span className={!annual ? "font-bold" : "text-gray-500"}>Bill Monthly</span>
+        <span className={!annual ? "font-bold text-foreground" : "text-muted-foreground"}>Bill Monthly</span>
         <label className="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" className="sr-only peer" checked={annual} onChange={() => setAnnual(!annual)} />
-          <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:bg-yellow-500"></div>
-          <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand-400 rounded-full peer peer-checked:bg-brand-400"></div>
+          <div className="absolute left-1 top-1 w-4 h-4 bg-card rounded-full transition peer-checked:translate-x-5"></div>
         </label>
-        <span className={annual ? "font-bold" : "text-gray-500"}>Bill Annually</span>
+        <span className={annual ? "font-bold text-foreground" : "text-muted-foreground"}>Bill Annually</span>
       </div>
 
       {/* Plans */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl w-full">
         {plans.map((plan, idx) => (
-          <div key={idx} className={`flex flex-col justify-between rounded-2xl p-6 shadow-lg ${plan.highlight ? "bg-yellow-100 border-2 border-yellow-500" : "bg-white"}`}> 
+          <div key={idx} className={`flex flex-col justify-between rounded-2xl p-6 shadow-lg border ${plan.highlight ? "bg-glass-brand-sm border-2 border-brand-400" : "bg-card border-border"}`}> 
 
             {/* Plan Header */}
             <div>
-              <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-              <p className="text-gray-600 mb-4">{plan.description}</p>
-              <p className="text-3xl font-bold mb-6">{plan.price} <span className="text-sm text-gray-500">{annual ? "/year" : "/month"}</span></p>
+              <h3 className="text-xl font-bold mb-2 text-foreground font-display">{plan.name}</h3>
+              <p className="text-muted-foreground mb-4">{plan.description}</p>
+              <p className="text-3xl font-bold mb-6 text-foreground"><span className="font-display">{plan.price}</span> <span className="text-sm text-muted-foreground">{annual ? "/year" : "/month"}</span></p>
             </div>
 
             {/* Features */}
             <ul className="space-y-3 mb-6">
               {featureList.map((feature, fIdx) => (
-                <li key={fIdx} className={`flex items-center gap-2 ${plan.features[fIdx] ? "" : "text-gray-400"}`}>
-                  {plan.features[fIdx] ? <Check className="text-green-500 w-4 h-4" /> : <X className="w-4 h-4" />}
+                <li key={fIdx} className={`flex items-center gap-2 ${plan.features[fIdx] ? "text-foreground" : "text-muted-foreground"}`}>
+                  {plan.features[fIdx] ? <Check className="text-success-500 w-4 h-4" /> : <X className="text-muted-foreground w-4 h-4" />}
                   {feature}
                 </li>
               ))}
@@ -84,9 +84,9 @@ export default function PricingPlans() {
 
             {/* Button */}
             {plan.highlight ? (
-              <button className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition">Choose Plan</button>
+              <button className="w-full bg-gradient-to-r from-brand-400 to-brand-500 text-primary-foreground py-2 rounded-lg hover:from-brand-500 hover:to-brand-600 transition shadow-brand-md hover:shadow-brand-lg font-semibold">Choose Plan</button>
             ) : (
-              <button className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition">Choose Plan</button>
+              <button className="w-full border border-border text-foreground py-2 rounded-lg hover:bg-surface-200 transition">Choose Plan</button>
             )}
           </div>
         ))}

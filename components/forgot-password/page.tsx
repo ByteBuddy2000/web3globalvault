@@ -15,33 +15,33 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6">
-        <h2 className="text-2xl font-bold text-center text-black">Forgot Password</h2>
-        <p className="text-center text-gray-600">Enter your email and we'll send you instructions to reset your password.</p>
+    <div className="min-h-screen flex items-center justify-center bg-surface-0">
+      <div className="bg-card p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6 border border-border">
+        <h2 className="text-2xl font-bold text-center text-foreground font-display">Forgot Password</h2>
+        <p className="text-center text-muted-foreground font-body">Enter your email and we'll send you instructions to reset your password.</p>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-foreground">Email</label>
             <input
               type="email"
               value={email}
               onChange={handleChange}
               required
-              className="mt-1 w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gold-500"
+              className="mt-1 w-full border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-400 bg-surface-100"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-gold-500 hover:bg-gold-600 text-white font-bold py-2 rounded-lg"
+            className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-primary-foreground font-bold py-2 rounded-lg transition-all shadow-brand-md hover:shadow-brand-lg"
           >
             Send Reset Link
           </button>
         </form>
 
         <div className="text-center text-sm">
-          <a href="/signin" className="text-gold-500 hover:underline">Back to signin</a>
+          <a href="/signin" className="text-brand-400 hover:text-brand-300 hover:underline">Back to signin</a>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -38,10 +38,7 @@ export default function ForgotPasswordPage() {
       toast.success('Reset email sent! Check your inbox.');
       setSubmitted(true);
 
-      // Redirect to signin after 3 seconds
-      setTimeout(() => {
-        router.push('/signin');
-      }, 3000);
+      setTimeout(() => router.push('/signin'), 3000);
     } catch (error) {
       console.error('Error:', error);
       toast.error('An error occurred. Please try again.');
@@ -50,75 +47,74 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-app flex items-center justify-center p-4">
-        <div className="card w-full max-w-md p-8 text-center">
-          <CheckCircle2 className="w-16 h-16 text-green-400 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-2">Email Sent!</h2>
-          <p className="text-muted mb-6">
-            If an account exists with <span className="text-accent">{email}</span>, you will receive a password reset link shortly.
-          </p>
-          <p className="text-sm text-muted mb-6">
-            Redirecting to signin in a few seconds...
-          </p>
-          <Link
-            href="/signin"
-            className="btn-accent inline-block px-6 py-2 rounded-lg font-semibold"
-          >
-            Back to signin
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-app flex items-center justify-center p-4">
-      <div className="card w-full max-w-md p-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Forgot Password?</h1>
-        <p className="text-muted mb-8">
-          Enter your email and we'll send you a link to reset your password.
-        </p>
+    <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-background text-foreground font-body relative overflow-hidden">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap');
+      `}</style>
+      <Toaster richColors position="top-center" />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Input */}
-          <div>
-            <label className="block text-sm font-semibold text-white mb-2">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 text-muted w-5 h-5" />
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg bg-black/20 border border-white/6 text-white placeholder-muted focus:outline-none focus:border-accent transition"
-                disabled={loading}
-              />
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute top-10 left-1/5 h-80 w-80 rounded-full bg-brand-glow-sm blur-3xl" />
+        <div className="absolute bottom-8 right-1/4 h-72 w-72 rounded-full bg-cyan-glow-sm blur-3xl" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        <div className="rounded-[28px] border border-border bg-card/95 p-8 shadow-lg backdrop-blur-xl">
+          {!submitted ? (
+            <>
+              <div className="mb-8 text-center">
+                <h1 className="text-3xl font-bold mb-2 font-display">Forgot Password?</h1>
+                <p className="text-sm text-muted-foreground">
+                  Enter your email and we'll send you a link to reset your password.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 text-muted-foreground w-5 h-5" />
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full rounded-2xl border border-border bg-glass-white-sm px-3.5 py-3.5 pl-11 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-3 text-sm font-semibold text-primary-foreground shadow-brand-md transition hover:shadow-brand-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Sending...' : 'Send Reset Link'}
+                  {!loading && <ArrowRight className="w-4 h-4" />}
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="text-center">
+              <CheckCircle2 className="mx-auto mb-6 h-16 w-16 text-success-500" />
+              <h2 className="text-2xl font-bold text-foreground mb-2">Email Sent!</h2>
+              <p className="text-muted-foreground mb-4">
+                If an account exists with <span className="text-brand-400">{email}</span>, you will receive a password reset link shortly.
+              </p>
+              <p className="text-sm text-muted-foreground mb-6">Redirecting to signin in a few seconds...</p>
+              <Link
+                href="/signin"
+                className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-3 text-sm font-semibold text-primary-foreground shadow-brand-md transition hover:shadow-brand-lg"
+              >
+                Back to signin
+              </Link>
             </div>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn-accent py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            {loading ? 'Sending...' : 'Send Reset Link'}
-            {!loading && <ArrowRight className="w-4 h-4" />}
-          </button>
-        </form>
-
-        {/* Back to signin Link */}
-        <div className="mt-6 text-center">
-          <p className="text-muted text-sm">
-            Remember your password?{' '}
-            <Link href="/signin" className="text-accent hover:underline font-semibold">
-              Back to signin
-            </Link>
-          </p>
+          )}
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden text-white font-mono" style={{ background: 'var(--void-0)' }}>
+    <div className="flex h-screen overflow-hidden text-foreground font-body bg-background">
       <Sidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Mobile overlay */}

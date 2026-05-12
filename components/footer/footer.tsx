@@ -29,23 +29,11 @@ export default function Footer() {
   };
 
   return (
-    <footer
-      className="relative overflow-hidden"
-      style={{
-        background: 'var(--surface-0)',
-        fontFamily: 'var(--font-body)',
-        borderTop: '1px solid var(--border-subtle)',
-      }}
-    >
+    <footer className="relative overflow-hidden bg-surface-0 border-t border-border-subtle font-body">
       {/* ── top brand line ── */}
-      <div
-        className="w-full"
-        style={{
-          height: '1px',
-          background:
-            'linear-gradient(90deg, transparent 0%, var(--border-default) 15%, var(--border-brand-strong) 50%, var(--border-default) 85%, transparent 100%)',
-        }}
-      />
+      <div className="w-full h-px" style={{
+        background: 'linear-gradient(90deg, transparent 0%, var(--border-default) 15%, var(--border-brand-strong) 50%, var(--border-default) 85%, transparent 100%)',
+      }} />
 
       {/* ── ambient glow ── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -66,13 +54,10 @@ export default function Footer() {
 
           {/* brand */}
           <div className="flex-shrink-0">
-            <span
-              className="text-2xl font-bold block mb-1.5 text-gradient"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
+            <span className="text-2xl font-bold block mb-1.5 text-gradient font-display">
               Web3GlobalVault
             </span>
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-300)' }}>
+            <p className="text-sm text-muted-foreground">
               Where Finance Meets the Future.
             </p>
           </div>
@@ -80,16 +65,7 @@ export default function Footer() {
           {/* newsletter */}
           <div className="w-full md:w-auto">
             {subscribed ? (
-              <div
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full"
-                style={{
-                  background: 'var(--glass-brand-sm)',
-                  border: '1px solid var(--border-brand)',
-                  color: 'var(--brand-400)',
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: 500,
-                }}
-              >
+              <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-glass-brand-sm border border-brand-400 text-brand-400 text-sm font-medium">
                 <CheckCircle2 className="w-4 h-4" />
                 You're subscribed!
               </div>
@@ -100,13 +76,7 @@ export default function Footer() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="input"
-                  style={{
-                    width: '220px',
-                    borderRadius: 'var(--radius-full)',
-                    paddingLeft: 'var(--space-4)',
-                    paddingRight: 'var(--space-4)',
-                  }}
+                  className="input w-[220px] rounded-full px-4"
                   required
                 />
                 <button
@@ -133,14 +103,7 @@ export default function Footer() {
               <Link
                 key={label}
                 href={href}
-                style={{
-                  fontSize: 'var(--text-xs)',
-                  color: 'var(--text-300)',
-                  letterSpacing: 'var(--tracking-wide)',
-                  transition: 'color var(--duration-fast) var(--ease-out)',
-                }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--text-0)')}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--text-300)')}
+                className="text-xs text-muted-foreground tracking-wide transition-colors hover:text-foreground"
               >
                 {label}
               </Link>
@@ -154,37 +117,18 @@ export default function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
-                className="w-8 h-8 rounded-lg flex items-center justify-center transition-base"
-                style={{
-                  background: 'var(--glass-white-xs)',
-                  border: '1px solid var(--border-default)',
-                }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.background = 'var(--glass-brand-sm)';
-                  el.style.borderColor = 'var(--border-brand)';
-                  el.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.background = 'var(--glass-white-xs)';
-                  el.style.borderColor = 'var(--border-default)';
-                  el.style.transform = 'translateY(0)';
-                }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-glass-white-xs border border-border hover:bg-glass-brand-sm hover:border-brand-400 hover:-translate-y-0.5"
               >
-                <Icon className="w-3.5 h-3.5" style={{ color: 'var(--brand-400)' }} />
+                <Icon className="w-3.5 h-3.5 text-brand-400" />
               </Link>
             ))}
           </div>
         </div>
 
         {/* ── copyright ── */}
-        <p
-          className="text-center mt-10"
-          style={{ fontSize: 'var(--text-xs)', color: 'var(--text-400)' }}
-        >
+        <p className="text-center mt-10 text-xs text-muted-foreground">
           © {new Date().getFullYear()}{' '}
-          <span style={{ color: 'var(--brand-400)' }}>Web3GlobalVault</span>
+          <span className="text-brand-400">Web3GlobalVault</span>
           {' '}· All Rights Reserved
         </p>
 
