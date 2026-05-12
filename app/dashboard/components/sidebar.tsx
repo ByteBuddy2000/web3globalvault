@@ -59,57 +59,25 @@ export default function Sidebar({
       <a
         href={link.href}
         onClick={() => onClose?.()}
-        className={`relative flex items-center gap-2.5 rounded-xl transition-all duration-200 no-underline
-          ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}`}
-        style={{
-          background:  isActive ? 'rgba(123,47,255,0.12)' : 'transparent',
-          border:      isActive
-            ? '1px solid rgba(123,47,255,0.30)'
-            : '1px solid transparent',
-          color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
-        }}
-        onMouseEnter={e => {
-          if (!isActive) {
-            e.currentTarget.style.background   = 'rgba(123,47,255,0.06)';
-            e.currentTarget.style.borderColor  = 'rgba(123,47,255,0.18)';
-            e.currentTarget.style.color        = 'var(--text-secondary)';
-          }
-        }}
-        onMouseLeave={e => {
-          if (!isActive) {
-            e.currentTarget.style.background   = 'transparent';
-            e.currentTarget.style.borderColor  = 'transparent';
-            e.currentTarget.style.color        = 'var(--text-muted)';
-          }
-        }}
+        className={`relative flex items-center gap-2.5 rounded-xl transition-all duration-200 no-underline hover:bg-glass-brand-sm hover:border-brand-400/30
+          ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
+          ${isActive ? 'bg-glass-brand-sm border border-brand-400/30 text-foreground' : 'border border-transparent text-muted-foreground'}`}
       >
         {/* Violet active bar */}
         {isActive && !collapsed && (
           <motion.div
             layoutId="active-bar"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
-            style={{ background: 'var(--grad-primary)' }}
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-gradient-to-r from-brand-500 to-cyan-500"
             transition={{ type: 'spring', stiffness: 350, damping: 30 }}
           />
         )}
 
         {/* Icon box */}
         <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all"
-          style={
-            isActive
-              ? {
-                  background:  'rgba(123,47,255,0.20)',
-                  border:      '1px solid rgba(123,47,255,0.40)',
-                  color:       'var(--vio-300)',
-                  boxShadow:   '0 0 10px rgba(123,47,255,0.25)',
-                }
-              : {
-                  background: 'rgba(255,255,255,0.03)',
-                  border:     '1px solid rgba(255,255,255,0.06)',
-                  color:      'var(--text-faint)',
-                }
-          }
+          className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all
+            ${isActive 
+              ? 'bg-glass-brand-md border border-brand-400/40 text-brand-300 shadow-brand-sm' 
+              : 'bg-glass-white-xs border border-border text-muted-foreground'}`}
         >
           <Icon size={14} />
         </div>
@@ -123,11 +91,7 @@ export default function Sidebar({
               animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
               transition={{ duration: 0.2 }}
-              className="text-[13px] font-mono whitespace-nowrap overflow-hidden"
-              style={{
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'var(--text-primary)' : 'inherit',
-              }}
+              className={`text-[13px] font-mono whitespace-nowrap overflow-hidden ${isActive ? 'font-semibold text-foreground' : 'font-normal'}`}
             >
               {link.label}
             </motion.span>
@@ -136,10 +100,7 @@ export default function Sidebar({
 
         {/* Collapsed active dot */}
         {collapsed && isActive && (
-          <span
-            className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-            style={{ background: 'var(--vio-500)', boxShadow: '0 0 5px var(--vio-500)' }}
-          />
+          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand-500 shadow-brand-sm" />
         )}
       </a>
     );
@@ -155,8 +116,7 @@ export default function Sidebar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-[9px] font-bold tracking-[0.14em] uppercase px-3 mb-2"
-            style={{ color: 'var(--text-faint)' }}
+            className="text-[9px] font-bold tracking-[0.14em] uppercase px-3 mb-2 text-muted-foreground"
           >
             {title}
           </motion.p>
@@ -165,10 +125,7 @@ export default function Sidebar({
 
       {/* Collapsed: thin divider instead of label */}
       {collapsed && (
-        <div
-          className="h-px mx-2 mb-2"
-          style={{ background: 'var(--surface-border)' }}
-        />
+        <div className="h-px mx-2 mb-2 bg-border" />
       )}
 
       <div className="flex flex-col gap-0.5">
@@ -183,33 +140,21 @@ export default function Sidebar({
 
       {/* ── Logo / brand ── */}
       <div
-        className={`flex items-center gap-3 mb-5
+        className={`flex items-center gap-3 mb-5 border-b border-border
           ${collapsed && !isMobile ? 'justify-center px-0 py-5' : 'px-4 py-5'}`}
-        style={{ borderBottom: '1px solid var(--surface-border)' }}
       >
         {/* Logo with glow ring */}
         <div className="relative shrink-0">
-          <div
-            className="absolute inset-0 rounded-full blur-md"
-            style={{ background: 'rgba(123,47,255,0.35)' }}
-          />
+          <div className="absolute inset-0 rounded-full blur-md bg-brand-500/20" />
           <Image
             src="/asset/logo.jpeg"
             alt="Web3GlobalVault"
             width={collapsed && !isMobile ? 34 : 40}
             height={collapsed && !isMobile ? 34 : 40}
-            className="rounded-full relative z-10 object-cover block"
-            style={{ border: '1.5px solid rgba(123,47,255,0.50)' }}
+            className="rounded-full relative z-10 object-cover block border-2 border-brand-400/50"
           />
           {/* Online indicator */}
-          <span
-            className="absolute bottom-0 right-0 z-20 w-2.5 h-2.5 rounded-full"
-            style={{
-              background: 'var(--green-500)',
-              border: '1.5px solid var(--void-50)',
-              boxShadow: '0 0 6px var(--green-500)',
-            }}
-          />
+          <span className="absolute bottom-0 right-0 z-20 w-2.5 h-2.5 rounded-full bg-success-500 border-2 border-surface-50 shadow-success-glow" />
         </div>
 
         <AnimatePresence initial={false}>
@@ -221,16 +166,10 @@ export default function Sidebar({
               exit={{ opacity: 0, x: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <p
-                className="text-sm font-extrabold leading-tight"
-                style={{ color: 'var(--text-primary)' }}
-              >
+              <p className="text-sm font-extrabold leading-tight text-foreground font-display">
                 Web3GlobalVault
               </p>
-              <p
-                className="text-[9px] tracking-[0.14em] mt-0.5"
-                style={{ color: 'var(--vio-300)' }}
-              >
+              <p className="text-[9px] tracking-[0.14em] mt-0.5 text-brand-300 font-mono">
                 BUY · INVEST · EARN
               </p>
             </motion.div>
@@ -240,9 +179,8 @@ export default function Sidebar({
 
       {/* ── Navigation ── */}
       <nav
-        className={`flex-1 overflow-y-auto overflow-x-hidden
+        className={`flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide
           ${collapsed && !isMobile ? 'px-2' : 'px-3'}`}
-        style={{ scrollbarWidth: 'none' }}
       >
         <NavSection title="Menu"             links={mainLinks} />
         <NavSection title="Tools & Partners" links={toolsLinks} />
@@ -251,8 +189,8 @@ export default function Sidebar({
 
       {/* ── Bottom area ── */}
       <div
-        className={`${collapsed && !isMobile ? 'px-2 py-3' : 'px-3 py-3'}`}
-        style={{ borderTop: '1px solid var(--surface-border)' }}
+        className={`border-t border-border
+          ${collapsed && !isMobile ? 'px-2 py-3' : 'px-3 py-3'}`}
       >
         {/* Pro tip banner */}
         <AnimatePresence initial={false}>
@@ -262,25 +200,15 @@ export default function Sidebar({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mb-2 p-3 rounded-xl overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, rgba(123,47,255,0.10), rgba(0,229,255,0.05))',
-                border: '1px solid rgba(123,47,255,0.22)',
-              }}
+              className="mb-2 p-3 rounded-xl overflow-hidden bg-gradient-to-br from-glass-brand-sm to-glass-cyan-sm border border-brand-400/20"
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Zap size={10} style={{ color: 'var(--cyan-500)' }} />
-                <span
-                  className="text-[10px] font-bold tracking-wider"
-                  style={{ color: 'var(--cyan-300)' }}
-                >
+                <Zap size={10} className="text-cyan-400" />
+                <span className="text-[10px] font-bold tracking-wider text-cyan-300">
                   PRO TIP
                 </span>
               </div>
-              <p
-                className="text-[10px] leading-relaxed"
-                style={{ color: 'var(--text-muted)' }}
-              >
+              <p className="text-[10px] leading-relaxed text-muted-foreground">
                 Use Buy to top-up assets quickly — trusted providers available.
               </p>
             </motion.div>
@@ -290,26 +218,10 @@ export default function Sidebar({
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center gap-2.5 rounded-xl transition-all outline-none cursor-pointer bg-transparent
+          className={`w-full flex items-center gap-2.5 rounded-xl transition-all outline-none cursor-pointer bg-transparent border border-transparent hover:bg-glass-brand-sm hover:border-brand-400/30
             ${collapsed && !isMobile ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}`}
-          style={{ border: '1px solid transparent' }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background   = 'rgba(255,0,110,0.07)';
-            e.currentTarget.style.borderColor  = 'rgba(255,0,110,0.20)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background  = 'transparent';
-            e.currentTarget.style.borderColor = 'transparent';
-          }}
         >
-          <div
-            className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center"
-            style={{
-              background: 'rgba(255,0,110,0.08)',
-              border: '1px solid rgba(255,0,110,0.20)',
-              color: 'var(--mag-500)',
-            }}
-          >
+          <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center bg-glass-brand-sm border border-brand-400/20 text-danger-500">
             <LogOut size={14} />
           </div>
           <AnimatePresence initial={false}>
@@ -319,8 +231,7 @@ export default function Sidebar({
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                className="text-[13px] whitespace-nowrap overflow-hidden"
-                style={{ color: 'var(--text-muted)' }}
+                className="text-[13px] whitespace-nowrap overflow-hidden text-muted-foreground"
               >
                 Logout
               </motion.span>
@@ -332,11 +243,7 @@ export default function Sidebar({
   );
 
   /* ── Shared sidebar surface style ── */
-  const sidebarSurface: React.CSSProperties = {
-    background: 'linear-gradient(180deg, rgba(13,11,24,0.97) 0%, rgba(7,6,15,0.98) 100%)',
-    borderRight: '1px solid var(--surface-border)',
-    backdropFilter: 'blur(24px)',
-  };
+  const sidebarSurface = "bg-gradient-to-b from-surface-100/97 to-surface-50/98 border-r border-border backdrop-blur-xl";
 
   return (
     <>
@@ -344,37 +251,15 @@ export default function Sidebar({
       <motion.aside
         animate={{ width: collapsed ? 72 : 256 }}
         transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-        className="hidden md:flex flex-col min-h-screen sticky top-0 overflow-hidden shrink-0 relative"
-        style={sidebarSurface}
+        className={`hidden md:flex flex-col min-h-screen sticky top-0 overflow-hidden shrink-0 relative ${sidebarSurface}`}
       >
         {/* Ambient violet orb */}
-        <div
-          className="pointer-events-none absolute top-0 left-0 w-48 h-48 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(123,47,255,0.07) 0%, transparent 70%)',
-            filter: 'blur(30px)',
-          }}
-        />
+        <div className="pointer-events-none absolute top-0 left-0 w-48 h-48 rounded-full bg-brand-500/7 blur-3xl" />
 
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="absolute top-5 right-3 z-10 w-6 h-6 rounded-lg flex items-center justify-center outline-none cursor-pointer transition-all"
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid var(--surface-border)',
-            color: 'var(--text-faint)',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background  = 'rgba(123,47,255,0.12)';
-            e.currentTarget.style.borderColor = 'rgba(123,47,255,0.35)';
-            e.currentTarget.style.color       = 'var(--vio-300)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background  = 'rgba(255,255,255,0.04)';
-            e.currentTarget.style.borderColor = 'var(--surface-border)';
-            e.currentTarget.style.color       = 'var(--text-faint)';
-          }}
+          className="absolute top-5 right-3 z-10 w-6 h-6 rounded-lg flex items-center justify-center outline-none cursor-pointer transition-all bg-glass-white-xs border border-border text-muted-foreground hover:bg-glass-brand-sm hover:border-brand-400/35 hover:text-brand-300"
         >
           <motion.div
             animate={{ rotate: collapsed ? 180 : 0 }}
@@ -397,8 +282,7 @@ export default function Sidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 md:hidden"
-              style={{ background: 'rgba(3,2,10,0.75)', backdropFilter: 'blur(6px)' }}
+              className="fixed inset-0 z-40 md:hidden bg-surface-0/75 backdrop-blur-md"
               onClick={() => onClose?.()}
             />
 
@@ -409,29 +293,15 @@ export default function Sidebar({
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-              className="fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col overflow-hidden md:hidden"
-              style={sidebarSurface}
+              className={`fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col overflow-hidden md:hidden ${sidebarSurface}`}
             >
               {/* Ambient orb */}
-              <div
-                className="pointer-events-none absolute top-0 left-0 w-40 h-40 rounded-full"
-                style={{
-                  background: 'radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)',
-                  filter: 'blur(24px)',
-                }}
-              />
+              <div className="pointer-events-none absolute top-0 left-0 w-40 h-40 rounded-full bg-brand-500/8 blur-2xl" />
 
               {/* Close button */}
               <button
                 onClick={() => onClose?.()}
-                className="absolute top-4 right-3 z-10 w-7 h-7 rounded-lg flex items-center justify-center outline-none cursor-pointer transition-all"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid var(--surface-border)',
-                  color: 'var(--text-muted)',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+                className="absolute top-4 right-3 z-10 w-7 h-7 rounded-lg flex items-center justify-center outline-none cursor-pointer transition-all bg-glass-white-xs border border-border text-muted-foreground hover:text-foreground"
               >
                 <X size={13} />
               </button>

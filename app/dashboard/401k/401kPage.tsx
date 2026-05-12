@@ -97,19 +97,19 @@ export default function K401Page() {
     <section className="max-w-5xl mx-auto p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">401(k) Savings</h1>
-          <p className="text-sm text-gray-300">Retirement savings and contribution history</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground font-display">401(k) Savings</h1>
+          <p className="text-sm text-muted-foreground">Retirement savings and contribution history</p>
         </div>
         <div className="flex gap-3">
           <div className="text-right">
-            <div className="text-xs text-gray-400">Current Balance</div>
-            <div className="text-xl font-semibold text-yellow-400">
+            <div className="text-xs text-muted-foreground">Current Balance</div>
+            <div className="text-xl font-semibold text-brand-400">
               {loading ? '—' : `$${Math.round(data?.totalBalance ?? 0).toLocaleString()}`}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-400">Projected (10y)</div>
-            <div className="text-xl font-semibold text-green-400">
+            <div className="text-xs text-muted-foreground">Projected (10y)</div>
+            <div className="text-xl font-semibold text-success-500">
               {loading ? '—' : `$${projectedValue(data?.totalBalance ?? 0, 0, 10).toLocaleString()}`}
             </div>
           </div>
@@ -118,11 +118,11 @@ export default function K401Page() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Contribution form */}
-        <div className="lg:col-span-1 bg-gradient-to-br from-zinc-900/70 to-zinc-800/60 p-4 rounded-xl shadow">
-          <h2 className="text-lg font-semibold mb-3 text-white">Make a Contribution</h2>
+        <div className="lg:col-span-1 bg-card/95 backdrop-blur-xl p-4 rounded-xl border border-border shadow-lg">
+          <h2 className="text-lg font-semibold mb-3 text-foreground font-display">Make a Contribution</h2>
           <form onSubmit={handleContribute} className="space-y-3">
             <div>
-              <label className="text-sm text-gray-300 block mb-1">Amount (USD)</label>
+              <label className="text-sm text-muted-foreground block mb-1">Amount (USD)</label>
               <input
                 inputMode="numeric"
                 type="number"
@@ -130,30 +130,30 @@ export default function K401Page() {
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full p-2 rounded bg-black/20 border border-white/5 text-white"
+                className="w-full p-2 rounded-lg bg-surface-100 border border-border text-foreground placeholder:text-muted-foreground focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
                 placeholder="e.g. 100"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-300 block mb-1">Frequency</label>
-              <select value={frequency} onChange={(e) => sCryptorequency(e.target.value as any)} className="w-full p-2 rounded bg-black/20 border border-white/5 text-white">
+              <label className="text-sm text-muted-foreground block mb-1">Frequency</label>
+              <select value={frequency} onChange={(e) => sCryptorequency(e.target.value as any)} className="w-full p-2 rounded-lg bg-surface-100 border border-border text-foreground focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20">
                 <option value="one-time">One-time</option>
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
               </select>
             </div>
 
-            {error && <div className="text-sm text-red-400">{error}</div>}
+            {error && <div className="text-sm text-danger-500">{error}</div>}
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2 rounded-lg bg-yellow-500 text-black font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-2 rounded-lg bg-gradient-to-r from-brand-500 to-brand-600 text-primary-foreground font-semibold disabled:opacity-60 hover:from-brand-600 hover:to-brand-700 transition-all shadow-brand-md hover:shadow-brand-lg flex items-center justify-center gap-2"
             >
               {submitting ? (
-                <svg className="animate-spin h-4 w-4 text-black" viewBox="0 0 24 24">
+                <svg className="animate-spin h-4 w-4 text-primary-foreground" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                 </svg>
@@ -162,7 +162,7 @@ export default function K401Page() {
             </button>
           </form>
 
-          <div className="mt-4 text-xs text-gray-400">
+          <div className="mt-4 text-xs text-muted-foreground">
             Contributions help grow your retirement savings with compound returns. You can cancel recurring contributions from settings.
           </div>
         </div>
