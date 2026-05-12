@@ -66,19 +66,12 @@ export default function signupPage() {
   ];
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-16 relative"
-      style={{
-        background: 'linear-gradient(160deg, #0A0A0B 0%, #0D0E10 40%, #0A0C0F 100%)',
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        color: '#E8E8E8',
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 py-16 relative bg-background text-foreground font-body">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { -webkit-font-smoothing: antialiased; }
-        ::selection { background: rgba(201,168,76,0.25); }
-        ::placeholder { color: #4B5563; }
+        ::selection { background: rgba(59, 130, 246, 0.3); }
+        ::placeholder { color: var(--text-300); }
       `}</style>
 
       <Toaster richColors position="top-center" />
@@ -86,42 +79,35 @@ export default function signupPage() {
       {/* ambient orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)', filter: 'blur(50px)' }} />
+          style={{ background: 'radial-gradient(circle, var(--brand-glow-sm) 0%, transparent 70%)', filter: 'blur(50px)' }} />
         <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)', filter: 'blur(50px)' }} />
+          style={{ background: 'radial-gradient(circle, var(--cyan-glow-sm) 0%, transparent 70%)', filter: 'blur(50px)' }} />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
 
         {/* card */}
-        <div
-          className="rounded-2xl p-8 md:p-10"
+        <div className="rounded-2xl p-8 md:p-10 bg-card border border-border backdrop-blur-xl shadow-lg"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-            border: '1px solid rgba(201,168,76,0.2)',
-            backdropFilter: 'blur(24px)',
-            boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.05)',
+            boxShadow: 'var(--shadow-lg), 0 0 0 1px var(--glass-brand-xs)',
           }}
         >
           {/* header */}
           <div className="text-center mb-8">
             {/* logo */}
             <a href="/" className="inline-flex items-center gap-2.5 mb-6">
-              <div className="w-9 h-9 rounded-full overflow-hidden"
-                style={{ border: '2px solid rgba(201,168,76,0.5)' }}>
+              <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-brand-400">
                 <Image src="/asset/logo.jpeg" width={36} height={36} alt="Genesis" className="object-cover" />
               </div>
-              <span className="text-lg font-bold"
-                style={{ fontFamily: "'Playfair Display', serif", background: 'linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span className="text-lg font-bold font-display bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">
                 Web3GlobalVault
               </span>
             </a>
 
-            <h1 className="text-3xl font-bold mb-2"
-              style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-3xl font-bold mb-2 font-display">
               Create Account
             </h1>
-            <p className="text-sm text-gray-400">Join 2M+ customers and unlock your financial future.</p>
+            <p className="text-sm text-muted-foreground">Join 2M+ customers and unlock your financial future.</p>
           </div>
 
           {/* form */}
@@ -150,7 +136,7 @@ export default function signupPage() {
               autoComplete="new-password"
               value={formData.password}
               onChange={handleChange}
-              toggle={<button type="button" onClick={() => setShowPassword(p => !p)} className="text-gray-500 hover:text-gray-300 transition-colors">
+              toggle={<button type="button" onClick={() => setShowPassword(p => !p)} className="text-muted-foreground hover:text-foreground transition-colors">
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>}
             />
@@ -164,7 +150,7 @@ export default function signupPage() {
               autoComplete="new-password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              toggle={<button type="button" onClick={() => setShowConfirm(p => !p)} className="text-gray-500 hover:text-gray-300 transition-colors">
+              toggle={<button type="button" onClick={() => setShowConfirm(p => !p)} className="text-muted-foreground hover:text-foreground transition-colors">
                 {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>}
             />
@@ -178,12 +164,7 @@ export default function signupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none mt-2"
-              style={{
-                background: 'linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)',
-                color: '#0A0A0B',
-                boxShadow: '0 6px 24px rgba(201,168,76,0.35)',
-              }}
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none mt-2 bg-gradient-to-r from-brand-500 to-brand-600 text-primary-foreground shadow-brand-md hover:shadow-brand-lg"
             >
               {loading ? (
                 <>
@@ -201,27 +182,26 @@ export default function signupPage() {
 
           {/* divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-            <span className="text-xs text-gray-600 tracking-widest uppercase">or</span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground tracking-widest uppercase">or</span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-muted-foreground">
             Already have an account?{' '}
             <a href="/signin"
-              className="font-semibold transition-colors duration-200 hover:opacity-80"
-              style={{ color: '#C9A84C' }}>
+              className="font-semibold transition-colors duration-200 hover:opacity-80 text-brand-400 hover:text-brand-300">
               Sign In
             </a>
           </p>
         </div>
 
         {/* bottom note */}
-        <p className="text-center text-xs text-gray-700 mt-6">
+        <p className="text-center text-xs text-muted-foreground mt-6">
           By signuping, you agree to our{' '}
-          <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Terms</a>
+          <a href="#" className="hover:text-foreground transition-colors text-muted-foreground">Terms</a>
           {' '}and{' '}
-          <a href="#" className="hover:text-gray-400 transition-colors" style={{ color: '#6B7280' }}>Privacy Policy</a>.
+          <a href="#" className="hover:text-foreground transition-colors text-muted-foreground">Privacy Policy</a>.
         </p>
       </div>
     </div>
@@ -239,15 +219,12 @@ function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, 
 
   return (
     <div
-      className="relative flex items-center rounded-xl transition-all duration-300"
-      style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: focused ? '1px solid rgba(201,168,76,0.5)' : '1px solid rgba(255,255,255,0.07)',
-        boxShadow: focused ? '0 0 0 3px rgba(201,168,76,0.07)' : 'none',
-      }}
+      className={`relative flex items-center rounded-xl transition-all duration-300 bg-glass-white-sm border ${
+        focused ? 'border-brand-400 shadow-brand-sm' : 'border-border'
+      }`}
     >
       <div className="pl-4 flex-shrink-0">
-        <Icon className="w-4 h-4" style={{ color: focused ? '#C9A84C' : '#4B5563', transition: 'color 0.2s' }} />
+        <Icon className={`w-4 h-4 transition-colors ${focused ? 'text-brand-400' : 'text-muted-foreground'}`} />
       </div>
       <input
         type={type}
@@ -260,7 +237,7 @@ function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, 
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full bg-transparent px-3 py-3.5 text-sm text-gray-200 outline-none"
+        className="w-full bg-transparent px-3 py-3.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
       />
       {toggle && <div className="pr-4 shrink-0">{toggle}</div>}
     </div>
@@ -277,17 +254,18 @@ function PasswordStrength({ password }: { password: string }) {
   ];
   const score = checks.filter(Boolean).length;
   const label = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'][score];
-  const color = ['#EF4444', '#F97316', '#EAB308', '#84CC16', '#C9A84C'][score];
+  const colorClass = ['text-danger-500', 'text-warning-500', 'text-warning-400', 'text-success-500', 'text-brand-400'][score];
+  const bgColor = ['var(--danger-500)', 'var(--warning-500)', 'var(--warning-400)', 'var(--success-500)', 'var(--brand-400)'][score];
 
   return (
     <div className="space-y-1.5">
       <div className="flex gap-1">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="flex-1 h-1 rounded-full transition-all duration-300"
-            style={{ background: i < score ? color : 'rgba(255,255,255,0.08)' }} />
+            style={{ background: i < score ? bgColor : 'var(--glass-white-sm)' }} />
         ))}
       </div>
-      <p className="text-xs" style={{ color }}>{label}</p>
+      <p className={`text-xs ${colorClass}`}>{label}</p>
     </div>
   );
 }
