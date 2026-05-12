@@ -33,7 +33,7 @@ export async function sendEmail(options: EmailOptions) {
   }
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || `"Genesis Bank" <${smtpUser}>`,
+    from: process.env.SMTP_FROM || `"Web3GlobalVault" <${smtpUser}>`,
     to: options.to,
     subject: options.subject,
     text: options.text,

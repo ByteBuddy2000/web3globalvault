@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Genesis Bank-Investment",
+  title: "Web3GlobalVault-Investment",
   description: "Financial Freedom and Independence",
 };
 

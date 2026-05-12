@@ -134,7 +134,7 @@ export default function Sidebar({
           <div className="absolute inset-0 rounded-full bg-yellow-400/20 blur-md" />
           <Image
             src="/asset/logo.jpeg"
-            alt="Genesis Bank"
+            alt="Web3GlobalVault"
             width={collapsed && !isMobile ? 34 : 40}
             height={collapsed && !isMobile ? 34 : 40}
             className="rounded-full border border-yellow-400/25 relative z-10 object-cover block"
@@ -148,7 +148,7 @@ export default function Sidebar({
               initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-sm font-extrabold text-gray-100 leading-tight">Genesis Bank</p>
+              <p className="text-sm font-extrabold text-gray-100 leading-tight">Web3GlobalVault</p>
               <p className="text-[9px] text-yellow-400 tracking-[0.14em] mt-0.5">BUY · INVEST · EARN</p>
             </motion.div>
           )}

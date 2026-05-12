@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
       const { sendEmail } = await import("@/lib/mailer");
       await sendEmail({
         to: email,
-        subject: "Genesis Bank Password Reset",
+        subject: "Web3GlobalVault Password Reset",
         text: `You requested a password reset. Click the link to reset your password: ${resetLink} \n\nIf you didn't request this, ignore this email.`,
         html: `
-          <p>You requested a password reset for your Genesis Bank account.</p>
+          <p>You requested a password reset for your Web3GlobalVault account.</p>
           <p><a href="${resetLink}" style="color:#fbbf24;">Click here to reset your password</a></p>
           <p>If this was not you, you can ignore this email.</p>
         `,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Terms & Conditions page for the Genesis banking site
+// Terms & Conditions page for the Web3GlobalVaulting site
 // Uses Tailwind CSS className utilities and Genesis color theme (gold & black)
 
 export default function TermsAndConditions() {
@@ -8,7 +8,7 @@ export default function TermsAndConditions() {
     <main className="min-h-screen bg-black text-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white/5 border border-gray-800 rounded-2xl shadow-lg p-8">
         <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-amber-400">Genesis Bank — Terms &amp; Conditions</h1>
+          <h1 className="text-3xl font-bold text-amber-400">Web3GlobalVault — Terms &amp; Conditions</h1>
           <span className="text-sm text-gray-400">Last updated: September 11, 2025</span>
         </header>
 

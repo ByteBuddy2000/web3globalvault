@@ -61,7 +61,7 @@ const Orbs = () => (
 
 /* ─── Data ──────────────────────────────────────────────────── */
 const milestones = [
-  { year: "2010", title: "Founded in San Francisco", desc: "Genesis Bank was established with a vision to democratize access to financial services across Africa." },
+  { year: "2010", title: "Founded in San Francisco", desc: "Web3GlobalVault was established with a vision to democratize access to financial services across Africa." },
   { year: "2013", title: "Expanded to 10 Countries", desc: "Rapid growth across West Africa and entry into key European markets." },
   { year: "2017", title: "Launched Digital Banking", desc: "Pioneered mobile-first banking with our award-winning app platform." },
   { year: "2020", title: "Reached 1 Million Customers", desc: "A milestone celebrating trust, reliability and innovation." },
@@ -137,7 +137,7 @@ export default function AboutPage() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed"
         >
-          For over 14 years, Genesis Bank has been redefining what it means to be a financial institution — combining global reach with deeply local understanding.
+          For over 14 years, Web3GlobalVault has been redefining what it means to be a financial institution — combining global reach with deeply local understanding.
         </motion.p>
       </section>
 

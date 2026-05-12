@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Lock,
   Zap,
+  Wifi,
 } from "lucide-react";
 import Image from "next/image";
 import Footer from "../components/footer/footer";
@@ -31,18 +32,18 @@ const companyPlans = [
 ];
 
 const partners = [
-  { name: "Visa", logo: "/asset/Visa.png" },
+  { name: "Visa",       logo: "/asset/Visa.png" },
   { name: "Mastercard", logo: "/asset/Mastercard.png" },
-  { name: "PayPal", logo: "/asset/PayPal.png" },
-  { name: "Stripe", logo: "/asset/Stripe_Logo.png" },
-  { name: "Revolut", logo: "/asset/Revolut.png" },
+  { name: "PayPal",     logo: "/asset/PayPal.png" },
+  { name: "Stripe",     logo: "/asset/Stripe_Logo.png" },
+  { name: "Revolut",    logo: "/asset/Revolut.png" },
 ];
 
 const testimonials = [
   {
     name: "Jane Doe",
     role: "Entrepreneur",
-    text: "Genesis Bank helped us scale globally with seamless payments and smart investment tools.",
+    text: "Web3GlobalVault helped us scale globally with seamless payments and smart investment tools.",
     avatar: "/asset/user1.jpg",
     rating: 5,
   },
@@ -63,40 +64,40 @@ const testimonials = [
 ];
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Partners", href: "#partners" },
-  { label: "FAQ", href: "/faq" },
+  { label: "Home",       href: "/" },
+  { label: "About Us",   href: "/about" },
+  { label: "Services",   href: "/services" },
+  { label: "Partners",   href: "#partners" },
+  { label: "FAQ",        href: "/faq" },
   { label: "Contact Us", href: "/contact" },
 ];
-/* ─── Helpers ───────────────────────────────────────────────── */
-const GoldLine = () => (
-  <div className="flex justify-center my-16">
+
+/* ─── Section Divider ───────────────────────────────────────── */
+const SectionDivider = () => (
+  <div className="max-w-7xl mx-auto px-6">
     <div
-      className="h-px w-48"
       style={{
+        height: "1px",
         background:
-          "linear-gradient(90deg, transparent 0%, #C9A84C 30%, #F5D78E 50%, #C9A84C 70%, transparent 100%)",
+          "linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-brand) 50%, var(--border-default) 80%, transparent 100%)",
+        margin: "0",
       }}
     />
   </div>
 );
 
-const GoldDot = ({ className = "" }) => (
-  <span
-    className={`inline-block w-1.5 h-1.5 rounded-full ${className}`}
-    style={{ background: "#C9A84C" }}
-  />
+/* ─── Live indicator dot ────────────────────────────────────── */
+const LiveDot = () => (
+  <span className="status-dot status-dot-live" />
 );
 
-/* ─── Floating orbs background ──────────────────────────────── */
+/* ─── Ambient Orbs ──────────────────────────────────────────── */
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%", size: 400, delay: 0 },
-      { top: "60%", left: "75%", size: 500, delay: 2 },
-      { top: "40%", left: "40%", size: 300, delay: 4 },
+      { top: "8%",  left: "2%",  size: 560, delay: 0,  color: "var(--brand-500)" },
+      { top: "65%", left: "72%", size: 440, delay: 2.5, color: "var(--cyan-400)" },
+      { top: "38%", left: "42%", size: 320, delay: 5,  color: "var(--brand-700)" },
     ].map((o, i) => (
       <motion.div
         key={i}
@@ -106,88 +107,96 @@ const Orbs = () => (
           left: o.left,
           width: o.size,
           height: o.size,
-          background:
-            "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)",
-          filter: "blur(40px)",
+          background: `radial-gradient(circle, ${
+            i === 1
+              ? "rgba(34,211,238,0.07)"
+              : "rgba(59,130,246,0.08)"
+          } 0%, transparent 70%)`,
+          filter: "blur(50px)",
         }}
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.6, 1, 0.6],
-        }}
-        transition={{
-          duration: 8,
-          delay: o.delay,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={{ scale: [1, 1.18, 1], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 9 + i * 2, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
       />
     ))}
   </div>
 );
 
-/* ─── Stat counter ──────────────────────────────────────────── */
+/* ─── Stat Card ─────────────────────────────────────────────── */
 function StatCard({ value, label }) {
   return (
-    <div className="text-center px-8 py-6 border-l border-white/10 first:border-l-0">
+    <div
+      className="text-center px-8 py-6"
+      style={{ borderLeft: "1px solid var(--border-subtle)" }}
+    >
       <p
-        className="text-4xl font-bold mb-1"
-        style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
-          background: "linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
+        className="text-4xl font-bold mb-1 text-gradient"
+        style={{ fontFamily: "var(--font-display)" }}
       >
         {value}
       </p>
-      <p className="text-sm text-gray-400 tracking-widest uppercase">{label}</p>
+      <p
+        className="text-xs tracking-wider uppercase"
+        style={{ color: "var(--text-300)", letterSpacing: "var(--tracking-wider)" }}
+      >
+        {label}
+      </p>
     </div>
   );
 }
 
-/* ─── Feature card ──────────────────────────────────────────── */
-function FeatureCard({ icon: Icon, title, desc, delay }) {
+/* ─── Feature Card ──────────────────────────────────────────── */
+function FeatureCard({
+  icon: Icon,
+  title,
+  desc,
+  delay,
+}) {
   return (
     <motion.div
-      className="group relative p-8 rounded-2xl overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
-        border: "1px solid rgba(201,168,76,0.15)",
-        backdropFilter: "blur(20px)",
-      }}
+      className="card group relative p-8 overflow-hidden"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       viewport={{ once: true }}
       whileHover={{ y: -6 }}
     >
-      {/* hover glow */}
+      {/* hover top-glow */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%)",
+            "radial-gradient(circle at 50% 0%, var(--glass-brand-md) 0%, transparent 65%)",
         }}
       />
+
+      {/* icon badge */}
       <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 relative"
+        className="w-14 h-14 rounded-xl flex items-center justify-center mb-6"
         style={{
-          background: "linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05))",
-          border: "1px solid rgba(201,168,76,0.3)",
+          background: "var(--glass-brand-sm)",
+          border: "1px solid var(--border-brand)",
         }}
       >
-        <Icon className="w-6 h-6" style={{ color: "#C9A84C" }} />
+        <Icon className="w-6 h-6" style={{ color: "var(--brand-400)" }} />
       </div>
+
       <h4
         className="text-xl font-bold mb-3"
-        style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#F5D78E" }}
+        style={{
+          fontFamily: "var(--font-display)",
+          color: "var(--text-0)",
+        }}
       >
         {title}
       </h4>
-      <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
+
+      <p style={{ color: "var(--text-200)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-normal)" }}>
+        {desc}
+      </p>
+
       <div
-        className="mt-6 inline-flex items-center gap-2 text-xs tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
-        style={{ color: "#C9A84C" }}
+        className="mt-6 inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+        style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
       >
         Learn more <ArrowRight className="w-3 h-3" />
       </div>
@@ -195,100 +204,120 @@ function FeatureCard({ icon: Icon, title, desc, delay }) {
   );
 }
 
-/* ─── Testimonial card ──────────────────────────────────────── */
-function TestimonialCard({ t, delay }) {
+/* ─── Testimonial Card ──────────────────────────────────────── */
+function TestimonialCard({
+  t,
+  delay,
+}) {
   return (
     <motion.div
-      className="relative p-8 rounded-2xl"
-      style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-        border: "1px solid rgba(201,168,76,0.12)",
-        backdropFilter: "blur(16px)",
-      }}
+      className="card relative p-8"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.02 }}
     >
-      {/* quote mark */}
+      {/* decorative quote */}
       <span
         className="absolute top-4 right-6 text-6xl leading-none opacity-10 select-none"
-        style={{ fontFamily: "Georgia, serif", color: "#C9A84C" }}
+        style={{ fontFamily: "Georgia, serif", color: "var(--brand-400)" }}
       >
         "
       </span>
+
+      {/* stars */}
       <div className="flex gap-1 mb-4">
         {Array.from({ length: t.rating }).map((_, i) => (
-          <Star key={i} className="w-4 h-4 fill-current" style={{ color: "#C9A84C" }} />
+          <Star key={i} className="w-4 h-4 fill-current" style={{ color: "var(--brand-400)" }} />
         ))}
       </div>
-      <p className="text-gray-300 text-sm leading-relaxed mb-6 italic">"{t.text}"</p>
+
+      <p
+        className="text-sm italic mb-6"
+        style={{ color: "var(--text-100)", lineHeight: "var(--leading-normal)" }}
+      >
+        "{t.text}"
+      </p>
+
       <div className="flex items-center gap-3">
-        <div className="relative">
-          <Image
-            src={t.avatar}
-            alt={t.name}
-            width={44}
-            height={44}
-            className="rounded-full object-cover"
-            style={{ border: "2px solid rgba(201,168,76,0.4)" }}
-          />
-        </div>
+        <Image
+          src={t.avatar}
+          alt={t.name}
+          width={44}
+          height={44}
+          className="rounded-full object-cover avatar-md"
+          style={{ border: "2px solid var(--border-brand)" }}
+        />
         <div>
-          <p className="font-semibold text-white text-sm">{t.name}</p>
-          <p className="text-xs text-gray-500">{t.role}</p>
+          <p className="font-semibold text-sm" style={{ color: "var(--text-0)" }}>
+            {t.name}
+          </p>
+          <p className="text-xs" style={{ color: "var(--text-300)" }}>
+            {t.role}
+          </p>
         </div>
       </div>
     </motion.div>
   );
 }
 
-/* ─── Globe SVG (refined) ────────────────────────────────────── */
+/* ─── Globe Visual ──────────────────────────────────────────── */
 const GlobeVisual = () => (
   <div className="relative flex justify-center items-center w-72 h-72">
-    {/* outer rings */}
-    {[220, 180, 140].map((size, i) => (
+    {/* orbital rings */}
+    {[220, 175, 130].map((size, i) => (
       <motion.div
         key={i}
         className="absolute rounded-full"
         style={{
           width: size,
           height: size,
-          border: `1px solid rgba(201,168,76,${0.06 + i * 0.06})`,
+          border: `1px solid ${
+            i === 0
+              ? "var(--border-brand)"
+              : i === 1
+              ? "var(--border-cyan)"
+              : "var(--border-default)"
+          }`,
+          opacity: 0.5 + i * 0.15,
         }}
         animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-        transition={{ duration: 20 + i * 6, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 18 + i * 7, repeat: Infinity, ease: "linear" }}
       />
     ))}
-    {/* core */}
+
+    {/* core sphere */}
     <div
       className="relative w-24 h-24 rounded-full flex items-center justify-center"
       style={{
-        background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)",
-        boxShadow: "0 0 60px rgba(201,168,76,0.4), 0 0 120px rgba(201,168,76,0.15)",
+        background:
+          "linear-gradient(135deg, var(--brand-600) 0%, var(--brand-400) 60%, var(--cyan-400) 100%)",
+        boxShadow: "var(--shadow-glow-brand)",
       }}
     >
-      <Globe2 className="w-10 h-10 text-black" />
+      <Globe2 className="w-10 h-10" style={{ color: "#fff" }} />
     </div>
+
     {/* orbiting dots */}
     {[0, 60, 120, 180, 240, 300].map((deg, i) => (
       <motion.div
         key={i}
         className="absolute w-2 h-2 rounded-full"
         style={{
-          background: "#C9A84C",
-          boxShadow: "0 0 6px #C9A84C",
+          background: i % 2 === 0 ? "var(--brand-400)" : "var(--cyan-400)",
+          boxShadow: i % 2 === 0
+            ? "0 0 6px var(--brand-400)"
+            : "0 0 6px var(--cyan-400)",
           top: "50%",
           left: "50%",
           marginTop: -4,
           marginLeft: -4,
+          x: Math.cos((deg * Math.PI) / 180) * 105,
+          y: Math.sin((deg * Math.PI) / 180) * 105,
         }}
-        animate={{
-          x: Math.cos((deg * Math.PI) / 180) * 100,
-          y: Math.sin((deg * Math.PI) / 180) * 100,
-        }}
-        transition={{ duration: 0 }}
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2 + i * 0.4, repeat: Infinity, ease: "easeInOut" }}
       />
     ))}
   </div>
@@ -306,7 +335,7 @@ export default function HomePage() {
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
   const heroY = useTransform(scrollY, [0, 500], [0, 80]);
 
-  /* scroll listener for sticky header */
+  /* scroll listener */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
@@ -334,62 +363,52 @@ export default function HomePage() {
     <div
       className="min-h-screen flex flex-col relative"
       style={{
-        background: "linear-gradient(160deg, #0A0A0B 0%, #0D0E10 40%, #0A0C0F 100%)",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        color: "#E8E8E8",
+        background: "var(--surface-0)",
+        fontFamily: "var(--font-body)",
+        color: "var(--text-0)",
       }}
     >
-      {/* inject fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap');
-        html { scroll-behavior: smooth; }
-        * { -webkit-font-smoothing: antialiased; }
-        ::selection { background: rgba(201,168,76,0.25); }
-      `}</style>
-
       <Orbs />
 
-      {/* ── HEADER ───────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HEADER
+      ══════════════════════════════════════════════════════ */}
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
-          background: scrolled
-            ? "rgba(10,10,11,0.85)"
-            : "transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(201,168,76,0.1)" : "none",
+          background: scrolled ? "rgba(6,7,10,0.88)" : "transparent",
+          backdropFilter: scrolled ? "blur(22px) saturate(140%)" : "none",
+          borderBottom: scrolled ? "1px solid var(--border-subtle)" : "none",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-full overflow-hidden"
-              style={{ border: "2px solid rgba(201,168,76,0.5)" }}
+              style={{ border: "2px solid var(--border-brand)" }}
             >
-              <Image src="/asset/logo.jpeg" width={40} height={40} alt="Genesis" className="object-cover" />
+              <Image
+                src="/asset/logo.jpeg"
+                width={40}
+                height={40}
+                alt="Genesis"
+                className="object-cover"
+              />
             </div>
             <span
-              className="text-xl font-bold"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                background: "linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
+              className="text-xl font-bold text-gradient"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              Genesis Bank
+              Web3GlobalVault
             </span>
           </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200 tracking-wide"
-              >
+              <a key={item.label} href={item.href} className="nav-link">
                 {item.label}
               </a>
             ))}
@@ -397,20 +416,13 @@ export default function HomePage() {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <a
-              href="/signup"
-              className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-              style={{
-                background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)",
-                color: "#0A0A0B",
-                boxShadow: "0 4px 20px rgba(201,168,76,0.25)",
-              }}
-            >
+            <a href="/signup" className="btn-primary btn-sm hidden md:inline-flex">
               Open Account <ArrowRight className="w-3.5 h-3.5" />
             </a>
             <button
-              className="md:hidden p-2 text-gray-400"
+              className="md:hidden p-2 btn-ghost btn-icon"
               onClick={() => setMobileOpen((p) => !p)}
+              aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -425,19 +437,18 @@ export default function HomePage() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden overflow-hidden"
-              style={{ background: "rgba(10,10,11,0.96)", borderTop: "1px solid rgba(201,168,76,0.1)" }}
+              style={{
+                background: "rgba(6,7,10,0.97)",
+                borderTop: "1px solid var(--border-subtle)",
+              }}
             >
-              <div className="px-6 py-6 flex flex-col gap-4">
+              <div className="px-6 py-6 flex flex-col gap-2">
                 {navLinks.map((item) => (
-                  <Link key={item.label} href={item.href} className="text-sm text-gray-300 hover:text-white py-1">
+                  <Link key={item.label} href={item.href} className="nav-link">
                     {item.label}
                   </Link>
                 ))}
-                <Link
-                  href="/signup"
-                  className="mt-2 text-center text-sm font-semibold px-5 py-3 rounded-full"
-                  style={{ background: "linear-gradient(135deg, #C9A84C, #F5D78E)", color: "#0A0A0B" }}
-                >
+                <Link href="/signup" className="btn-primary mt-3 text-center">
                   Open Account
                 </Link>
               </div>
@@ -446,7 +457,9 @@ export default function HomePage() {
         </AnimatePresence>
       </header>
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         ref={heroRef}
         className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 z-10"
@@ -457,46 +470,50 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs tracking-widest uppercase"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
           style={{
-            border: "1px solid rgba(201,168,76,0.3)",
-            background: "rgba(201,168,76,0.06)",
-            color: "#C9A84C",
+            border: "1px solid var(--border-brand)",
+            background: "var(--glass-brand-sm)",
+            color: "var(--brand-300)",
+            fontSize: "var(--text-xs)",
+            letterSpacing: "var(--tracking-wider)",
+            textTransform: "uppercase",
           }}
         >
-          <GoldDot /> Trusted by 2M+ customers worldwide
+          <LiveDot />
+          Trusted by 2M+ customers worldwide
         </motion.div>
 
+        {/* H1 */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 max-w-5xl"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          className="font-bold leading-none mb-6 max-w-5xl"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+            letterSpacing: "var(--tracking-tight)",
+            color: "var(--text-0)",
+          }}
         >
           Where Finance{" "}
-          <span
-            style={{
-              background: "linear-gradient(135deg, #F5D78E 0%, #C9A84C 50%, #E8C668 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Meets
-          </span>{" "}
+          <span className="text-gradient">Meets</span>{" "}
           the Future
         </motion.h1>
 
+        {/* Sub-heading */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-lg md:text-xl mb-4 text-gray-400 max-w-xl leading-relaxed"
+          className="text-lg md:text-xl mb-4 max-w-xl leading-relaxed"
+          style={{ color: "var(--text-200)" }}
         >
           Your gateway to smart, secure, and modern financial solutions crafted for today's world.
         </motion.p>
 
-        {/* typewriter */}
+        {/* Typewriter */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -504,52 +521,55 @@ export default function HomePage() {
           className="mb-10 h-8 flex items-center justify-center"
         >
           <span
-            className="text-base md:text-lg"
-            style={{ fontFamily: "'DM Mono', monospace", color: "#C9A84C" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "var(--text-base)",
+              color: "var(--brand-400)",
+            }}
           >
             {displayedText}
             <span className="animate-pulse">▌</span>
           </span>
         </motion.div>
 
+        {/* CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55 }}
           className="flex flex-col sm:flex-row gap-4 items-center"
         >
-          <a
-            href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-            style={{
-              background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)",
-              color: "#0A0A0B",
-              boxShadow: "0 8px 32px rgba(201,168,76,0.35)",
-            }}
-          >
+          <a href="/signup" className="btn-primary btn-lg">
             Get Started Free <ArrowRight className="w-4 h-4" />
           </a>
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200"
-            style={{ border: "1px solid rgba(255,255,255,0.1)" }}
-          >
+          <a href="#" className="btn-secondary btn-lg">
             Watch Demo
           </a>
         </motion.div>
 
-        {/* scroll hint */}
+        {/* Scroll hint */}
         <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          style={{ color: "var(--text-400)" }}
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <span className="text-xs tracking-widest uppercase">Scroll</span>
+          <span
+            style={{
+              fontSize: "var(--text-xs)",
+              letterSpacing: "var(--tracking-wider)",
+              textTransform: "uppercase",
+            }}
+          >
+            Scroll
+          </span>
           <ChevronDown className="w-4 h-4" />
         </motion.div>
       </motion.section>
 
-      {/* ── STATS STRIP ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          STATS STRIP
+      ══════════════════════════════════════════════════════ */}
       <motion.div
         className="relative z-10 max-w-5xl mx-auto w-full px-6 mb-4"
         initial={{ opacity: 0, y: 30 }}
@@ -558,29 +578,36 @@ export default function HomePage() {
         viewport={{ once: true }}
       >
         <div
-          className="rounded-2xl grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10"
+          className="card rounded-2xl grid grid-cols-2 md:grid-cols-4"
           style={{
-            background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-            border: "1px solid rgba(201,168,76,0.12)",
-            backdropFilter: "blur(20px)",
+            /* override card border-radius for strip */
+            borderRadius: "var(--radius-xl)",
           }}
         >
+          {/* first child: no left border */}
           {[
-            { value: "40+", label: "Countries" },
-            { value: "2M+", label: "Customers" },
-            { value: "14+", label: "Years" },
-            { value: "$50B+", label: "Processed" },
-          ].map((s) => (
-            <StatCard key={s.label} {...s} />
+            { value: "40+",  label: "Countries" },
+            { value: "2M+",  label: "Customers" },
+            { value: "14+",  label: "Years" },
+            { value: "$50B+",label: "Processed" },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              style={i === 0 ? { borderLeft: "none" } : {}}
+            >
+              <StatCard {...s} />
+            </div>
           ))}
         </div>
       </motion.div>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── HERO IMAGE + COPY ─────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          HERO IMAGE + COPY
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center py-8 z-10"
+        className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center py-20 z-10"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -588,16 +615,18 @@ export default function HomePage() {
       >
         {/* Image */}
         <div className="relative">
+          {/* ambient glow behind image */}
           <div
-            className="absolute -inset-4 rounded-3xl"
+            className="absolute -inset-6 rounded-3xl pointer-events-none"
             style={{
-              background: "linear-gradient(135deg, rgba(201,168,76,0.12) 0%, transparent 60%)",
-              filter: "blur(20px)",
+              background:
+                "radial-gradient(ellipse at 40% 40%, var(--glass-brand-md) 0%, transparent 65%)",
+              filter: "blur(24px)",
             }}
           />
           <div
             className="relative rounded-2xl overflow-hidden"
-            style={{ border: "1px solid rgba(201,168,76,0.2)" }}
+            style={{ border: "1px solid var(--border-brand)" }}
           >
             <Image
               src="/asset/mps.jpeg"
@@ -610,21 +639,30 @@ export default function HomePage() {
             <div
               className="absolute bottom-4 left-4 right-4 rounded-xl p-4 flex items-center gap-3"
               style={{
-                background: "rgba(10,10,11,0.8)",
+                background: "rgba(6,7,10,0.85)",
                 backdropFilter: "blur(16px)",
-                border: "1px solid rgba(201,168,76,0.2)",
+                border: "1px solid var(--border-brand)",
               }}
             >
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: "rgba(201,168,76,0.15)" }}
+                style={{ background: "var(--glass-brand-md)" }}
               >
-                <TrendingUp className="w-5 h-5" style={{ color: "#C9A84C" }} />
+                <TrendingUp className="w-5 h-5" style={{ color: "var(--brand-400)" }} />
               </div>
               <div>
-                <p className="text-xs text-gray-400">Portfolio Growth</p>
-                <p className="text-sm font-semibold text-white">+24.6% this quarter</p>
+                <p style={{ fontSize: "var(--text-xs)", color: "var(--text-200)" }}>
+                  Portfolio Growth
+                </p>
+                <p className="font-semibold" style={{ fontSize: "var(--text-sm)", color: "var(--text-0)" }}>
+                  +24.6% this quarter
+                </p>
               </div>
+              <span
+                className="badge badge-success ml-auto"
+              >
+                Live
+              </span>
             </div>
           </div>
         </div>
@@ -632,124 +670,151 @@ export default function HomePage() {
         {/* Copy */}
         <div>
           <p
-            className="text-xs tracking-widest uppercase mb-4"
-            style={{ color: "#C9A84C" }}
+            className="text-xs font-semibold tracking-wider uppercase mb-4"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
           >
             About Genesis
           </p>
           <h2
-            className="text-4xl md:text-5xl font-bold leading-tight mb-6"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            className="font-bold leading-tight mb-6"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
           >
             Best Financial Company{" "}
-            <span style={{ color: "#C9A84C" }}>For Your Business</span>
+            <span className="text-gradient">For Your Business</span>
           </h2>
-          <p className="text-gray-400 mb-8 text-base leading-relaxed">
+          <p className="mb-8 leading-relaxed" style={{ color: "var(--text-200)" }}>
             At Genesis Financial, we help clients unlock their full financial potential with
             secure digital banking, automated investment tools, and trusted advisors —
             all at your fingertips.
           </p>
 
-          <div className="flex gap-6 mb-8">
+          {/* Mini stats */}
+          <div className="flex gap-4 mb-8">
             {[
               { num: "76+", label: "Projects Completed" },
               { num: "14+", label: "Years of Experience" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="px-6 py-4 rounded-xl text-center"
+                className="card-brand px-6 py-4 rounded-xl text-center"
                 style={{
-                  background: "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.04))",
-                  border: "1px solid rgba(201,168,76,0.2)",
+                  background: "var(--glass-brand-sm)",
+                  border: "1px solid var(--border-brand)",
                 }}
               >
                 <p
-                  className="text-3xl font-bold"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    background: "linear-gradient(135deg, #F5D78E, #C9A84C)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
+                  className="text-3xl font-bold text-gradient"
+                  style={{ fontFamily: "var(--font-display)" }}
                 >
                   {s.num}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">{s.label}</p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-200)" }}>
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
 
-          <a
-            href="/signin"
-            className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:-translate-y-0.5"
-            style={{
-              background: "linear-gradient(135deg, #C9A84C, #F5D78E)",
-              color: "#0A0A0B",
-              boxShadow: "0 4px 20px rgba(201,168,76,0.25)",
-            }}
-          >
+          <a href="/signin" className="btn-primary">
             Plan Your Financial Future <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── PARTNERS ─────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          PARTNERS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10"
+        id="partners"
+        className="max-w-7xl mx-auto px-6 py-20 z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>
+        <div className="text-center mb-12">
+          <p
+            className="section-label mb-2"
+            style={{
+              fontSize: "var(--text-xs)",
+              letterSpacing: "var(--tracking-wider)",
+              textTransform: "uppercase",
+              color: "var(--brand-400)",
+              fontWeight: 600,
+            }}
+          >
             Ecosystem
           </p>
           <h3
-            className="text-3xl font-bold"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Our Trusted Partners
           </h3>
         </div>
-        <div className="flex flex-wrap justify-center gap-5">
+
+        <div className="flex flex-wrap justify-center gap-4">
           {partners.map((partner, idx) => (
             <motion.div
               key={idx}
-              className="flex flex-col items-center gap-2 px-8 py-5 rounded-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              className="flex flex-col items-center gap-2 px-8 py-5 rounded-xl cursor-pointer transition-base"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(201,168,76,0.12)",
-                backdropFilter: "blur(10px)",
+                background: "var(--glass-white-xs)",
+                border: "1px solid var(--border-default)",
+                backdropFilter: "blur(12px)",
               }}
-              whileHover={{ borderColor: "rgba(201,168,76,0.35)" }}
+              whileHover={{
+                borderColor: "var(--border-brand)",
+                y: -4,
+                transition: { duration: 0.2 },
+              }}
             >
-              <Image src={partner.logo} alt={partner.name} width={72} height={36} className="object-contain opacity-80 hover:opacity-100 transition-opacity" />
-              {partner.name && (
-                <span className="text-xs text-gray-500">{partner.name}</span>
-              )}
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                width={72}
+                height={36}
+                className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
+              <span
+                style={{ fontSize: "var(--text-xs)", color: "var(--text-300)" }}
+              >
+                {partner.name}
+              </span>
             </motion.div>
           ))}
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── FEATURES ─────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-8 z-10">
-        <div className="text-center mb-14">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>
+      {/* ══════════════════════════════════════════════════════
+          FEATURES
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
             Why Us
           </p>
           <h3
-            className="text-4xl font-bold"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Why Choose Genesis?
           </h3>
         </div>
+
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
@@ -776,11 +841,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── IMAGE CARDS ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          IMAGE CARDS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-6"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-6"
         initial={{ opacity: 0, scale: 0.97 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
@@ -804,10 +871,10 @@ export default function HomePage() {
         ].map(({ img, tag, title, desc, icon: Icon }) => (
           <motion.div
             key={title}
-            className="group rounded-2xl overflow-hidden relative cursor-pointer"
-            style={{ border: "1px solid rgba(201,168,76,0.12)" }}
+            className="card group rounded-2xl overflow-hidden cursor-pointer"
             whileHover={{ y: -4 }}
           >
+            {/* image */}
             <div className="relative h-64 overflow-hidden">
               <Image
                 src={img}
@@ -820,34 +887,35 @@ export default function HomePage() {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(10,10,11,0.9) 0%, rgba(10,10,11,0.2) 60%, transparent 100%)",
+                    "linear-gradient(to top, var(--surface-0) 0%, rgba(6,7,10,0.15) 60%, transparent 100%)",
                 }}
               />
               <span
-                className="absolute top-4 left-4 text-xs tracking-widest uppercase px-3 py-1 rounded-full"
-                style={{
-                  background: "rgba(201,168,76,0.15)",
-                  border: "1px solid rgba(201,168,76,0.3)",
-                  color: "#C9A84C",
-                }}
+                className="badge badge-brand absolute top-4 left-4"
               >
                 {tag}
               </span>
             </div>
-            <div
-              className="p-6"
-              style={{ background: "rgba(255,255,255,0.02)" }}
-            >
+
+            {/* content */}
+            <div className="p-6" style={{ background: "var(--glass-white-xs)" }}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "rgba(201,168,76,0.1)" }}
+                  style={{ background: "var(--glass-brand-sm)" }}
                 >
-                  <Icon className="w-4 h-4" style={{ color: "#C9A84C" }} />
+                  <Icon className="w-4 h-4" style={{ color: "var(--brand-400)" }} />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">{title}</h4>
-                  <p className="text-sm text-gray-400">{desc}</p>
+                  <h4
+                    className="font-semibold mb-1"
+                    style={{ color: "var(--text-0)", fontFamily: "var(--font-display)" }}
+                  >
+                    {title}
+                  </h4>
+                  <p style={{ fontSize: "var(--text-sm)", color: "var(--text-200)" }}>
+                    {desc}
+                  </p>
                 </div>
               </div>
             </div>
@@ -855,17 +923,22 @@ export default function HomePage() {
         ))}
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-8 z-10">
-        <div className="text-center mb-14">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>
+      {/* ══════════════════════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
             Social Proof
           </p>
           <h3
-            className="text-4xl font-bold"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
           >
             What Our Clients Say
           </h3>
@@ -877,28 +950,38 @@ export default function HomePage() {
         </div>
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── GLOBAL REACH ─────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          GLOBAL REACH
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-16 items-center"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-16 items-center"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
         <div>
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
             Presence
           </p>
           <h4
-            className="text-4xl font-bold mb-6 leading-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="font-bold leading-tight mb-6"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 4vw, 2.8rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
           >
             A Truly Global Bank
           </h4>
-          <p className="text-gray-400 mb-6 leading-relaxed">
-            Genesis Bank operates in over 40 countries, serving millions of customers with
+          <p className="mb-6 leading-relaxed" style={{ color: "var(--text-200)" }}>
+            Web3GlobalVault operates in over 40 countries, serving millions of customers with
             local expertise and global standards. No matter where you are, we're there.
           </p>
           <ul className="space-y-3">
@@ -907,8 +990,15 @@ export default function HomePage() {
               "24/7 multilingual support in 12 languages",
               "International compliance & regulatory standards",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-gray-300">
-                <GoldDot className="flex-shrink-0" />
+              <li
+                key={item}
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "var(--text-100)" }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ background: "var(--brand-400)" }}
+                />
                 {item}
               </li>
             ))}
@@ -919,11 +1009,13 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── LOANS & OFFERS ───────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          LOANS & OFFERS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-2 gap-6"
+        className="max-w-7xl mx-auto px-6 py-20 z-10 grid md:grid-cols-2 gap-6"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
@@ -931,30 +1023,34 @@ export default function HomePage() {
       >
         {/* Loans */}
         <div
-          className="p-8 rounded-2xl relative overflow-hidden group"
+          className="card-brand p-8 rounded-2xl relative overflow-hidden group"
           style={{
-            background: "linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))",
-            border: "1px solid rgba(201,168,76,0.2)",
+            background:
+              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-brand-xs) 100%)",
+            border: "1px solid var(--border-brand)",
           }}
         >
+          {/* decorative blob */}
           <div
-            className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, #C9A84C, transparent)" }}
+            className="absolute -top-12 -right-12 w-40 h-40 rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, var(--brand-glow-sm), transparent)",
+            }}
           />
           <h4
             className="text-2xl font-bold mb-3"
-            style={{ fontFamily: "'Playfair Display', serif", color: "#F5D78E" }}
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
           >
             Need a Loan?
           </h4>
-          <p className="text-gray-400 text-sm mb-5 leading-relaxed">
+          <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-200)" }}>
             Genesis offers quick personal and business loans with flexible repayment options,
             low interest rates, and instant digital approval.
           </p>
           <a
             href="#"
-            className="inline-flex items-center gap-2 text-sm font-semibold"
-            style={{ color: "#C9A84C" }}
+            className="inline-flex items-center gap-2 text-sm font-semibold transition-base"
+            style={{ color: "var(--brand-400)" }}
           >
             Check your eligibility <ArrowRight className="w-4 h-4" />
           </a>
@@ -962,17 +1058,13 @@ export default function HomePage() {
 
         {/* Offers */}
         <div
-          className="p-8 rounded-2xl relative overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-            border: "1px solid rgba(201,168,76,0.12)",
-          }}
+          className="card p-8 rounded-2xl relative overflow-hidden"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="w-5 h-5 fill-current" style={{ color: "#C9A84C" }} />
+          <div className="flex items-center gap-2 mb-5">
+            <Star className="w-5 h-5 fill-current" style={{ color: "var(--brand-400)" }} />
             <h4
               className="text-2xl font-bold"
-              style={{ fontFamily: "'Playfair Display', serif", color: "#F5D78E" }}
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
             >
               Best Offers for You
             </h4>
@@ -983,8 +1075,15 @@ export default function HomePage() {
               "Free international transfer this month",
               "Refer & earn $250 instantly",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-gray-300">
-                <GoldDot className="flex-shrink-0" />
+              <li
+                key={item}
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "var(--text-100)" }}
+              >
+                <span
+                  className="status-dot"
+                  style={{ background: "var(--success-400)", boxShadow: "0 0 6px var(--success-400)" }}
+                />
                 {item}
               </li>
             ))}
@@ -992,68 +1091,78 @@ export default function HomePage() {
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── CTA BANNER ───────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          CTA BANNER
+      ══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-8 z-10"
+        className="max-w-7xl mx-auto px-6 py-20 z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
         <div
-          className="relative rounded-3xl p-12 md:p-16 text-center overflow-hidden"
+          className="relative rounded-3xl p-12 md:p-20 text-center overflow-hidden"
           style={{
-            background: "linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 50%, rgba(201,168,76,0.08) 100%)",
-            border: "1px solid rgba(201,168,76,0.25)",
+            background:
+              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
+            border: "1px solid var(--border-brand)",
           }}
         >
+          {/* top glow overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 60%)",
+              background:
+                "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
             }}
           />
+
           <p
-            className="text-xs tracking-widest uppercase mb-4"
-            style={{ color: "#C9A84C" }}
+            className="text-xs font-semibold tracking-wider uppercase mb-4"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
           >
             Get Started Today
           </p>
+
           <h3
-            className="text-4xl md:text-5xl font-bold mb-5 max-w-2xl mx-auto leading-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="font-bold mb-5 max-w-2xl mx-auto leading-tight"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 5vw, 3.2rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
           >
             Ready to Take Control of Your Finances?
           </h3>
-          <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-            Join over 2 million customers who trust Genesis Bank for seamless, secure, and smart banking.
+
+          <p className="mb-10 max-w-lg mx-auto" style={{ color: "var(--text-200)" }}>
+            Join over 2 million customers who trust Web3GlobalVault for seamless, secure, and smart banking.
           </p>
-          <a
-            href="/signup"
-            className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-sm font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-            style={{
-              background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)",
-              color: "#0A0A0B",
-              boxShadow: "0 8px 40px rgba(201,168,76,0.4)",
-            }}
-          >
+
+          <a href="/signup" className="btn-primary btn-lg">
             Open Your Free Account <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── NEWS ─────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          NEWS
+      ══════════════════════════════════════════════════════ */}
       <div className="z-10">
         <NewsSection />
       </div>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── FOOTER ───────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════════════════════ */}
       <div className="z-10">
         <Footer />
       </div>
