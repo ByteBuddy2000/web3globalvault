@@ -101,7 +101,7 @@ const mainServices = [
 const businessServices = [
   { icon: Building2, title: "Business Accounts", desc: "Multi-currency business accounts with team access controls and real-time analytics." },
   { icon: Send, title: "Bulk Payments", desc: "Process payroll, vendor payments, and mass disbursements in a single click." },
-  { icon: RefreshCw, title: "Payment APIs", desc: "Integrate Genesis payment rails directly into your app or e-commerce platform." },
+  { icon: RefreshCw, title: "Payment APIs", desc: "Integrate Web3GlobalVaultpayment rails directly into your app or e-commerce platform." },
   { icon: Users2, title: "Corporate Cards", desc: "Issue virtual and physical cards for your team with custom spending limits." },
 ];
 
@@ -215,7 +215,7 @@ export default function ServicesPage() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed"
         >
-          From everyday banking to global investing, Genesis provides a complete financial ecosystem designed for modern life.
+          From everyday banking to global investing, Web3GlobalVaultprovides a complete financial ecosystem designed for modern life.
         </motion.p>
       </section>
 
@@ -382,7 +382,7 @@ export default function ServicesPage() {
             Ready to Explore Our Services?
           </h3>
           <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-            Open a free account in minutes and access the full suite of Genesis financial tools.
+            Open a free account in minutes and access the full suite of Web3GlobalVaultfinancial tools.
           </p>
           <a href="/register"
             className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-sm font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"

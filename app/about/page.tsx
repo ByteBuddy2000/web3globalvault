@@ -161,7 +161,7 @@ export default function AboutPage() {
           {
             label: "Our Vision",
             title: "A Borderless Financial Future",
-            desc: "We envision a world where geography, background, or status no longer limits one's access to capital, investment, and opportunity. Genesis is building that world.",
+            desc: "We envision a world where geography, background, or status no longer limits one's access to capital, investment, and opportunity. Web3GlobalVaultis building that world.",
             icon: Globe2,
           },
         ].map(({ label, title, desc, icon: Icon }, i) => (
@@ -359,7 +359,7 @@ export default function AboutPage() {
           <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "#C9A84C" }}>Join Us</p>
           <h3 className="text-4xl md:text-5xl font-bold mb-5 max-w-2xl mx-auto leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}>
-            Be Part of the Genesis Story
+            Be Part of the Web3GlobalVaultStory
           </h3>
           <p className="text-gray-400 mb-8 max-w-lg mx-auto">
             Millions of people trust us with their finances. Open your account today and experience the difference.
