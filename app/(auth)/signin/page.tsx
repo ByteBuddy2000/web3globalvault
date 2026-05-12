@@ -1,4 +1,3 @@
-// signin.tsx
 'use client';
 
 import { useState, ChangeEvent, FormEvent } from 'react';
@@ -56,7 +55,7 @@ export default function signinPage() {
           {/* header */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-              <div className="w-9 h-9 rounded-full overflow-hidden border border-[var(--vio-500)] border-opacity-50">
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-opacity-50" style={{ borderColor: 'var(--vio-500)' }}>
                 <Image src="/asset/logo.jpeg" width={36} height={36} alt="Genesis" className="object-cover" />
               </div>
               <span className="text-lg font-bold text-transparent bg-clip-text" style={{ backgroundImage: 'var(--grad-holo)' }}>
@@ -67,7 +66,7 @@ export default function signinPage() {
             <h1 className="text-3xl font-bold mb-2 font-display">
               Welcome Back
             </h1>
-            <p className="text-sm text-[var(--text-secondary)]">Sign in to access your account and dashboard.</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Sign in to access your account and dashboard.</p>
           </div>
 
           {/* form */}
@@ -93,14 +92,17 @@ export default function signinPage() {
                 onChange={handleChange}
                 toggle={
                   <button type="button" onClick={() => setShowPassword(p => !p)}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">
+                    className="transition-colors"
+                    style={{ color: 'var(--text-muted)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 }
               />
               <div className="text-right">
                 <a href="/forgot-password"
-                  className="text-xs transition-colors duration-200 hover:text-[var(--cyan-500)]"
+                  className="text-xs transition-colors duration-200"
                   style={{ color: 'var(--cyan-500)' }}>
                   Forgot Password?
                 </a>
@@ -129,14 +131,14 @@ export default function signinPage() {
           {/* divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
-            <span className="text-xs text-[var(--text-muted)] tracking-widest uppercase">or</span>
+            <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>or</span>
             <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
           </div>
 
-          <p className="text-center text-sm text-[var(--text-secondary)]">
+          <p className="text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
             Don't have an account?{' '}
             <a href="/signup"
-              className="font-semibold transition-colors duration-200 hover:text-[var(--cyan-500)]"
+              className="font-semibold transition-colors duration-200"
               style={{ color: 'var(--cyan-500)' }}>
               Create Account
             </a>
@@ -144,18 +146,18 @@ export default function signinPage() {
         </div>
 
         {/* bottom note */}
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
+        <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
           By signing in to Web3GlobalVault, you agree to our{' '}
-          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Terms</a>
+          <a href="#" className="transition-colors" style={{ color: 'var(--text-muted)' }}>Terms</a>
           {' '}and{' '}
-          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Privacy Policy</a>.
+          <a href="#" className="transition-colors" style={{ color: 'var(--text-muted)' }}>Privacy Policy</a>.
         </p>
       </div>
     </div>
   );
 }
 
-/* ─── Field Input ───────────────────────────────────────────── */
+/* --- Field Input --------------------------------------------- */
 function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, onChange, toggle = null }: {
   icon: any; type: string; name: string; placeholder: string;
   autoComplete: string; value: string;
@@ -187,7 +189,8 @@ function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, 
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full bg-transparent px-3 py-3.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
+        className="w-full bg-transparent px-3 py-3.5 text-sm outline-none"
+        style={{ color: 'var(--text-primary)' }}
       />
       {toggle && <div className="pr-4 shrink-0">{toggle}</div>}
     </div>

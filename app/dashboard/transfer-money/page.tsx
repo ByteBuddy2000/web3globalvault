@@ -119,14 +119,14 @@ export default function TransferMoneyPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-gray-100 px-4 sm:px-6 py-8">
-      <div className="max-w-2xl mx-auto bg-[#14141a] rounded-2xl shadow-lg p-6 sm:p-8 border border-gray-800">
+    <div className="min-h-screen px-4 sm:px-6 py-8" style={{ background: 'var(--void-0)' }}>
+      <div className="max-w-2xl mx-auto rounded-2xl shadow-lg p-6 sm:p-8" style={{ background: 'var(--card)', border: '1px solid var(--surface-border)' }}>
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-yellow-400 mb-2 flex items-center justify-center gap-2">
-            <Send className="w-6 h-6 text-yellow-400" />
+          <h2 className="text-3xl font-bold mb-2 flex items-center justify-center gap-2" style={{ color: 'var(--cyan-500)' }}>
+            <Send className="w-6 h-6" />
             Transfer Money
           </h2>
-          <p className="text-gray-400 text-sm">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
             Send funds locally, internationally, or via crypto — securely.
           </p>
         </div>
@@ -140,11 +140,11 @@ export default function TransferMoneyPage() {
             <button
               onClick={() => setTransferType(transferType)}
               type="button"
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-sm font-medium ${
-                transferType === transferType
-                  ? "bg-yellow-400 text-black shadow-lg"
-                  : "bg-[#1c1c22] text-gray-300 hover:bg-[#25252e]"
-              }`}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-sm font-medium"
+              style={{
+                background: transferType === transferType ? 'var(--cyan-500)' : 'var(--input)',
+                color: transferType === transferType ? 'var(--void-0)' : 'var(--text-secondary)',
+              }}
             >
               {{
                 local: <Banknote className="w-4 h-4" />,
@@ -164,7 +164,7 @@ export default function TransferMoneyPage() {
           {transferType === "local" && (
             <>
               <div>
-                <label className="block text-gray-400 text-sm mb-1">
+                <label className="block text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>
                   Recipient Account Number
                 </label>
                 <input
@@ -172,7 +172,12 @@ export default function TransferMoneyPage() {
                   name="accountNumber"
                   value={transferData.accountNumber}
                   onChange={handleChange}
-                  className="w-full bg-black/20 border border-white/6 rounded-lg px-3 py-3 focus:ring-2 focus:ring-accent text-white"
+                  className="w-full rounded-lg px-3 py-3 focus:ring-2"
+                  style={{
+                    background: 'var(--input)',
+                    border: '1px solid var(--surface-border)',
+                    color: 'var(--text-primary)',
+                  }}
                   placeholder="Enter recipient account number"
                   required
                 />

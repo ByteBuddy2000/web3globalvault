@@ -77,7 +77,7 @@ export default function signupPage() {
           <div className="text-center mb-8">
             {/* logo */}
             <a href="/" className="inline-flex items-center gap-2.5 mb-6">
-              <div className="w-9 h-9 rounded-full overflow-hidden border border-[var(--vio-500)] border-opacity-50">
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-opacity-50" style={{ borderColor: 'var(--vio-500)' }}>
                 <Image src="/asset/logo.jpeg" width={36} height={36} alt="Genesis" className="object-cover" />
               </div>
               <span className="text-lg font-bold text-transparent bg-clip-text" style={{ backgroundImage: 'var(--grad-holo)' }}>
@@ -88,7 +88,7 @@ export default function signupPage() {
             <h1 className="text-3xl font-bold mb-2 font-display">
               Create Account
             </h1>
-            <p className="text-sm text-[var(--text-secondary)]">Join 2M+ customers and unlock your financial future.</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Join 2M+ customers and unlock your financial future.</p>
           </div>
 
           {/* form */}
@@ -118,7 +118,9 @@ export default function signupPage() {
               value={formData.password}
               onChange={handleChange}
               toggle={
-                <button type="button" onClick={() => setShowPassword(p => !p)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">
+                <button type="button" onClick={() => setShowPassword(p => !p)} className="transition-colors" style={{ color: 'var(--text-muted)' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}>
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               }
@@ -134,7 +136,9 @@ export default function signupPage() {
               value={formData.confirmPassword}
               onChange={handleChange}
               toggle={
-                <button type="button" onClick={() => setShowConfirm(p => !p)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">
+                <button type="button" onClick={() => setShowConfirm(p => !p)} className="transition-colors" style={{ color: 'var(--text-muted)' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}>
                   {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               }
@@ -168,14 +172,14 @@ export default function signupPage() {
           {/* divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
-            <span className="text-xs text-[var(--text-muted)] tracking-widest uppercase">or</span>
+            <span className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>or</span>
             <div className="flex-1 h-px" style={{ background: 'var(--surface-border)' }} />
           </div>
 
-          <p className="text-center text-sm text-[var(--text-secondary)]">
+          <p className="text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
             Already have an account?{' '}
             <a href="/signin"
-              className="font-semibold transition-colors duration-200 hover:text-[var(--cyan-500)]"
+              className="font-semibold transition-colors duration-200"
               style={{ color: 'var(--cyan-500)' }}>
               Sign In
             </a>
@@ -183,11 +187,11 @@ export default function signupPage() {
         </div>
 
         {/* bottom note */}
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
+        <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
           By signuping, you agree to our{' '}
-          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Terms</a>
+          <a href="#" className="transition-colors" style={{ color: 'var(--text-muted)' }}>Terms</a>
           {' '}and{' '}
-          <a href="#" className="hover:text-[var(--text-secondary)] transition-colors" style={{ color: 'var(--text-muted)' }}>Privacy Policy</a>.
+          <a href="#" className="transition-colors" style={{ color: 'var(--text-muted)' }}>Privacy Policy</a>.
         </p>
       </div>
     </div>
@@ -212,7 +216,7 @@ function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, 
         boxShadow: focused ? '0 0 0 3px rgba(0,229,255,0.1)' : 'none',
       }}
     >
-      <div className="pl-4 flex-shrink-0">
+      <div className="pl-4 shrink-0">
         <Icon className="w-4 h-4" style={{ color: focused ? 'var(--cyan-500)' : 'var(--text-muted)', transition: 'color 0.2s' }} />
       </div>
       <input
@@ -226,9 +230,10 @@ function FieldInput({ icon: Icon, type, name, placeholder, autoComplete, value, 
         onChange={onChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className="w-full bg-transparent px-3 py-3.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
+        className="w-full bg-transparent px-3 py-3.5 text-sm outline-none"
+        style={{ color: 'var(--text-primary)' }}
       />
-      {toggle && <div className="pr-4 flex-shrink-0">{toggle}</div>}
+      {toggle && <div className="pr-4 shrink-0">{toggle}</div>}
     </div>
   );
 }
