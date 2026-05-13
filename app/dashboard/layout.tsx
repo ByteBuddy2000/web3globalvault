@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Navbar from '../../components/navbar/navbar';
 import Sidebar from './components/sidebar';
+import Dashboardnavbar from '@/components/navbar/dashboard-navbar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
-        <Navbar onMenu={() => setSidebarOpen(s => !s)} />
+        <Dashboardnavbar onMenu={() => setSidebarOpen(s => !s)} />
 
         <div className="flex-1 relative overflow-hidden">
           {/* Grid texture */}

@@ -18,7 +18,7 @@ type UserData = {
   fullName: string;
 };
 
-const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
+const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -242,4 +242,4 @@ const Navbar = ({ onMenu }: { onMenu?: () => void }) => {
   );
 };
 
-export default Navbar;
+export default Dashboardnavbar;
