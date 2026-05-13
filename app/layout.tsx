@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
-import "./globals.css";
 import TawkToWidget from "@/components/Tawkto/page";
 import { cn } from "@/lib/utils";
+import "./globals.css";
+import Navbar from "@/components/navbar/navbar";
+
 
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
@@ -28,6 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("font-sans", figtree.variable)}>
+      <Navbar />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-app __processed_a4927776-6fde-4654-8bb4-813aff7a0597__="true"`}>
         <TawkToWidget />
         {children}

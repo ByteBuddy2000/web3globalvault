@@ -97,7 +97,7 @@ export default function signupPage() {
             {/* logo */}
             <a href="/" className="inline-flex items-center gap-2.5 mb-6">
               <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-brand-400">
-                <Image src="/asset/logo.jpeg" width={36} height={36} alt="Genesis" className="object-cover" />
+                <Image src="/asset/logo.jpeg" width={36} height={36} alt="GlobalVault" className="object-cover" />
               </div>
               <span className="text-lg font-bold font-display bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">
                 Web3GlobalVault

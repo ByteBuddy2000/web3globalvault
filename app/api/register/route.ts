@@ -143,7 +143,7 @@ export async function POST(req: Request) {
             </div>
 
             <div style="border-top: 1px solid rgba(148, 163, 184, 0.2); padding-top: 20px; text-align: center; font-size: 12px; color: #64748b;">
-              <p>Questions? Visit our <a href="${process.env.NEXTAUTH_URL}/support" style="color: #F5D78E; text-decoration: none;">support center</a> or contact us at support@genesisbank.com</p>
+              <p>Questions? Visit our <a href="${process.env.NEXTAUTH_URL}/support" style="color: #F5D78E; text-decoration: none;">support center</a> or contact us at support@GlobalVaultbank.com</p>
               <p style="margin: 10px 0 0 0;">© 2026 Web3GlobalVault. All rights reserved.</p>
             </div>
 
@@ -168,7 +168,7 @@ Visit your dashboard: ${process.env.NEXTAUTH_URL}/dashboard
 
 Security Tip: Never share your password or account details with anyone.
 
-Questions? Contact us at support@genesisbank.com
+Questions? Contact us at support@GlobalVaultbank.com
 
 © 2026 Web3GlobalVault. All rights reserved.`,
       });

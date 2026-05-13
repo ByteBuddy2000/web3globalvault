@@ -32,11 +32,11 @@ const companyPlans = [
 ];
 
 const partners = [
-  { name: "Visa",       logo: "/asset/Visa.png" },
+  { name: "Visa", logo: "/asset/Visa.png" },
   { name: "Mastercard", logo: "/asset/Mastercard.png" },
-  { name: "PayPal",     logo: "/asset/PayPal.png" },
-  { name: "Stripe",     logo: "/asset/Stripe_Logo.png" },
-  { name: "Revolut",    logo: "/asset/Revolut.png" },
+  { name: "PayPal", logo: "/asset/PayPal.png" },
+  { name: "Stripe", logo: "/asset/Stripe_Logo.png" },
+  { name: "Revolut", logo: "/asset/Revolut.png" },
 ];
 
 const testimonials = [
@@ -57,19 +57,10 @@ const testimonials = [
   {
     name: "Natasha Smith",
     role: "Business Owner",
-    text: "I love the security features and the cashback offers provided. Genesis is my go-to bank.",
+    text: "I love the security features and the cashback offers provided. GlobalVault is my go-to bank.",
     avatar: "/asset/user3.jpg",
     rating: 5,
   },
-];
-
-const navLinks = [
-  { label: "Home",       href: "/" },
-  { label: "About Us",   href: "/about" },
-  { label: "Services",   href: "/services" },
-  { label: "Partners",   href: "#partners" },
-  { label: "FAQ",        href: "/faq" },
-  { label: "Contact Us", href: "/contact" },
 ];
 
 /* ─── Section Divider ───────────────────────────────────────── */
@@ -95,9 +86,9 @@ const LiveDot = () => (
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "8%",  left: "2%",  size: 560, delay: 0,  color: "var(--brand-500)" },
+      { top: "8%", left: "2%", size: 560, delay: 0, color: "var(--brand-500)" },
       { top: "65%", left: "72%", size: 440, delay: 2.5, color: "var(--cyan-400)" },
-      { top: "38%", left: "42%", size: 320, delay: 5,  color: "var(--brand-700)" },
+      { top: "38%", left: "42%", size: 320, delay: 5, color: "var(--brand-700)" },
     ].map((o, i) => (
       <motion.div
         key={i}
@@ -107,11 +98,10 @@ const Orbs = () => (
           left: o.left,
           width: o.size,
           height: o.size,
-          background: `radial-gradient(circle, ${
-            i === 1
+          background: `radial-gradient(circle, ${i === 1
               ? "rgba(34,211,238,0.07)"
               : "rgba(59,130,246,0.08)"
-          } 0%, transparent 70%)`,
+            } 0%, transparent 70%)`,
           filter: "blur(50px)",
         }}
         animate={{ scale: [1, 1.18, 1], opacity: [0.5, 1, 0.5] }}
@@ -273,13 +263,12 @@ const GlobeVisual = () => (
         style={{
           width: size,
           height: size,
-          border: `1px solid ${
-            i === 0
+          border: `1px solid ${i === 0
               ? "var(--border-brand)"
               : i === 1
-              ? "var(--border-cyan)"
-              : "var(--border-default)"
-          }`,
+                ? "var(--border-cyan)"
+                : "var(--border-default)"
+            }`,
           opacity: 0.5 + i * 0.15,
         }}
         animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
@@ -370,92 +359,6 @@ export default function HomePage() {
     >
       <Orbs />
 
-      {/* ══════════════════════════════════════════════════════
-          HEADER
-      ══════════════════════════════════════════════════════ */}
-      <header
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-        style={{
-          background: scrolled ? "rgba(6,7,10,0.88)" : "transparent",
-          backdropFilter: scrolled ? "blur(22px) saturate(140%)" : "none",
-          borderBottom: scrolled ? "1px solid var(--border-subtle)" : "none",
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-full overflow-hidden"
-              style={{ border: "2px solid var(--border-brand)" }}
-            >
-              <Image
-                src="/asset/logo.jpeg"
-                width={40}
-                height={40}
-                alt="Genesis"
-                className="object-cover"
-              />
-            </div>
-            <span
-              className="text-xl font-bold text-gradient"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Web3GlobalVault
-            </span>
-          </div>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((item) => (
-              <a key={item.label} href={item.href} className="nav-link">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* CTA + mobile toggle */}
-          <div className="flex items-center gap-3">
-            <a href="/signup" className="btn-primary btn-sm hidden md:inline-flex">
-              Open Account <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-            <button
-              className="md:hidden p-2 btn-ghost btn-icon"
-              onClick={() => setMobileOpen((p) => !p)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden"
-              style={{
-                background: "rgba(6,7,10,0.97)",
-                borderTop: "1px solid var(--border-subtle)",
-              }}
-            >
-              <div className="px-6 py-6 flex flex-col gap-2">
-                {navLinks.map((item) => (
-                  <Link key={item.label} href={item.href} className="nav-link">
-                    {item.label}
-                  </Link>
-                ))}
-                <Link href="/signup" className="btn-primary mt-3 text-center">
-                  Open Account
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
 
       {/* ══════════════════════════════════════════════════════
           HERO
@@ -586,10 +489,10 @@ export default function HomePage() {
         >
           {/* first child: no left border */}
           {[
-            { value: "40+",  label: "Countries" },
-            { value: "2M+",  label: "Customers" },
-            { value: "14+",  label: "Years" },
-            { value: "$50B+",label: "Processed" },
+            { value: "40+", label: "Countries" },
+            { value: "2M+", label: "Customers" },
+            { value: "14+", label: "Years" },
+            { value: "$50B+", label: "Processed" },
           ].map((s, i) => (
             <div
               key={s.label}
@@ -673,7 +576,7 @@ export default function HomePage() {
             className="text-xs font-semibold tracking-wider uppercase mb-4"
             style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
           >
-            About Genesis
+            About GlobalVault
           </p>
           <h2
             className="font-bold leading-tight mb-6"
@@ -688,7 +591,7 @@ export default function HomePage() {
             <span className="text-gradient">For Your Business</span>
           </h2>
           <p className="mb-8 leading-relaxed" style={{ color: "var(--text-200)" }}>
-            At Genesis Financial, we help clients unlock their full financial potential with
+            At GlobalVault Financial, we help clients unlock their full financial potential with
             secure digital banking, automated investment tools, and trusted advisors —
             all at your fingertips.
           </p>
@@ -811,7 +714,7 @@ export default function HomePage() {
             className="section-header"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Why Choose Genesis?
+            Why Choose GlobalVault?
           </h3>
         </div>
 
@@ -1044,7 +947,7 @@ export default function HomePage() {
             Need a Loan?
           </h4>
           <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-200)" }}>
-            Genesis offers quick personal and business loans with flexible repayment options,
+            GlobalVault offers quick personal and business loans with flexible repayment options,
             low interest rates, and instant digital approval.
           </p>
           <a
@@ -1094,58 +997,107 @@ export default function HomePage() {
       <SectionDivider />
 
       {/* ══════════════════════════════════════════════════════
-          CTA BANNER
-      ══════════════════════════════════════════════════════ */}
+    CTA BANNER
+══════════════════════════════════════════════════════ */}
       <motion.section
-        className="max-w-7xl mx-auto px-6 py-20 z-10"
+        className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <div
-          className="relative rounded-3xl p-12 md:p-20 text-center overflow-hidden"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
-            border: "1px solid var(--border-brand)",
-          }}
-        >
-          {/* top glow overlay */}
+        <div className="max-w-7xl mx-auto">
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="
+        relative overflow-hidden text-center
+        rounded-2xl sm:rounded-3xl
+        px-5 py-12
+        sm:px-8 sm:py-16
+        lg:px-16 lg:py-20
+      "
             style={{
               background:
-                "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
-            }}
-          />
-
-          <p
-            className="text-xs font-semibold tracking-wider uppercase mb-4"
-            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
-          >
-            Get Started Today
-          </p>
-
-          <h3
-            className="font-bold mb-5 max-w-2xl mx-auto leading-tight"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(2rem, 5vw, 3.2rem)",
-              letterSpacing: "var(--tracking-tight)",
-              color: "var(--text-0)",
+                "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
+              border: "1px solid var(--border-brand)",
             }}
           >
-            Ready to Take Control of Your Finances?
-          </h3>
+            {/* Glow Overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
+              }}
+            />
 
-          <p className="mb-10 max-w-lg mx-auto" style={{ color: "var(--text-200)" }}>
-            Join over 2 million customers who trust Web3GlobalVault for seamless, secure, and smart banking.
-          </p>
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center">
+              {/* Label */}
+              <p
+                className="
+            text-[10px] sm:text-xs
+            font-semibold uppercase
+            tracking-[0.25em]
+            mb-4
+          "
+                style={{ color: "var(--brand-400)" }}
+              >
+                Get Started Today
+              </p>
 
-          <a href="/signup" className="btn-primary btn-lg">
-            Open Your Free Account <ArrowRight className="w-4 h-4" />
-          </a>
+              {/* Heading */}
+              <h3
+                className="
+            font-bold leading-tight
+            max-w-3xl mx-auto
+            mb-5
+            text-3xl
+            sm:text-4xl
+            md:text-5xl
+          "
+                style={{
+                  fontFamily: "var(--font-display)",
+                  color: "var(--text-0)",
+                }}
+              >
+                Ready to Take Control of Your Finances?
+              </h3>
+
+              {/* Description */}
+              <p
+                className="
+            max-w-xl mx-auto
+            text-sm sm:text-base md:text-lg
+            leading-relaxed
+            mb-8 sm:mb-10
+            px-1
+          "
+                style={{ color: "var(--text-200)" }}
+              >
+                Join over 2 million customers who trust
+                Web3GlobalVault for seamless, secure, and smart
+                banking.
+              </p>
+
+              {/* CTA */}
+              <div className="w-full sm:w-auto">
+                <a
+                  href="/signup"
+                  className="
+              btn-primary btn-lg
+              inline-flex items-center justify-center gap-2
+              w-full sm:w-auto
+              min-h-[52px]
+              px-6 sm:px-8
+              text-sm sm:text-base
+            "
+                >
+                  Open Your Free Account
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.section>
 

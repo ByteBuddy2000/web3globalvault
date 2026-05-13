@@ -10,78 +10,69 @@ import {
   Send,
   MessageSquare,
   Globe2,
-  CheckCircle,
+  CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
-
 import Footer from "@/components/footer/footer";
-/* ─── Helpers ───────────────────────────────────────────────── */
-const GoldLine = () => (
-  <div className="flex justify-center my-16">
-    <div className="h-px w-48"
-      style={{ background: "linear-gradient(90deg, transparent 0%, #C9A84C 30%, #F5D78E 50%, #C9A84C 70%, transparent 100%)" }} />
+
+/* ─── Section Divider ───────────────────────────────────────── */
+const SectionDivider = () => (
+  <div className="max-w-7xl mx-auto px-6 my-16">
+    <div
+      style={{
+        height: "1px",
+        background:
+          "linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-brand) 50%, var(--border-default) 80%, transparent 100%)",
+      }}
+    />
   </div>
 );
 
-const GoldDot = ({ className = "" }) => (
-  <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${className}`}
-    style={{ background: "#C9A84C" }} />
-);
-
+/* ─── Ambient Orbs ──────────────────────────────────────────── */
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%", size: 400, delay: 0 },
-      { top: "60%", left: "75%", size: 500, delay: 2 },
-      { top: "40%", left: "40%", size: 300, delay: 4 },
+      { top: "10%", left: "5%",  size: 480, delay: 0 },
+      { top: "60%", left: "75%", size: 520, delay: 2.5 },
+      { top: "38%", left: "40%", size: 320, delay: 5 },
     ].map((o, i) => (
-      <motion.div key={i} className="absolute rounded-full"
-        style={{ top: o.top, left: o.left, width: o.size, height: o.size, background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 8, delay: o.delay, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.div
+        key={i}
+        className="absolute rounded-full"
+        style={{
+          top: o.top, left: o.left, width: o.size, height: o.size,
+          background: `radial-gradient(circle, ${
+            i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
+          } 0%, transparent 70%)`,
+          filter: "blur(50px)",
+        }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 9 + i * 2, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
+      />
     ))}
   </div>
 );
 
 /* ─── Data ──────────────────────────────────────────────────── */
 const contactInfo = [
-  {
-    icon: Mail,
-    label: "Email Us",
-    value: "support@genesisbank.com",
-    sub: "We respond within 2 hours",
-  },
-  {
-    icon: Phone,
-    label: "Call Us",
-    value: "+1 626 923 7679",
-    sub: "Mon–Fri, 8am–10pm WAT",
-  },
-  {
-    icon: MapPin,
-    label: "Head Office",
-    value: "123 Financial District, Los Angeles, USA",
-    sub: "Los Angeles, USA",
-  },
-  {
-    icon: Clock,
-    label: "Support Hours",
-    value: "24/7 Live Chat",
-    sub: "Always available in the app",
-  },
+  { icon: Mail,    label: "Email Us",       value: "support@GlobalVaultbank.com",             sub: "We respond within 2 hours" },
+  { icon: Phone,   label: "Call Us",        value: "+1 626 923 7679",                     sub: "Mon–Fri, 8am–10pm WAT" },
+  { icon: MapPin,  label: "Head Office",    value: "123 Financial District, Los Angeles", sub: "Los Angeles, USA" },
+  { icon: Clock,   label: "Support Hours",  value: "24/7 Live Chat",                      sub: "Always available in the app" },
 ];
 
 const offices = [
-  { city: "Los Angeles", country: "United States", address: "123 Financial District, Los Angeles, USA", flag: "�🇸" },
-  { city: "London", country: "United Kingdom", address: "20 Fenchurch Street, EC3M 3BY", flag: "🇬🇧" },
-  { city: "New York", country: "United States", address: "350 Fifth Avenue, Suite 4100", flag: "🇺🇸" },
-  { city: "Dubai", country: "UAE", address: "DIFC Gate Village, Building 6", flag: "🇦🇪" },
+  { city: "Los Angeles", country: "United States", address: "123 Financial District, Los Angeles, USA", flag: "🇺🇸" },
+  { city: "London",      country: "United Kingdom", address: "20 Fenchurch Street, EC3M 3BY",           flag: "🇬🇧" },
+  { city: "New York",    country: "United States", address: "350 Fifth Avenue, Suite 4100",             flag: "🇺🇸" },
+  { city: "Dubai",       country: "UAE",           address: "DIFC Gate Village, Building 6",            flag: "🇦🇪" },
 ];
 
 const departments = [
   { icon: MessageSquare, label: "General Enquiry" },
-  { icon: Globe2, label: "International Services" },
-  { icon: Mail, label: "Business / Enterprise" },
-  { icon: Phone, label: "Technical Support" },
+  { icon: Globe2,        label: "International Services" },
+  { icon: Mail,          label: "Business / Enterprise" },
+  { icon: Phone,         label: "Technical Support" },
 ];
 
 /* ─── Input Field ───────────────────────────────────────────── */
@@ -102,24 +93,14 @@ function InputField({
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }) {
-  const [focused, setFocused] = useState(false);
-  const base = {
-    background: "rgba(255,255,255,0.03)",
-    border: focused ? "1px solid rgba(201,168,76,0.5)" : "1px solid rgba(201,168,76,0.15)",
-    backdropFilter: "blur(10px)",
-    color: "#E8E8E8",
-    outline: "none",
-    transition: "border-color 0.25s ease",
-    width: "100%",
-    borderRadius: "0.75rem",
-    padding: "0.875rem 1rem",
-    fontSize: "0.875rem",
-  };
-
   return (
     <div>
-      <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>
-        {label}{required && <span style={{ color: "#C9A84C" }}> *</span>}
+      <label
+        className="block text-xs font-semibold tracking-wider uppercase mb-2"
+        style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+      >
+        {label}
+        {required && <span style={{ color: "var(--brand-400)" }}> *</span>}
       </label>
       {textarea ? (
         <textarea
@@ -128,9 +109,8 @@ function InputField({
           rows={5}
           value={value}
           onChange={onChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          style={{ ...base, resize: "vertical" }}
+          className="input"
+          style={{ resize: "vertical", fontFamily: "var(--font-body)" }}
         />
       ) : (
         <input
@@ -139,9 +119,7 @@ function InputField({
           required={required}
           value={value}
           onChange={onChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          style={base}
+          className="input"
         />
       )}
     </div>
@@ -150,96 +128,114 @@ function InputField({
 
 /* ─── Main ──────────────────────────────────────────────────── */
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", department: "", subject: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    name: "", email: "", department: "", subject: "", message: "",
+  });
+  const [submitted,  setSubmitted]  = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const handleChange =
+    (field: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (response.ok) {
+      if (res.ok) {
         setSubmitted(true);
       } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.error || 'Failed to send message'}`);
+        const err = await res.json();
+        alert(`Error: ${err.error || "Failed to send message"}`);
       }
-    } catch (error) {
-      console.error('Submit error:', error);
-      alert('Failed to send message. Please try again.');
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Failed to send message. Please try again.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setSubmitted(false);
+    setForm({ name: "", email: "", department: "", subject: "", message: "" });
   };
 
   return (
     <div
       className="min-h-screen flex flex-col relative"
       style={{
-        background: "linear-gradient(160deg, #0A0A0B 0%, #0D0E10 40%, #0A0C0F 100%)",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        color: "#E8E8E8",
+        background: "var(--surface-0)",
+        fontFamily: "var(--font-body)",
+        color: "var(--text-0)",
       }}
     >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap');
-        html { scroll-behavior: smooth; }
-        * { -webkit-font-smoothing: antialiased; }
-        ::selection { background: rgba(201,168,76,0.25); }
-        ::placeholder { color: #4B5563; }
-      `}</style>
-
       <Orbs />
 
-      {/* ── PAGE HERO ─────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          PAGE HERO
+      ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-[52vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-16 z-10">
+
+        {/* eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs tracking-widest uppercase"
-          style={{ border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: "#C9A84C" }}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+          style={{
+            border: "1px solid var(--border-brand)",
+            background: "var(--glass-brand-sm)",
+            color: "var(--brand-300)",
+            fontSize: "var(--text-xs)",
+            letterSpacing: "var(--tracking-wider)",
+            textTransform: "uppercase",
+          }}
         >
-          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: "#C9A84C" }} />
+          <span className="status-dot status-dot-live" />
           Get In Touch
         </motion.div>
 
+        {/* H1 */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold leading-none mb-6 max-w-4xl"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          className="font-bold leading-none mb-6 max-w-4xl"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(2.8rem, 8vw, 5rem)",
+            letterSpacing: "var(--tracking-tight)",
+            color: "var(--text-0)",
+          }}
         >
           We'd Love to{" "}
-          <span style={{ background: "linear-gradient(135deg, #F5D78E 0%, #C9A84C 50%, #E8C668 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            Hear From You
-          </span>
+          <span className="text-gradient">Hear From You</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-lg text-gray-400 max-w-xl leading-relaxed"
+          className="text-lg max-w-xl leading-relaxed"
+          style={{ color: "var(--text-200)" }}
         >
-          Whether you have a question, need support, or want to explore a partnership — our team is ready to assist you.
+          Whether you have a question, need support, or want to explore a partnership —
+          our team is ready to assist you.
         </motion.p>
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── CONTACT INFO CARDS ────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          CONTACT INFO CARDS
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         className="max-w-7xl mx-auto px-6 py-8 z-10"
         initial={{ opacity: 0, y: 30 }}
@@ -251,37 +247,50 @@ export default function ContactPage() {
           {contactInfo.map(({ icon: Icon, label, value, sub }, i) => (
             <motion.div
               key={label}
-              className="group p-7 rounded-2xl relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-                border: "1px solid rgba(201,168,76,0.15)",
-                backdropFilter: "blur(20px)",
-              }}
+              className="card group p-7 relative overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -4 }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: "radial-gradient(circle at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%)" }} />
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05))", border: "1px solid rgba(201,168,76,0.3)" }}>
-                <Icon className="w-4 h-4" style={{ color: "#C9A84C" }} />
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: "radial-gradient(circle at 50% 0%, var(--glass-brand-md) 0%, transparent 60%)" }}
+              />
+
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: "var(--glass-brand-sm)", border: "1px solid var(--border-brand)" }}
+              >
+                <Icon className="w-4 h-4" style={{ color: "var(--brand-400)" }} />
               </div>
-              <p className="text-xs tracking-widest uppercase mb-1" style={{ color: "#C9A84C" }}>{label}</p>
-              <p className="font-semibold text-white text-sm mb-1">{value}</p>
-              <p className="text-xs text-gray-500">{sub}</p>
+
+              <p
+                className="text-xs font-semibold tracking-wider uppercase mb-1"
+                style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+              >
+                {label}
+              </p>
+              <p className="font-semibold text-sm mb-1" style={{ color: "var(--text-0)" }}>
+                {value}
+              </p>
+              <p style={{ fontSize: "var(--text-xs)", color: "var(--text-400)" }}>
+                {sub}
+              </p>
             </motion.div>
           ))}
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── FORM + SIDEBAR ────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          FORM + SIDEBAR
+      ══════════════════════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-6 py-8 z-10 grid md:grid-cols-5 gap-10 items-start">
-        {/* Form */}
+
+        {/* ── Contact Form ── */}
         <motion.div
           className="md:col-span-3"
           initial={{ opacity: 0, x: -30 }}
@@ -289,64 +298,87 @@ export default function ContactPage() {
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
         >
-          <div
-            className="p-10 rounded-2xl"
-            style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-              border: "1px solid rgba(201,168,76,0.15)",
-              backdropFilter: "blur(20px)",
-            }}
-          >
-            <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>Send a Message</p>
-            <h3 className="text-3xl font-bold mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <div className="card p-10">
+            <p
+              className="text-xs font-semibold tracking-wider uppercase mb-2"
+              style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+            >
+              Send a Message
+            </p>
+            <h3
+              className="text-3xl font-bold mb-8"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+            >
               How Can We Help?
             </h3>
 
+            {/* ── Success state ── */}
             {submitted ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-16"
               >
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-                  style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.3)" }}>
-                  <CheckCircle className="w-7 h-7" style={{ color: "#C9A84C" }} />
-                </div>
-                <h4 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif", color: "#F5D78E" }}>Message Sent!</h4>
-                <p className="text-gray-400 text-sm">A member of our team will respond to you within 2 hours.</p>
-                <button
-                  onClick={() => { setSubmitted(false); setForm({ name: "", email: "", department: "", subject: "", message: "" }); }}
-                  className="mt-8 text-xs tracking-widest uppercase"
-                  style={{ color: "#C9A84C" }}
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+                  style={{ background: "var(--success-glow)", border: "1px solid rgba(34,197,94,0.3)" }}
                 >
-                  Send Another Message
+                  <CheckCircle2 className="w-7 h-7" style={{ color: "var(--success-400)" }} />
+                </div>
+                <h4
+                  className="text-2xl font-bold mb-2"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+                >
+                  Message Sent!
+                </h4>
+                <p style={{ color: "var(--text-200)", fontSize: "var(--text-sm)" }}>
+                  A member of our team will respond to you within 2 hours.
+                </p>
+                <button
+                  onClick={resetForm}
+                  className="btn-ghost btn-sm mt-8 inline-flex items-center gap-2"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" /> Send Another Message
                 </button>
               </motion.div>
             ) : (
+              /* ── Form ── */
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <InputField label="Full Name" placeholder="Jane Doe" required value={form.name} onChange={handleChange("name")} />
-                  <InputField label="Email Address" type="email" placeholder="jane@example.com" required value={form.email} onChange={handleChange("email")} />
+                  <InputField label="Full Name"      placeholder="Jane Doe"           required value={form.name}  onChange={handleChange("name")} />
+                  <InputField label="Email Address"  type="email" placeholder="jane@example.com" required value={form.email} onChange={handleChange("email")} />
                 </div>
 
-                {/* Department select */}
+                {/* Department picker */}
                 <div>
-                  <label className="block text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>Department</label>
+                  <label
+                    className="block text-xs font-semibold tracking-wider uppercase mb-2"
+                    style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+                  >
+                    Department
+                  </label>
                   <div className="flex flex-wrap gap-2">
-                    {departments.map(({ icon: Icon, label }) => (
-                      <button
-                        type="button"
-                        key={label}
-                        onClick={() => setForm((p) => ({ ...p, department: label }))}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs transition-all duration-200"
-                        style={form.department === label
-                          ? { background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.5)", color: "#F5D78E" }
-                          : { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", color: "#6B7280" }}
-                      >
-                        <Icon className="w-3 h-3" />
-                        {label}
-                      </button>
-                    ))}
+                    {departments.map(({ icon: Icon, label }) => {
+                      const active = form.department === label;
+                      return (
+                        <button
+                          type="button"
+                          key={label}
+                          onClick={() => setForm((p) => ({ ...p, department: label }))}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full transition-base"
+                          style={{
+                            fontSize: "var(--text-xs)",
+                            fontWeight: active ? 600 : 400,
+                            background: active ? "var(--glass-brand-md)" : "var(--glass-white-xs)",
+                            border: active ? "1px solid var(--border-brand-strong)" : "1px solid var(--border-default)",
+                            color: active ? "var(--brand-300)" : "var(--text-300)",
+                          }}
+                        >
+                          <Icon className="w-3 h-3" />
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -356,17 +388,14 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center gap-2 py-4 rounded-full text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-70"
-                  style={{
-                    background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)",
-                    color: "#0A0A0B",
-                    boxShadow: "0 6px 24px rgba(201,168,76,0.35)",
-                  }}
+                  className="btn-primary w-full justify-center py-4 disabled:opacity-60"
+                  style={{ borderRadius: "var(--radius-full)" }}
                 >
                   {submitting ? (
                     <>
                       <motion.div
-                        className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black"
+                        className="w-4 h-4 rounded-full"
+                        style={{ border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff" }}
                         animate={{ rotate: 360 }}
                         transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
                       />
@@ -381,7 +410,7 @@ export default function ContactPage() {
           </div>
         </motion.div>
 
-        {/* Sidebar */}
+        {/* ── Sidebar ── */}
         <motion.div
           className="md:col-span-2 space-y-6"
           initial={{ opacity: 0, x: 30 }}
@@ -391,34 +420,49 @@ export default function ContactPage() {
         >
           {/* Live chat promo */}
           <div
-            className="p-8 rounded-2xl relative overflow-hidden"
+            className="card-brand p-8 relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03))",
-              border: "1px solid rgba(201,168,76,0.25)",
+              borderRadius: "var(--radius-xl)",
+              background: "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-brand-xs) 100%)",
+              border: "1px solid var(--border-brand)",
             }}
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20"
-              style={{ background: "radial-gradient(circle, #C9A84C, transparent)" }} />
-            <MessageSquare className="w-6 h-6 mb-4" style={{ color: "#C9A84C" }} />
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif", color: "#F5D78E" }}>Live Chat</h4>
-            <p className="text-gray-400 text-sm mb-5 leading-relaxed">Get an instant response from our support team — available 24 hours a day, 7 days a week.</p>
-            <a href="#"
-              className="inline-flex items-center gap-2 text-sm font-semibold"
-              style={{ color: "#C9A84C" }}>
+            {/* decorative blob */}
+            <div
+              className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, var(--brand-glow-sm), transparent)" }}
+            />
+            <MessageSquare className="w-6 h-6 mb-4" style={{ color: "var(--brand-400)" }} />
+            <h4
+              className="text-xl font-bold mb-2"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+            >
+              Live Chat
+            </h4>
+            <p
+              className="text-sm mb-5 leading-relaxed"
+              style={{ color: "var(--text-200)" }}
+            >
+              Get an instant response from our support team — available 24 hours a day,
+              7 days a week.
+            </p>
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 text-sm font-semibold transition-base"
+              style={{ color: "var(--brand-400)" }}
+            >
               Start a chat <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
-          {/* Response time */}
-          <div
-            className="p-7 rounded-2xl"
-            style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-              border: "1px solid rgba(201,168,76,0.12)",
-              backdropFilter: "blur(20px)",
-            }}
-          >
-            <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "#C9A84C" }}>Our Commitments</p>
+          {/* Commitments */}
+          <div className="card p-7">
+            <p
+              className="text-xs font-semibold tracking-wider uppercase mb-4"
+              style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+            >
+              Our Commitments
+            </p>
             <ul className="space-y-3">
               {[
                 "Email response within 2 hours",
@@ -426,8 +470,16 @@ export default function ContactPage() {
                 "Dedicated business account manager",
                 "Multilingual support (12 languages)",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm text-gray-300">
-                  <GoldDot /> {item}
+                <li
+                  key={item}
+                  className="flex items-center gap-3 text-sm"
+                  style={{ color: "var(--text-100)" }}
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{ background: "var(--brand-400)" }}
+                  />
+                  {item}
                 </li>
               ))}
             </ul>
@@ -435,9 +487,11 @@ export default function ContactPage() {
         </motion.div>
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── OFFICES ───────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          OFFICES
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         className="max-w-7xl mx-auto px-6 py-8 z-10"
         initial={{ opacity: 0, y: 30 }}
@@ -446,37 +500,60 @@ export default function ContactPage() {
         viewport={{ once: true }}
       >
         <div className="text-center mb-12">
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: "#C9A84C" }}>Locations</p>
-          <h3 className="text-4xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>Our Global Offices</h3>
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Locations
+          </p>
+          <h3
+            className="section-header"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Our Global Offices
+          </h3>
         </div>
+
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-5">
           {offices.map(({ city, country, address, flag }, i) => (
             <motion.div
               key={city}
-              className="group p-7 rounded-2xl relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-                border: "1px solid rgba(201,168,76,0.15)",
-                backdropFilter: "blur(20px)",
-              }}
+              className="card group p-7 relative overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -4 }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: "radial-gradient(circle at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 60%)" }} />
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: "radial-gradient(circle at 50% 0%, var(--glass-brand-md) 0%, transparent 60%)" }}
+              />
+
               <span className="text-3xl mb-4 block">{flag}</span>
-              <h4 className="font-bold text-white mb-0.5" style={{ fontFamily: "'Playfair Display', serif" }}>{city}</h4>
-              <p className="text-xs text-gray-500 mb-3">{country}</p>
-              <p className="text-xs text-gray-400 leading-relaxed">{address}</p>
+
+              <h4
+                className="font-bold mb-0.5"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
+              >
+                {city}
+              </h4>
+              <p
+                className="mb-3"
+                style={{ fontSize: "var(--text-xs)", color: "var(--text-400)" }}
+              >
+                {country}
+              </p>
+              <p style={{ fontSize: "var(--text-xs)", color: "var(--text-200)", lineHeight: "var(--leading-normal)" }}>
+                {address}
+              </p>
             </motion.div>
           ))}
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
+
       <div className="z-10"><Footer /></div>
     </div>
   );

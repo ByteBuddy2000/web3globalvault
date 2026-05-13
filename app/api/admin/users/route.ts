@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     if (!asset) return NextResponse.json({ message: "Asset not found" }, { status: 404 });
 
     // Create a transaction record for audit (Deposit)
-    const reference = `genesis-credit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const reference = `GlobalVault-credit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const tx = new Transaction({
       user: user._id,
       type: "Deposit",

@@ -1,44 +1,59 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronDown, Search } from "lucide-react";
+import { ArrowRight, ChevronDown, Search, MessageSquare } from "lucide-react";
 import Footer from "@/components/footer/footer";
 
-/* ─── Helpers ───────────────────────────────────────────────── */
-const GoldLine = () => (
-  <div className="flex justify-center my-16">
-    <div className="h-px w-48"
-      style={{ background: "linear-gradient(90deg, transparent 0%, #C9A84C 30%, #F5D78E 50%, #C9A84C 70%, transparent 100%)" }} />
+/* ─── Section Divider ───────────────────────────────────────── */
+const SectionDivider = () => (
+  <div className="max-w-7xl mx-auto px-6 my-16">
+    <div
+      style={{
+        height: "1px",
+        background:
+          "linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-brand) 50%, var(--border-default) 80%, transparent 100%)",
+      }}
+    />
   </div>
 );
 
+/* ─── Ambient Orbs ──────────────────────────────────────────── */
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%", size: 400, delay: 0 },
-      { top: "60%", left: "75%", size: 500, delay: 2 },
-      { top: "40%", left: "40%", size: 300, delay: 4 },
+      { top: "10%", left: "5%",  size: 480, delay: 0 },
+      { top: "60%", left: "75%", size: 520, delay: 2.5 },
+      { top: "38%", left: "40%", size: 320, delay: 5 },
     ].map((o, i) => (
-      <motion.div key={i} className="absolute rounded-full"
-        style={{ top: o.top, left: o.left, width: o.size, height: o.size, background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 8, delay: o.delay, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.div
+        key={i}
+        className="absolute rounded-full"
+        style={{
+          top: o.top, left: o.left, width: o.size, height: o.size,
+          background: `radial-gradient(circle, ${
+            i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
+          } 0%, transparent 70%)`,
+          filter: "blur(50px)",
+        }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 9 + i * 2, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
+      />
     ))}
   </div>
 );
 
 /* ─── Data ──────────────────────────────────────────────────── */
-const categories = ["All", "Accounts", "Transfers", "Investments", "Security"];
+const categories = ["All", "Accounts", "Transfers", "Investments", "Security", "Loans"];
 
 const faqs = [
   {
     category: "Accounts",
     q: "How do I open a Web3GlobalVault account?",
-    a: "Opening an account takes less than 5 minutes. Visit our website or download the Genesis app, click 'Open Account', provide your basic details, verify your identity with a government-issued ID, and you're set. No branch visits required.",
+    a: "Opening an account takes less than 5 minutes. Visit our website or download the GlobalVault app, click 'Open Account', provide your basic details, verify your identity with a government-issued ID, and you're set. No branch visits required.",
   },
   {
     category: "Accounts",
-    q: "What documents do I need to signup?",
+    q: "What documents do I need to sign up?",
     a: "For personal accounts, you'll need a valid government-issued photo ID (passport, national ID, or driver's licence) and proof of address (utility bill or bank statement dated within the last 3 months). Business accounts require additional documentation.",
   },
   {
@@ -49,7 +64,7 @@ const faqs = [
   {
     category: "Accounts",
     q: "Can I have multiple accounts?",
-    a: "Yes. You can hold a personal current account, a savings account, and a business account simultaneously under a single Genesis profile, all managed from one dashboard.",
+    a: "Yes. You can hold a personal current account, a savings account, and a business account simultaneously under a single GlobalVault profile, all managed from one dashboard.",
   },
   {
     category: "Transfers",
@@ -64,12 +79,12 @@ const faqs = [
   {
     category: "Transfers",
     q: "Which countries can I send money to?",
-    a: "Genesis supports transfers to 40+ countries across Africa, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
+    a: "GlobalVault supports transfers to 40+ countries across Africa, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
   },
   {
     category: "Investments",
-    q: "What types of investments does Genesis offer?",
-    a: "We offer a diversified range including equities (stocks), Cryptos, fixed income (bonds), money market funds, and cryptocurrency. All investment products are accessible directly from the Genesis app with real-time pricing and portfolio analytics.",
+    q: "What types of investments does GlobalVault offer?",
+    a: "We offer a diversified range including equities (stocks), ETFs, fixed income (bonds), money market funds, and cryptocurrency. All investment products are accessible directly from the GlobalVault app with real-time pricing and portfolio analytics.",
   },
   {
     category: "Investments",
@@ -83,27 +98,27 @@ const faqs = [
   },
   {
     category: "Security",
-    q: "How does Genesis protect my account?",
+    q: "How does GlobalVault protect my account?",
     a: "We use multiple layers of security including 256-bit AES encryption, biometric and two-factor authentication, real-time AI-powered fraud monitoring, device fingerprinting, and instant transaction alerts. Your data is never sold to third parties.",
   },
   {
     category: "Security",
     q: "What should I do if I suspect fraudulent activity?",
-    a: "Immediately freeze your card via the app (Settings → Card → Freeze), then contact our 24/7 fraud response team at fraud@genesisbank.com or via the in-app chat. We'll investigate and resolve the issue promptly.",
+    a: "Immediately freeze your card via the app (Settings → Card → Freeze), then contact our 24/7 fraud response team at fraud@GlobalVaultbank.com or via the in-app chat. We'll investigate and resolve the issue promptly.",
   },
   {
     category: "Security",
     q: "Are my deposits insured?",
-    a: "Yes. Web3GlobalVault deposits are insured up to the applicable regulatory limits in each jurisdiction. In Nigeria, this is up to$500,000 per depositor through the Federal Reserve. Details vary by country — check the app for your local coverage.",
+    a: "Yes. Web3GlobalVault deposits are insured up to the applicable regulatory limits in each jurisdiction. Details vary by country — check the app for your local coverage.",
   },
   {
     category: "Loans",
     q: "How quickly can I get a personal loan approved?",
-    a: "Our fully digital loan process typically provides instant pre-approval within minutes. Final approval and disbursement to your Genesis account can happen in as little as 24 hours, depending on verification requirements.",
+    a: "Our fully digital loan process typically provides instant pre-approval within minutes. Final approval and disbursement to your GlobalVault account can happen in as little as 24 hours, depending on verification requirements.",
   },
   {
     category: "Loans",
-    q: "What are the interest rates on Genesis loans?",
+    q: "What are the interest rates on GlobalVault loans?",
     a: "Interest rates depend on your credit profile, loan amount, and repayment term. Rates start from as low as 8% per annum. You can check your personalised rate offer before committing — no impact on your credit score.",
   },
   {
@@ -125,38 +140,53 @@ type AccordionItemProps = {
 function AccordionItem({ q, a, isOpen, onToggle, delay }: AccordionItemProps) {
   return (
     <motion.div
-      className="rounded-2xl overflow-hidden"
+      className="overflow-hidden"
       style={{
-        background: isOpen
-          ? "linear-gradient(135deg, rgba(201,168,76,0.07), rgba(201,168,76,0.02))"
-          : "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
-        border: isOpen ? "1px solid rgba(201,168,76,0.3)" : "1px solid rgba(201,168,76,0.12)",
+        background: isOpen ? "var(--glass-brand-sm)" : "var(--glass-white-xs)",
+        border: isOpen
+          ? "1px solid var(--border-brand)"
+          : "1px solid var(--border-default)",
+        borderRadius: "var(--radius-xl)",
         backdropFilter: "blur(20px)",
-        transition: "all 0.3s ease",
+        transition: "background var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out)",
       }}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       viewport={{ once: true }}
     >
+      {/* trigger */}
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between gap-4 px-7 py-5 text-left"
       >
-        <span className="text-sm font-semibold text-white leading-snug">{q}</span>
+        <span
+          className="font-semibold leading-snug"
+          style={{
+            fontSize: "var(--text-sm)",
+            color: isOpen ? "var(--text-0)" : "var(--text-100)",
+          }}
+        >
+          {q}
+        </span>
+
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
           className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
           style={{
-            background: isOpen ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.05)",
-            border: isOpen ? "1px solid rgba(201,168,76,0.35)" : "1px solid rgba(255,255,255,0.08)",
+            background: isOpen ? "var(--glass-brand-md)" : "var(--glass-white-sm)",
+            border: isOpen ? "1px solid var(--border-brand)" : "1px solid var(--border-default)",
           }}
         >
-          <ChevronDown className="w-4 h-4" style={{ color: isOpen ? "#C9A84C" : "#6B7280" }} />
+          <ChevronDown
+            className="w-4 h-4"
+            style={{ color: isOpen ? "var(--brand-400)" : "var(--text-300)" }}
+          />
         </motion.div>
       </button>
 
+      {/* body */}
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -167,8 +197,19 @@ function AccordionItem({ q, a, isOpen, onToggle, delay }: AccordionItemProps) {
             transition={{ duration: 0.35, ease: "easeInOut" }}
           >
             <div className="px-7 pb-6">
-              <div className="h-px mb-4" style={{ background: "rgba(201,168,76,0.15)" }} />
-              <p className="text-sm text-gray-400 leading-relaxed">{a}</p>
+              <div
+                className="mb-4"
+                style={{ height: "1px", background: "var(--border-brand)" }}
+              />
+              <p
+                style={{
+                  fontSize: "var(--text-sm)",
+                  color: "var(--text-200)",
+                  lineHeight: "var(--leading-normal)",
+                }}
+              >
+                {a}
+              </p>
             </div>
           </motion.div>
         )}
@@ -179,12 +220,12 @@ function AccordionItem({ q, a, isOpen, onToggle, delay }: AccordionItemProps) {
 
 /* ─── Main ──────────────────────────────────────────────────── */
 export default function FAQPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [openIndex,       setOpenIndex]       = useState<number | null>(null);
+  const [activeCategory,  setActiveCategory]  = useState("All");
+  const [searchQuery,     setSearchQuery]     = useState("");
 
   const filtered = faqs.filter((f) => {
-    const matchCat = activeCategory === "All" || f.category === activeCategory;
+    const matchCat    = activeCategory === "All" || f.category === activeCategory;
     const matchSearch =
       searchQuery.trim() === "" ||
       f.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -196,53 +237,63 @@ export default function FAQPage() {
     <div
       className="min-h-screen flex flex-col relative"
       style={{
-        background: "linear-gradient(160deg, #0A0A0B 0%, #0D0E10 40%, #0A0C0F 100%)",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        color: "#E8E8E8",
+        background: "var(--surface-0)",
+        fontFamily: "var(--font-body)",
+        color: "var(--text-0)",
       }}
     >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap');
-        html { scroll-behavior: smooth; }
-        * { -webkit-font-smoothing: antialiased; }
-        ::selection { background: rgba(201,168,76,0.25); }
-      `}</style>
-
       <Orbs />
 
-      {/* ── PAGE HERO ─────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          PAGE HERO
+      ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-[52vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-16 z-10">
+
+        {/* eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs tracking-widest uppercase"
-          style={{ border: "1px solid rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.06)", color: "#C9A84C" }}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+          style={{
+            border: "1px solid var(--border-brand)",
+            background: "var(--glass-brand-sm)",
+            color: "var(--brand-300)",
+            fontSize: "var(--text-xs)",
+            letterSpacing: "var(--tracking-wider)",
+            textTransform: "uppercase",
+          }}
         >
-          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: "#C9A84C" }} />
+          <span className="status-dot status-dot-live" />
           Help Center
         </motion.div>
 
+        {/* H1 */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold leading-none mb-6 max-w-4xl"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          className="font-bold leading-none mb-6 max-w-4xl"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(2.8rem, 8vw, 5rem)",
+            letterSpacing: "var(--tracking-tight)",
+            color: "var(--text-0)",
+          }}
         >
           Frequently Asked{" "}
-          <span style={{ background: "linear-gradient(135deg, #F5D78E 0%, #C9A84C 50%, #E8C668 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            Questions
-          </span>
+          <span className="text-gradient">Questions</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-lg text-gray-400 max-w-xl leading-relaxed mb-10"
+          className="text-lg max-w-xl leading-relaxed mb-10"
+          style={{ color: "var(--text-200)" }}
         >
-          Everything you need to know about Web3GlobalVault. Can't find an answer? Our team is happy to help.
+          Everything you need to know about Web3GlobalVault. Can't find an answer?
+          Our team is happy to help.
         </motion.p>
 
         {/* Search bar */}
@@ -252,42 +303,59 @@ export default function FAQPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="relative w-full max-w-lg"
         >
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search
+            className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+            style={{ color: "var(--text-400)" }}
+          />
           <input
             type="text"
             placeholder="Search questions…"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setOpenIndex(null); }}
-            className="w-full pl-12 pr-5 py-4 rounded-full text-sm text-gray-200 placeholder-gray-500 outline-none transition-all duration-300"
+            className="input"
             style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(201,168,76,0.2)",
-              backdropFilter: "blur(20px)",
+              paddingLeft: "2.75rem",
+              borderRadius: "var(--radius-full)",
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)")}
           />
         </motion.div>
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── FAQ CONTENT ───────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          FAQ CONTENT
+      ══════════════════════════════════════════════════════ */}
       <section className="max-w-3xl mx-auto px-6 py-8 z-10 w-full">
+
         {/* Category pills */}
         <div className="flex flex-wrap gap-3 justify-center mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}
-              className="px-5 py-2 rounded-full text-xs tracking-widest uppercase font-medium transition-all duration-300"
-              style={activeCategory === cat
-                ? { background: "linear-gradient(135deg, #C9A84C, #F5D78E)", color: "#0A0A0B", boxShadow: "0 4px 16px rgba(201,168,76,0.3)" }
-                : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.2)", color: "#9CA3AF" }}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const active = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}
+                className="transition-base"
+                style={{
+                  padding: "0.5rem 1.25rem",
+                  borderRadius: "var(--radius-full)",
+                  fontSize: "var(--text-xs)",
+                  letterSpacing: "var(--tracking-wider)",
+                  textTransform: "uppercase",
+                  fontWeight: active ? 600 : 500,
+                  background: active
+                    ? "linear-gradient(135deg, var(--brand-500), var(--brand-400))"
+                    : "var(--glass-white-xs)",
+                  border: active ? "none" : "1px solid var(--border-default)",
+                  color: active ? "#fff" : "var(--text-300)",
+                  boxShadow: active ? "var(--shadow-brand-sm)" : "none",
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
         {/* Accordion */}
@@ -295,7 +363,7 @@ export default function FAQPage() {
           <div className="space-y-3">
             {filtered.map((faq, i) => (
               <AccordionItem
-                key={i}
+                key={`${faq.category}-${i}`}
                 q={faq.q}
                 a={faq.a}
                 isOpen={openIndex === i}
@@ -310,14 +378,27 @@ export default function FAQPage() {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <p className="text-gray-500 text-sm">No questions match your search. Try different keywords.</p>
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+              style={{
+                background: "var(--glass-brand-xs)",
+                border: "1px solid var(--border-brand)",
+              }}
+            >
+              <Search className="w-6 h-6" style={{ color: "var(--brand-500)", opacity: 0.5 }} />
+            </div>
+            <p style={{ color: "var(--text-300)", fontSize: "var(--text-sm)" }}>
+              No questions match your search. Try different keywords.
+            </p>
           </motion.div>
         )}
       </section>
 
-      <GoldLine />
+      <SectionDivider />
 
-      {/* ── STILL HAVE QUESTIONS ──────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          STILL HAVE QUESTIONS CTA
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         className="max-w-7xl mx-auto px-6 py-8 z-10"
         initial={{ opacity: 0, y: 30 }}
@@ -326,38 +407,58 @@ export default function FAQPage() {
         viewport={{ once: true }}
       >
         <div
-          className="relative rounded-3xl p-12 md:p-16 text-center overflow-hidden"
+          className="relative rounded-3xl p-12 md:p-20 text-center overflow-hidden"
           style={{
-            background: "linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 50%, rgba(201,168,76,0.08) 100%)",
-            border: "1px solid rgba(201,168,76,0.25)",
+            background:
+              "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
+            border: "1px solid var(--border-brand)",
           }}
         >
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 60%)" }} />
-          <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "#C9A84C" }}>Still Need Help?</p>
-          <h3 className="text-4xl md:text-5xl font-bold mb-5 max-w-xl mx-auto leading-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}>
+          {/* top glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
+            }}
+          />
+
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-4"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Still Need Help?
+          </p>
+
+          <h3
+            className="font-bold mb-5 max-w-xl mx-auto leading-tight"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 5vw, 3.2rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
+          >
             We're Here to Answer Everything
           </h3>
-          <p className="text-gray-400 mb-8 max-w-md mx-auto">
+
+          <p className="mb-10 max-w-md mx-auto" style={{ color: "var(--text-200)" }}>
             Our support team is available 24/7 via live chat, email, or phone.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <a href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-              style={{ background: "linear-gradient(135deg, #C9A84C 0%, #F5D78E 50%, #C9A84C 100%)", color: "#0A0A0B", boxShadow: "0 8px 40px rgba(201,168,76,0.4)" }}>
+            <a href="/contact" className="btn-primary btn-lg">
               Contact Support <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200"
-              style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-              Live Chat
+            <a href="#" className="btn-secondary btn-lg">
+              <MessageSquare className="w-4 h-4" /> Live Chat
             </a>
           </div>
         </div>
       </motion.section>
 
-      <GoldLine />
+      <SectionDivider />
+
       <div className="z-10"><Footer /></div>
     </div>
   );

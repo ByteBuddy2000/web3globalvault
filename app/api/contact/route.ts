@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     // Send email to support
     await sendEmail({
-      to: 'support@genesisbank.com',
+      to: 'support@GlobalVaultbank.com',
       subject: `Contact Form: ${subject}`,
       text: `
 Name: ${name}

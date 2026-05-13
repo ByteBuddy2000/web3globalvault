@@ -89,7 +89,7 @@ export default function policy() {
             <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
               <div className="w-9 h-9 rounded-full overflow-hidden"
                 style={{ border: '2px solid rgba(201,168,76,0.5)' }}>
-                <Image src="/asset/logo.jpeg" width={36} height={36} alt="Genesis" className="object-cover" />
+                <Image src="/asset/logo.jpeg" width={36} height={36} alt="GlobalVault" className="object-cover" />
               </div>
               <span className="text-lg font-bold"
                 style={{ fontFamily: "'Playfair Display', serif", background: 'linear-gradient(135deg, #F5D78E 0%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>

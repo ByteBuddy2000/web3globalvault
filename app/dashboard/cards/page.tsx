@@ -4,7 +4,7 @@ import { CreditCard, Plus } from "lucide-react";
 
 export default function CardsPage() {
   const [cardDetails, setCardDetails] = useState({
-    name: "Josh Genesis",
+    name: "Josh GlobalVault",
     number: "3267 2836 0594 0009",
     expiry: "06/26",
     cvv: "759",
