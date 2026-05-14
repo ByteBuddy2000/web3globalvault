@@ -50,7 +50,7 @@ export default function Navbar() {
             style={{ border: "2px solid var(--border-brand)" }}
           >
             <Image
-              src="/asset/logo.jpeg"
+              src="/asset/web3.png"
               width={40}
               height={40}
               alt="Web3GlobalVault"
