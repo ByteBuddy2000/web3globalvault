@@ -749,28 +749,7 @@ export default function WithdrawPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap');
-
-        @keyframes spin   { to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-
-        .withdraw-card { animation: fadeUp 0.4s ease both; }
-
-        .withdraw-card input[type=number]::-webkit-inner-spin-button,
-        .withdraw-card input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-        .withdraw-card input[type=number] { -moz-appearance: textfield; }
-
-        .withdraw-card select option { background: #111318; color: #f9fafb; }
-
-        .cta-btn:not(:disabled):hover {
-          transform: translateY(-1px);
-          box-shadow: 0 8px 32px rgba(251,191,36,0.35) !important;
-        }
-        .cta-btn:not(:disabled):active { transform: translateY(0); }
-        .cta-btn { transition: all 0.2s ease; }
-
-        .addr-error { border-color: rgba(239,68,68,0.5) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.07) !important; }
-        .addr-ok    { border-color: rgba(74,222,128,0.4) !important; box-shadow: 0 0 0 3px rgba(74,222,128,0.05) !important; }
+        @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
       <Toaster richColors position="top-center" />
@@ -783,11 +762,8 @@ export default function WithdrawPage() {
         details={buildDetails()}
       />
 
-      <main style={{
-        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "24px 16px", fontFamily: "'DM Mono', monospace", minHeight: "100vh",
-      }}>
-        <div style={{ width: "100%", maxWidth: "460px" }} className="withdraw-card">
+      <main className="min-h-screen bg-app font-body py-6 px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-[460px] theme-card p-6 animate-fade-in-up">
 
           {/* Header */}
           <div style={{ marginBottom: "28px" }}>
@@ -812,31 +788,15 @@ export default function WithdrawPage() {
           </div>
 
           {/* Card */}
-          <div style={{
-            background: "rgba(17,19,24,0.9)", border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: "20px", padding: "24px",
-            boxShadow: "0 24px 64px rgba(0,0,0,0.5)", backdropFilter: "blur(20px)",
-          }}>
+          <div className="theme-card bg-surface-300/90 border-border-default p-6 shadow-lg backdrop-blur-sm">
             {/* Method Toggle */}
-            <div style={{
-              display: "flex", gap: "6px", padding: "5px",
-              background: "rgba(255,255,255,0.03)", borderRadius: "14px",
-              border: "1px solid rgba(255,255,255,0.07)", marginBottom: "24px",
-            }}>
+            <div className="flex gap-2.5 p-1.5 rounded-[14px] bg-surface-200/80 border border-border-default mb-6">
               {methods.map(m => {
                 const active = method === m.key;
                 return (
                   <button
                     key={m.key} type="button" onClick={() => setMethod(m.key)}
-                    style={{
-                      flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "7px",
-                      padding: "10px 0", borderRadius: "10px",
-                      border: active ? "1px solid rgba(251,191,36,0.3)" : "1px solid transparent",
-                      background: active ? "rgba(251,191,36,0.1)" : "transparent",
-                      color: active ? "#fbbf24" : "#6b7280",
-                      fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: "12px",
-                      letterSpacing: "0.06em", cursor: "pointer", transition: "all 0.2s",
-                    }}
+                    className={`flex-1 flex items-center justify-center gap-2.5 rounded-[10px] px-3 py-2 text-[12px] font-semibold tracking-[0.06em] font-mono transition ${active ? 'border border-brand-500 bg-brand-500/10 text-brand-300' : 'border border-transparent bg-transparent text-slate-400 hover:bg-surface-200'}`}
                   >
                     {m.icon} {m.label.toUpperCase()}
                   </button>
@@ -846,7 +806,7 @@ export default function WithdrawPage() {
 
             {/* ── Bank Form ── */}
             {method === "bank" && (
-              <form onSubmit={handleProceed} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+              <form onSubmit={handleProceed} className="flex flex-col gap-4">
                 <div>
                   <label style={fieldLabel}>Amount (USD)</label>
                   <input
@@ -878,15 +838,7 @@ export default function WithdrawPage() {
                     Bank withdrawals process within 1–3 business days. A separate fee payment is required before funds are released.
                   </span>
                 </div>
-                <button type="submit" disabled={!bankCanProceed} className="cta-btn" style={{
-                  width: "100%", padding: "16px", borderRadius: "14px", border: "none",
-                  cursor: bankCanProceed ? "pointer" : "not-allowed",
-                  background: bankCanProceed ? "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)" : "rgba(255,255,255,0.05)",
-                  color: bankCanProceed ? "#111" : "#4b5563",
-                  fontSize: "13px", fontFamily: "'DM Mono', monospace", fontWeight: 700, letterSpacing: "0.08em",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                  boxShadow: bankCanProceed ? "0 4px 20px rgba(251,191,36,0.25)" : "none",
-                }}>
+                <button type="submit" disabled={!bankCanProceed} className="theme-cta w-full justify-center" style={{ opacity: bankCanProceed ? 1 : 0.55 }}>
                   REVIEW WITHDRAWAL <ChevronRight size={14} />
                 </button>
               </form>
@@ -894,11 +846,11 @@ export default function WithdrawPage() {
 
             {/* ── Crypto Form ── */}
             {method === "crypto" && (
-              <form onSubmit={handleProceed} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-                <div style={{ display: "flex", gap: "12px" }}>
+              <form onSubmit={handleProceed} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <div style={{ flex: 1 }}>
                     <label style={fieldLabel}>Coin</label>
-                    <select value={coin} onChange={handleCoinChange} required style={sharedSelect}
+                    <select value={coin} onChange={handleCoinChange} required className="theme-select theme-input"
                       onFocus={onFocus} onBlur={onBlur} disabled={availableCryptoCoins.length === 0}>
                       <option value="" disabled>
                         {availableCryptoCoins.length > 0 ? "Select coin" : "No crypto assets"}
@@ -913,7 +865,8 @@ export default function WithdrawPage() {
                     <select
                       value={network} onChange={handleNetworkChange}
                       disabled={!coin} required
-                      style={{ ...sharedSelect, opacity: !coin ? 0.4 : 1, cursor: !coin ? "not-allowed" : "pointer" }}
+                      className="theme-select theme-input"
+                      style={{ opacity: !coin ? 0.4 : 1, cursor: !coin ? "not-allowed" : "pointer" }}
                       onFocus={onFocus} onBlur={onBlur}
                     >
                       <option value="" disabled>Select network</option>
@@ -964,14 +917,9 @@ export default function WithdrawPage() {
                     }
                     disabled={!coin || !network}
                     required
-                    className={
-                      walletTouched && walletAddress
-                        ? addrValidation?.valid ? "addr-ok" : "addr-error"
-                        : ""
-                    }
+                    className={`theme-input ${walletTouched && walletAddress ? (addrValidation?.valid ? 'addr-ok' : 'addr-error') : ''}`}
                     style={{
-                      ...sharedInput,
-                      opacity: (!coin || !network) ? 0.4 : 1,
+                      opacity: (!coin || !network) ? 0.45 : 1,
                       cursor: (!coin || !network) ? "not-allowed" : "text",
                     }}
                   />
@@ -987,42 +935,27 @@ export default function WithdrawPage() {
                         ? <CheckCircle2 size={11} color="#4ade80" />
                         : <AlertCircle  size={11} color="#ef4444" />
                       }
-                      <span style={{
-                        fontFamily: "'DM Mono', monospace", fontSize: "10px", letterSpacing: "0.04em",
-                        color: addrValidation.valid ? "#4ade80" : "#ef4444",
-                      }}>
+                      <span className={`font-mono text-[10px] tracking-[0.04em] ${addrValidation.valid ? 'text-success' : 'text-danger'}`}>
                         {addrValidation.valid ? `Valid ${coin} address` : addrValidation.message}
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div style={{
-                  display: "flex", gap: "10px", alignItems: "flex-start",
-                  padding: "12px 14px", background: "rgba(239,68,68,0.04)",
-                  border: "1px solid rgba(239,68,68,0.12)", borderRadius: "12px",
-                }}>
-                  <AlertCircle size={13} color="#ef4444" style={{ marginTop: "1px", flexShrink: 0 }} />
-                  <span style={{ fontSize: "11px", color: "#4b5563", lineHeight: 1.6 }}>
-                    Double-check your wallet address and network. Funds sent to a wrong address cannot be recovered.
-                  </span>
+                <div className="theme-panel-error">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle size={13} color="#ef4444" className="mt-0.5 flex-shrink-0" />
+                    <span className="text-[11px] text-slate-400 leading-6">
+                      Double-check your wallet address and network. Funds sent to a wrong address cannot be recovered.
+                    </span>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={!cryptoCanProceed}
-                  className="cta-btn"
-                  style={{
-                    width: "100%", padding: "16px", borderRadius: "14px", border: "none",
-                    cursor: cryptoCanProceed ? "pointer" : "not-allowed",
-                    background: cryptoCanProceed
-                      ? "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)"
-                      : "rgba(255,255,255,0.05)",
-                    color: cryptoCanProceed ? "#111" : "#4b5563",
-                    fontSize: "13px", fontFamily: "'DM Mono', monospace", fontWeight: 700, letterSpacing: "0.08em",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                    boxShadow: cryptoCanProceed ? "0 4px 20px rgba(251,191,36,0.25)" : "none",
-                  }}
+                  className="theme-cta w-full justify-center"
+                  style={{ opacity: cryptoCanProceed ? 1 : 0.55 }}
                 >
                   REVIEW WITHDRAWAL <ChevronRight size={14} />
                 </button>

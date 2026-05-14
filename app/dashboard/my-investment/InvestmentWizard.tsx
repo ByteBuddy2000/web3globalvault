@@ -119,30 +119,19 @@ export default function InvestmentWizard({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-100 flex items-end sm:items-center justify-center sm:p-4"
-      style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(10px)" }}
-    >
+    <div className="theme-modal-backdrop">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full sm:max-w-sm flex flex-col"
-        style={{
-          background: "linear-gradient(160deg, #13151c 0%, #0d0f14 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: "16px 16px 0 0",
-          boxShadow: "0 -4px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
-          maxHeight: "88vh",
-        }}
+        className="theme-modal-panel relative w-full sm:max-w-sm flex flex-col max-h-[88vh] overflow-hidden"
       >
         {/* Mobile drag handle */}
         <div className="sm:hidden w-7 h-1 bg-white/10 rounded-full mx-auto mt-2.5 flex-shrink-0" />
 
         {/* ── Header ── */}
-        <div className="px-4 pt-3 pb-2.5 flex-shrink-0"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="px-4 pt-3 pb-2.5 flex-shrink-0 border-b border-white/5">
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -157,8 +146,7 @@ export default function InvestmentWizard({
               </div>
             </div>
             <button onClick={onClose}
-              className="w-6 h-6 flex items-center justify-center rounded-md text-white/30 hover:text-white transition-colors"
-              style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+              className="w-6 h-6 flex items-center justify-center rounded-md text-white/30 hover:text-white transition-colors border border-white/10">
               <X size={11} />
             </button>
           </div>
@@ -187,7 +175,7 @@ export default function InvestmentWizard({
         </div>
 
         {/* ── Scrollable body ── */}
-        <div className="flex-1 overflow-y-auto px-4 py-3" style={{ minHeight: 0 }}>
+        <div className="flex-1 overflow-y-auto px-4 py-3 min-h-0">
           <AnimatePresence mode="wait">
 
             {/* ── Step 1: Plan ── */}
@@ -201,10 +189,10 @@ export default function InvestmentWizard({
                   const selected = selectedPlan === name;
                   return (
                     <button key={name} onClick={() => setSelectedPlan(name)}
-                      className="w-full text-left rounded-xl p-3 transition-all"
+                      className={`theme-card-soft w-full text-left p-3 transition-all ${selected ? "border-amber-400/30" : "border-white/10"}`}
                       style={{
                         background: selected ? `${meta.accent}12` : "rgba(255,255,255,0.03)",
-                        border: `1px solid ${selected ? meta.accent + "45" : "rgba(255,255,255,0.07)"}`,
+                        borderWidth: "1px",
                       }}
                     >
                       <div className="flex items-center justify-between">
@@ -253,10 +241,10 @@ export default function InvestmentWizard({
                     <motion.button key={asset._id} onClick={() => setSelectedAsset(asset.symbol)}
                       initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.03 }}
-                      className="w-full text-left rounded-xl p-3 transition-all"
+                      className={`theme-card-soft w-full text-left p-3 transition-all ${selected ? "border-amber-400/30" : "border-white/10"}`}
                       style={{
                         background: selected ? "rgba(251,191,36,0.08)" : "rgba(255,255,255,0.03)",
-                        border: `1px solid ${selected ? "rgba(251,191,36,0.3)" : "rgba(255,255,255,0.07)"}`,
+                        borderWidth: "1px",
                       }}
                     >
                       <div className="flex items-center justify-between">
@@ -294,8 +282,7 @@ export default function InvestmentWizard({
                     { label: "Asset", value: selectedAsset ?? "" },
                     { label: "Price", value: `$${assetPrice.toFixed(2)}` },
                   ].map(chip => (
-                    <div key={chip.label} className="flex-1 rounded-lg p-2 text-center"
-                      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                    <div key={chip.label} className="theme-card-soft flex-1 rounded-xl p-2 text-center">
                       <p className="text-[8px] text-white/25 font-mono uppercase tracking-widest">{chip.label}</p>
                       <p className="text-[10px] font-bold text-white font-mono mt-0.5 truncate">{chip.value}</p>
                     </div>
@@ -311,11 +298,7 @@ export default function InvestmentWizard({
                       value={amount}
                       onChange={e => setAmount(e.target.value)}
                       placeholder={`${selectedPlanData?.minAmount ?? 0}`}
-                      className="w-full pl-7 pr-3 py-3 text-lg font-black font-mono text-white placeholder-white/12 rounded-xl outline-none"
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        border: `1px solid ${amountError ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.1)"}`,
-                      }}
+                        className={`theme-input w-full pl-7 pr-3 py-3 text-lg font-black font-mono text-white placeholder-white/12 rounded-xl outline-none ${amountError ? "input-error" : ""}`}
                       min={selectedPlanData?.minAmount}
                       step="100"
                     />
@@ -339,8 +322,7 @@ export default function InvestmentWizard({
                       const val = selectedPlanData.minAmount * mult;
                       return (
                         <button key={mult} onClick={() => setAmount(String(val))}
-                          className="flex-1 py-1.5 rounded-lg text-[10px] font-bold font-mono text-white/35 hover:text-amber-400 transition-colors"
-                          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                          className="theme-btn-secondary flex-1 py-1.5 rounded-xl text-[10px] font-bold font-mono text-white/75 hover:text-white transition-colors">
                           ${(val / 1000).toFixed(0)}k
                         </button>
                       );
@@ -351,8 +333,7 @@ export default function InvestmentWizard({
                 {/* Live preview */}
                 {investAmount > 0 && assetPrice > 0 && !amountError && (
                   <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl p-3"
-                    style={{ background: "rgba(96,165,250,0.05)", border: "1px solid rgba(96,165,250,0.15)" }}>
+                    className="theme-panel-info rounded-xl p-3">
                     <Row label="Shares" value={requiredShares.toFixed(6)} />
                     <Row label="At Price" value={`$${assetPrice.toFixed(2)}`} />
                     {selectedPlanData && (
@@ -372,11 +353,7 @@ export default function InvestmentWizard({
                 transition={{ duration: 0.18 }} className="flex flex-col gap-2.5">
 
                 {/* Hero */}
-                <div className="rounded-xl p-3.5 text-center"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(251,191,36,0.09) 0%, rgba(251,191,36,0.03) 100%)",
-                    border: "1px solid rgba(251,191,36,0.18)",
-                  }}>
+                <div className="theme-panel-warning rounded-xl p-3.5 text-center">
                   <p className="text-[9px] text-white/25 font-mono uppercase tracking-widest mb-0.5">Investing</p>
                   <p className="text-3xl font-black text-amber-400 font-mono">${fmt(confirmationData.amount)}</p>
                   <p className="text-[10px] text-white/25 font-mono mt-0.5">
@@ -385,8 +362,7 @@ export default function InvestmentWizard({
                 </div>
 
                 {/* Details */}
-                <div className="rounded-xl p-3"
-                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                <div className="theme-card-soft rounded-xl p-3">
                   <Row label="Shares" value={confirmationData.shares.toFixed(6)} />
                   <Row label="Price/Share" value={`$${confirmationData.assetPrice.toFixed(2)}`} />
                   <Row label="Duration" value={`${confirmationData.duration}wk`} />
@@ -394,8 +370,7 @@ export default function InvestmentWizard({
                 </div>
 
                 {/* Projected */}
-                <div className="rounded-xl p-3"
-                  style={{ background: "rgba(16,185,129,0.05)", border: "1px solid rgba(16,185,129,0.18)" }}>
+                <div className="theme-panel-success rounded-xl p-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[9px] text-white/25 font-mono uppercase tracking-widest">Projected Value</p>
@@ -408,8 +383,7 @@ export default function InvestmentWizard({
                 </div>
 
                 {/* Lock note */}
-                <div className="rounded-xl px-3 py-2 flex items-center gap-2"
-                  style={{ background: "rgba(251,191,36,0.04)", border: "1px solid rgba(251,191,36,0.12)" }}>
+                <div className="theme-panel-warning rounded-xl px-3 py-2 flex items-center gap-2">
                   <span className="text-[10px]">⏳</span>
                   <p className="text-[10px] text-white/30 font-mono">
                     Locked {confirmationData.duration}wk · early withdrawal unavailable
@@ -426,8 +400,7 @@ export default function InvestmentWizard({
                 <motion.div
                   animate={{ scale: [1, 1.07, 1] }}
                   transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}>
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(16,185,129,0.1)", border: "1.5px solid rgba(16,185,129,0.25)" }}>
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-emerald-500/10 border border-emerald-500/25">
                     <CheckCircle2 size={28} className="text-emerald-400" />
                   </div>
                 </motion.div>
@@ -435,8 +408,7 @@ export default function InvestmentWizard({
                   <h3 className="text-base font-black text-white font-mono">Investment Active</h3>
                   <p className="text-[11px] text-white/25 font-mono mt-1">Your position has been opened.</p>
                 </div>
-                <div className="rounded-xl px-6 py-3 text-center"
-                  style={{ background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.18)" }}>
+                <div className="theme-panel-warning rounded-xl px-6 py-3 text-center">
                   <p className="text-xl font-black text-amber-400 font-mono">${fmt(confirmationData?.amount ?? 0)}</p>
                   <p className="text-[10px] text-white/25 font-mono mt-0.5">{confirmationData?.plan} Plan</p>
                 </div>
@@ -448,12 +420,10 @@ export default function InvestmentWizard({
 
         {/* ── Footer ── */}
         {step !== 5 && (
-          <div className="flex-shrink-0 px-4 py-3 flex gap-2"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="flex-shrink-0 px-4 py-3 flex gap-2 border-t border-white/5">
             <button
               onClick={() => step === 1 ? onClose() : handleBack()}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold font-mono text-white/35 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              className="btn-secondary flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold font-mono text-white/70 hover:text-white transition-colors">
               <ChevronLeft size={13} /> {step === 1 ? "Cancel" : "Back"}
             </button>
 
@@ -461,16 +431,7 @@ export default function InvestmentWizard({
               onClick={step === 4 ? handleConfirm : handleNext}
               disabled={investing}
               whileTap={{ scale: 0.97 }}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-black font-mono transition-all disabled:opacity-40"
-              style={{
-                background: step === 4
-                  ? "linear-gradient(135deg, #10b981, #059669)"
-                  : "linear-gradient(135deg, #f59e0b, #d97706)",
-                boxShadow: step === 4
-                  ? "0 0 16px rgba(16,185,129,0.2)"
-                  : "0 0 16px rgba(245,158,11,0.2)",
-                color: "#000",
-              }}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-black font-mono transition-all disabled:opacity-40 ${step === 4 ? "btn-success" : "btn-primary"}`}
             >
               {investing ? (
                 <span className="flex items-center gap-1.5">

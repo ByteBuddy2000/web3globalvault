@@ -402,52 +402,16 @@ export default function SwapPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap');
-
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
         @keyframes flipIn {
           0%   { transform: rotateX(0deg); }
           50%  { transform: rotateX(90deg); }
           100% { transform: rotateX(0deg); }
         }
-        @keyframes pulse-ring {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.3); }
-          50%       { box-shadow: 0 0 0 8px rgba(251,191,36,0); }
-        }
-
-        .swap-card { animation: fadeUp 0.4s ease both; }
-        .swap-card input[type=number]::-webkit-inner-spin-button,
-        .swap-card input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-        .swap-card input[type=number] { -moz-appearance: textfield; }
-
-        .flip-btn:hover .flip-icon { transform: rotate(180deg); }
-        .flip-icon { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-        .cta-btn:not(:disabled):hover {
-          transform: translateY(-1px);
-          box-shadow: 0 8px 32px rgba(251,191,36,0.35) !important;
-        }
-        .cta-btn:not(:disabled):active { transform: translateY(0); }
-        .cta-btn { transition: all 0.2s ease; }
-
-        .quick-pct:hover { background: rgba(251,191,36,0.12) !important; color: #fbbf24 !important; border-color: rgba(251,191,36,0.3) !important; }
       `}</style>
 
-      <main
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px 16px',
-          fontFamily: "'DM Mono', monospace",
-        }}
-      >
-        <div style={{ width: '100%', maxWidth: '420px' }} className="swap-card">
+      <main className="min-h-screen bg-app font-body py-6 px-4 sm:px-6 flex items-center justify-center">
+        <div className="mx-auto w-full max-w-[420px] theme-card p-6 animate-fade-in-up">
 
           {/* Header */}
           <div style={{ marginBottom: '28px' }}>
@@ -693,28 +657,8 @@ export default function SwapPage() {
             <button
               onClick={performSwap}
               disabled={!canSwap}
-              className="cta-btn"
-              style={{
-                marginTop: '16px',
-                width: '100%',
-                padding: '16px',
-                borderRadius: '14px',
-                border: 'none',
-                cursor: canSwap ? 'pointer' : 'not-allowed',
-                background: canSwap
-                  ? 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)'
-                  : 'rgba(255,255,255,0.05)',
-                color: canSwap ? '#111' : '#4b5563',
-                fontSize: '14px',
-                fontFamily: "'DM Mono', monospace",
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: canSwap ? '0 4px 20px rgba(251,191,36,0.25)' : 'none',
-              }}
+              className="theme-cta w-full justify-center mt-4"
+              style={{ opacity: canSwap ? 1 : 0.55 }}
             >
               {swapping ? (
                 <>
