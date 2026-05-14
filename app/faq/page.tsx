@@ -22,7 +22,7 @@ const SectionDivider = () => (
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%",  size: 480, delay: 0 },
+      { top: "10%", left: "5%", size: 480, delay: 0 },
       { top: "60%", left: "75%", size: 520, delay: 2.5 },
       { top: "38%", left: "40%", size: 320, delay: 5 },
     ].map((o, i) => (
@@ -31,9 +31,8 @@ const Orbs = () => (
         className="absolute rounded-full"
         style={{
           top: o.top, left: o.left, width: o.size, height: o.size,
-          background: `radial-gradient(circle, ${
-            i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
-          } 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
+            } 0%, transparent 70%)`,
           filter: "blur(50px)",
         }}
         animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
@@ -221,12 +220,12 @@ function AccordionItem({ q, a, isOpen, onToggle, delay }: AccordionItemProps) {
 
 /* ─── Main ──────────────────────────────────────────────────── */
 export default function FAQPage() {
-  const [openIndex,       setOpenIndex]       = useState<number | null>(null);
-  const [activeCategory,  setActiveCategory]  = useState("All");
-  const [searchQuery,     setSearchQuery]     = useState("");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filtered = faqs.filter((f) => {
-    const matchCat    = activeCategory === "All" || f.category === activeCategory;
+    const matchCat = activeCategory === "All" || f.category === activeCategory;
     const matchSearch =
       searchQuery.trim() === "" ||
       f.q.toLowerCase().includes(searchQuery.toLowerCase()) ||

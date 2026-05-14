@@ -33,7 +33,7 @@ const SectionDivider = () => (
 const Orbs = () => (
   <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
     {[
-      { top: "10%", left: "5%",  size: 480, delay: 0 },
+      { top: "10%", left: "5%", size: 480, delay: 0 },
       { top: "60%", left: "75%", size: 520, delay: 2.5 },
       { top: "38%", left: "40%", size: 320, delay: 5 },
     ].map((o, i) => (
@@ -42,9 +42,8 @@ const Orbs = () => (
         className="absolute rounded-full"
         style={{
           top: o.top, left: o.left, width: o.size, height: o.size,
-          background: `radial-gradient(circle, ${
-            i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
-          } 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${i === 1 ? "rgba(34,211,238,0.06)" : "rgba(59,130,246,0.08)"
+            } 0%, transparent 70%)`,
           filter: "blur(50px)",
         }}
         animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
@@ -56,24 +55,24 @@ const Orbs = () => (
 
 /* ─── Data ──────────────────────────────────────────────────── */
 const contactInfo = [
-  { icon: Mail,    label: "Email Us",       value: "support@GlobalVaultbank.com",             sub: "We respond within 2 hours" },
-  { icon: Phone,   label: "Call Us",        value: "+1 626 923 7679",                     sub: "Mon–Fri, 8am–10pm WAT" },
-  { icon: MapPin,  label: "Head Office",    value: "123 Financial District, Los Angeles", sub: "Los Angeles, USA" },
-  { icon: Clock,   label: "Support Hours",  value: "24/7 Live Chat",                      sub: "Always available in the app" },
+  { icon: Mail, label: "Email Us", value: "support@GlobalVaultbank.com", sub: "We respond within 2 hours" },
+  { icon: Phone, label: "Call Us", value: "+1 626 923 7679", sub: "Mon–Fri, 8am–10pm WAT" },
+  { icon: MapPin, label: "Head Office", value: "123 Financial District, Los Angeles", sub: "Los Angeles, USA" },
+  { icon: Clock, label: "Support Hours", value: "24/7 Live Chat", sub: "Always available in the app" },
 ];
 
 const offices = [
   { city: "Los Angeles", country: "United States", address: "123 Financial District, Los Angeles, USA", flag: "🇺🇸" },
-  { city: "London",      country: "United Kingdom", address: "20 Fenchurch Street, EC3M 3BY",           flag: "🇬🇧" },
-  { city: "New York",    country: "United States", address: "350 Fifth Avenue, Suite 4100",             flag: "🇺🇸" },
-  { city: "Dubai",       country: "UAE",           address: "DIFC Gate Village, Building 6",            flag: "🇦🇪" },
+  { city: "London", country: "United Kingdom", address: "20 Fenchurch Street, EC3M 3BY", flag: "🇬🇧" },
+  { city: "New York", country: "United States", address: "350 Fifth Avenue, Suite 4100", flag: "🇺🇸" },
+  { city: "Dubai", country: "UAE", address: "DIFC Gate Village, Building 6", flag: "🇦🇪" },
 ];
 
 const departments = [
   { icon: MessageSquare, label: "General Enquiry" },
-  { icon: Globe2,        label: "International Services" },
-  { icon: Mail,          label: "Business / Enterprise" },
-  { icon: Phone,         label: "Technical Support" },
+  { icon: Globe2, label: "International Services" },
+  { icon: Mail, label: "Business / Enterprise" },
+  { icon: Phone, label: "Technical Support" },
 ];
 
 /* ─── Input Field ───────────────────────────────────────────── */
@@ -132,13 +131,13 @@ export default function ContactPage() {
   const [form, setForm] = useState({
     name: "", email: "", department: "", subject: "", message: "",
   });
-  const [submitted,  setSubmitted]  = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange =
     (field: string) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,7 +176,6 @@ export default function ContactPage() {
         color: "var(--text-0)",
       }}
     >
-      <Navbar />
       <Orbs />
 
       {/* ══════════════════════════════════════════════════════
@@ -347,8 +345,8 @@ export default function ContactPage() {
               /* ── Form ── */
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <InputField label="Full Name"      placeholder="Jane Doe"           required value={form.name}  onChange={handleChange("name")} />
-                  <InputField label="Email Address"  type="email" placeholder="jane@example.com" required value={form.email} onChange={handleChange("email")} />
+                  <InputField label="Full Name" placeholder="Jane Doe" required value={form.name} onChange={handleChange("name")} />
+                  <InputField label="Email Address" type="email" placeholder="jane@example.com" required value={form.email} onChange={handleChange("email")} />
                 </div>
 
                 {/* Department picker */}

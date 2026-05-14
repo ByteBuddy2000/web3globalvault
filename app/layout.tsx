@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 
 
+
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({

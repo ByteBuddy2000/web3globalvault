@@ -87,7 +87,7 @@ export default function AboutPage() {
         color: "var(--text-0)",
       }}
     >
-      <Navbar />
+            <Navbar />
       <Orbs />
 
       {/* ══════════════════════════════════════════════════════
