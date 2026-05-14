@@ -22,6 +22,7 @@ import Image from "next/image";
 import Footer from "../components/footer/footer";
 import NewsSection from "./dashboard/components/NewsSection";
 import Link from "next/link";
+import Navbar from "@/components/navbar/navbar";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 const companyPlans = [
@@ -357,6 +358,7 @@ export default function HomePage() {
         color: "var(--text-0)",
       }}
     >
+      <Navbar />
       <Orbs />
 
 

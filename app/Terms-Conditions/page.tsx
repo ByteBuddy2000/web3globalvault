@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { FileText, Mail } from "lucide-react";
+import Navbar from "@/components/navbar/navbar";
 
 const terms = [
   {
@@ -54,15 +57,17 @@ const terms = [
 
 export default function TermsAndConditions() {
   return (
-    <main
-      className="min-h-screen"
-      style={{
-        background: "var(--surface-0)",
-        fontFamily: "var(--font-body)",
-        color: "var(--text-0)",
-        padding: "var(--space-8) var(--space-4)",
-      }}
-    >
+    <>
+      <Navbar />
+      <main
+        className="min-h-screen"
+        style={{
+          background: "var(--surface-0)",
+          fontFamily: "var(--font-body)",
+          color: "var(--text-0)",
+          padding: "var(--space-8) var(--space-4)",
+        }}
+      >
       {/* ambient glow */}
       <div
         className="pointer-events-none fixed inset-0 overflow-hidden"
@@ -257,5 +262,6 @@ export default function TermsAndConditions() {
         </div>
       </div>
     </main>
+    </>
   );
 }

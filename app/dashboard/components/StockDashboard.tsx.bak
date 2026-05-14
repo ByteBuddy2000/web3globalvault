@@ -19,7 +19,7 @@ const STOCKS: { symbol: string; name: string }[] = [
   { symbol: 'MSFT', name: 'Microsoft' },
   { symbol: 'META', name: 'Meta' },
   { symbol: 'NVDA', name: 'NVIDIA' },
-  { symbol: 'NFLX', name: 'NCryptolix' },
+  { symbol: 'NFLX', name: 'Netflix' },
 ];
 
 export default function StockDashboard() {

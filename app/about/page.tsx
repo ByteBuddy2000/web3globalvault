@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/footer/footer";
+import Navbar from "@/components/navbar/navbar";
 
 /* ─── Section Divider ───────────────────────────────────────── */
 const SectionDivider = () => (
@@ -86,6 +87,7 @@ export default function AboutPage() {
         color: "var(--text-0)",
       }}
     >
+      <Navbar />
       <Orbs />
 
       {/* ══════════════════════════════════════════════════════

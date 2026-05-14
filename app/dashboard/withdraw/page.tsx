@@ -206,13 +206,13 @@ function validateWalletAddress(coin: string, network: string, address: string): 
 // ── Row ───────────────────────────────────────────────────────────────────────
 function Row({ label, value, highlight }: RowProps) {
   const color =
-    highlight === "green" ? "#4ade80" :
-    highlight === "red"   ? "#ef4444" :
-    "#f9fafb";
+    highlight === "green" ? "text-success" :
+    highlight === "red"   ? "text-danger" :
+    "text-foreground";
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px", color: "#6b7280" }}>{label}</span>
-      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px", color, fontWeight: highlight ? 600 : 400 }}>{value}</span>
+    <div className="flex justify-between items-center">
+      <span className="font-mono text-[13px] text-muted-foreground">{label}</span>
+      <span className={`font-mono text-[13px] ${color} ${highlight ? 'font-semibold' : 'font-normal'}`}>{value}</span>
     </div>
   );
 }
@@ -229,19 +229,11 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      style={{
-        background: copied ? "rgba(74,222,128,0.1)" : "rgba(255,255,255,0.05)",
-        border: `1px solid ${copied ? "rgba(74,222,128,0.25)" : "rgba(255,255,255,0.08)"}`,
-        borderRadius: "8px",
-        padding: "6px 10px",
-        cursor: "pointer",
-        display: "flex", alignItems: "center", gap: "5px",
-        color: copied ? "#4ade80" : "#9ca3af",
-        fontSize: "11px", fontFamily: "'DM Mono', monospace",
-        fontWeight: 600, letterSpacing: "0.06em",
-        transition: "all 0.2s",
-        flexShrink: 0,
-      }}
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border transition-all cursor-pointer text-[11px] font-mono font-semibold tracking-wider flex-shrink-0 ${
+        copied
+          ? 'bg-glass-brand-sm border-brand text-success'
+          : 'bg-glass-white-xs border-border-subtle text-muted-foreground hover:bg-glass-white-sm hover:border-border-default'
+      }`}
     >
       {copied ? <CheckCircle2 size={11} /> : <Copy size={11} />}
       {copied ? "COPIED" : "COPY"}
@@ -271,70 +263,37 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
     : `${details.coin} · ${details.network || "Network"}`;
 
   return (
-    <div
-      style={{
-        position: "fixed", inset: 0, zIndex: 50,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: "rgba(0,0,0,0.80)", backdropFilter: "blur(10px)",
-        padding: "16px",
-      }}
-    >
-      <div
-        style={{
-          position: "relative", width: "100%", maxWidth: "440px",
-          background: "#111318",
-          border: "1px solid rgba(255,255,255,0.09)",
-          borderRadius: "20px",
-          boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
-          padding: "28px",
-          animation: "fadeUp 0.25s ease both",
-        }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+      <div className="relative w-full max-w-md card animate-fade-in-scale">
         {/* Close */}
         <button
           onClick={onClose}
           disabled={loading}
-          style={{
-            position: "absolute", top: "16px", right: "16px",
-            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "8px", width: "30px", height: "30px",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#6b7280",
-          }}
+          className="absolute top-4 right-4 w-7 h-7 rounded-lg flex items-center justify-center bg-glass-white-xs border border-border-subtle text-muted-foreground hover:bg-glass-white-sm hover:border-border-default transition-all cursor-pointer disabled:opacity-50"
         >
           <X size={14} />
         </button>
 
-        {/* Step iFederal Reserveator */}
-        <div style={{ display: "flex", gap: "6px", alignItems: "center", marginBottom: "20px" }}>
+        {/* Step indicator */}
+        <div className="flex gap-1.5 items-center mb-5">
           {(["review", "pay-fee"] as ModalStep[]).map((s, i) => (
-            <div key={s} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <div key={s} className="flex items-center gap-1.5">
               <div
-                style={{
-                  width: "22px", height: "22px", borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "10px", fontWeight: 700, fontFamily: "'DM Mono', monospace",
-                  background: step === s ? "rgba(251,191,36,0.15)" :
-                    (step === "pay-fee" && s === "review") || step === "done" ? "rgba(74,222,128,0.12)" : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${step === s ? "rgba(251,191,36,0.4)" :
-                    (step === "pay-fee" && s === "review") ? "rgba(74,222,128,0.3)" : "rgba(255,255,255,0.06)"}`,
-                  color: step === s ? "#fbbf24" :
-                    (step === "pay-fee" && s === "review") ? "#4ade80" : "#4b5563",
-                  transition: "all 0.3s",
-                }}
+                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono transition-all ${
+                  step === s ? 'bg-glass-brand-sm border border-brand text-brand-300' :
+                  (step === "pay-fee" && s === "review") || step === "done" ? 'bg-glass-brand-sm border border-success text-success' : 'bg-glass-white-xs border border-border-subtle text-muted-foreground'
+                }`}
               >
                 {(step === "pay-fee" && s === "review") ? <CheckCircle2 size={11} /> : i + 1}
               </div>
               {i < 1 && (
-                <div style={{
-                  width: "24px", height: "1px",
-                  background: step !== "review" ? "rgba(74,222,128,0.3)" : "rgba(255,255,255,0.06)",
-                  transition: "background 0.3s",
-                }} />
+                <div className={`w-6 h-px transition-all ${
+                  step !== "review" ? 'bg-success' : 'bg-border-subtle'
+                }`} />
               )}
             </div>
           ))}
-          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280", marginLeft: "6px", letterSpacing: "0.06em" }}>
+          <span className="font-mono text-[11px] text-muted-foreground ml-1.5 tracking-wider">
             {step === "review" ? "REVIEW DETAILS" : "PAY WITHDRAWAL FEE"}
           </span>
         </div>

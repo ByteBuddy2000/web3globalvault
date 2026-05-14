@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Footer from "@/components/footer/footer";
+import Navbar from "@/components/navbar/navbar";
 
 /* ─── Section Divider ───────────────────────────────────────── */
 const SectionDivider = () => (
@@ -176,6 +177,7 @@ export default function ContactPage() {
         color: "var(--text-0)",
       }}
     >
+      <Navbar />
       <Orbs />
 
       {/* ══════════════════════════════════════════════════════

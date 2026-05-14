@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown, Search, MessageSquare } from "lucide-react";
 import Footer from "@/components/footer/footer";
+import Navbar from "@/components/navbar/navbar";
 
 /* ─── Section Divider ───────────────────────────────────────── */
 const SectionDivider = () => (
@@ -242,6 +243,7 @@ export default function FAQPage() {
         color: "var(--text-0)",
       }}
     >
+      <Navbar />
       <Orbs />
 
       {/* ══════════════════════════════════════════════════════

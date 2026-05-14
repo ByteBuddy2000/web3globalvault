@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       { symbol: "TSLA", name: "Tesla", sector: "Automotive", market: "NASDAQ" },
       { symbol: "META", name: "Meta Platforms", sector: "Technology", market: "NASDAQ" },
       { symbol: "NVDA", name: "NVIDIA", sector: "Semiconductors", market: "NASDAQ" },
-      { symbol: "NFLX", name: "NCryptolix", sector: "Entertainment", market: "NASDAQ" },
+      { symbol: "NFLX", name: "Netflix", sector: "Entertainment", market: "NASDAQ" },
       { symbol: "BABA", name: "Alibaba", sector: "E-Commerce", market: "NYSE" },
       { symbol: "DIS", name: "Disney", sector: "Entertainment", market: "NYSE" },
       { symbol: "PYPL", name: "PayPal", sector: "Fintech", market: "NASDAQ" },

@@ -147,8 +147,9 @@ export default function Sidebar({
         <div className="relative shrink-0">
           <div className="absolute inset-0 rounded-full blur-md bg-brand-500/20" />
           <Image
-            src="/asset/logo.jpeg"
+            src="/asset/web3.png"
             alt="Web3GlobalVault"
+
             width={collapsed && !isMobile ? 34 : 40}
             height={collapsed && !isMobile ? 34 : 40}
             className="rounded-full relative z-10 object-cover block border-2 border-brand-400/50"
@@ -166,8 +167,8 @@ export default function Sidebar({
               exit={{ opacity: 0, x: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-sm font-extrabold leading-tight text-foreground font-display">
-                Web3GlobalVault
+              <p className="text-[18px] font-extrabold leading-tight text-foreground font-display">
+                WGV
               </p>
               <p className="text-[9px] tracking-[0.14em] mt-0.5 text-brand-300 font-mono">
                 BUY · INVEST · EARN
