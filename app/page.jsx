@@ -22,6 +22,7 @@ import Image from "next/image";
 import Footer from "../components/footer/footer";
 import NewsSection from "./dashboard/components/NewsSection";
 import Link from "next/link";
+import Navbar from "@/components/navbar/navbar";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 const companyPlans = [
@@ -99,8 +100,8 @@ const Orbs = () => (
           width: o.size,
           height: o.size,
           background: `radial-gradient(circle, ${i === 1
-              ? "rgba(34,211,238,0.07)"
-              : "rgba(59,130,246,0.08)"
+            ? "rgba(34,211,238,0.07)"
+            : "rgba(59,130,246,0.08)"
             } 0%, transparent 70%)`,
           filter: "blur(50px)",
         }}
@@ -264,10 +265,10 @@ const GlobeVisual = () => (
           width: size,
           height: size,
           border: `1px solid ${i === 0
-              ? "var(--border-brand)"
-              : i === 1
-                ? "var(--border-cyan)"
-                : "var(--border-default)"
+            ? "var(--border-brand)"
+            : i === 1
+              ? "var(--border-cyan)"
+              : "var(--border-default)"
             }`,
           opacity: 0.5 + i * 0.15,
         }}
@@ -357,7 +358,9 @@ export default function HomePage() {
         color: "var(--text-0)",
       }}
     >
+      <Navbar />
       <Orbs />
+
 
 
       {/* ══════════════════════════════════════════════════════

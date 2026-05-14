@@ -1,5 +1,6 @@
 import React from "react";
 import { FileText, Mail } from "lucide-react";
+import Navbar from "@/components/navbar/navbar";
 
 const terms = [
   {
@@ -63,6 +64,8 @@ export default function TermsAndConditions() {
         padding: "var(--space-8) var(--space-4)",
       }}
     >
+      <Navbar />
+
       {/* ambient glow */}
       <div
         className="pointer-events-none fixed inset-0 overflow-hidden"
