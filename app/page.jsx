@@ -33,11 +33,11 @@ const companyPlans = [
 ];
 
 const partners = [
-  { name: "Visa", logo: "/asset/Visa.png" },
-  { name: "Mastercard", logo: "/asset/Mastercard.png" },
-  { name: "PayPal", logo: "/asset/PayPal.png" },
-  { name: "Stripe", logo: "/asset/Stripe_Logo.png" },
-  { name: "Revolut", logo: "/asset/Revolut.png" },
+  {  logo: "/asset/Visa.png" },
+  {  logo: "/asset/Mastercard.png" },
+  {  logo: "/asset/PayPal.png" },
+  {  logo: "/asset/Stripe_Logo.png" },
+  {  logo: "/asset/Revolut.png" },
 ];
 
 const testimonials = [
@@ -636,18 +636,18 @@ export default function HomePage() {
 
       {/* ══════════════════════════════════════════════════════
           PARTNERS
-      ══════════════════════════════════════════════════════ */}
+══════════════════════════════════════════════════════ */}
       <motion.section
         id="partners"
-        className="max-w-7xl mx-auto px-6 py-20 z-10"
+        className="max-w-7xl mx-auto px-6 py-20 relative z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <div className="text-center mb-12">
+        <div className="text-center mb-14">
           <p
-            className="section-label mb-2"
+            className="section-label mb-3"
             style={{
               fontSize: "var(--text-xs)",
               letterSpacing: "var(--tracking-wider)",
@@ -658,40 +658,50 @@ export default function HomePage() {
           >
             Ecosystem
           </p>
+
           <h3
             className="section-header"
-            style={{ fontFamily: "var(--font-display)" }}
+            style={{
+              fontFamily: "var(--font-display)",
+            }}
           >
             Our Trusted Partners
           </h3>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-5">
           {partners.map((partner, idx) => (
             <motion.div
               key={idx}
-              className="flex flex-col items-center gap-2 px-8 py-5 rounded-xl cursor-pointer transition-base"
+              className="group flex flex-col items-center justify-center gap-3 px-8 py-6 rounded-2xl cursor-pointer transition-all duration-300"
               style={{
                 background: "var(--glass-white-xs)",
                 border: "1px solid var(--border-default)",
-                backdropFilter: "blur(12px)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
               }}
               whileHover={{
+                y: -6,
+                scale: 1.03,
                 borderColor: "var(--border-brand)",
-                y: -4,
-                transition: { duration: 0.2 },
               }}
             >
-              <Image
-                src={partner.logo}
-                alt={partner.name}
-                width={72}
-                height={36}
-                className="object-contain opacity-70 hover:opacity-100 transition-opacity"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
+              <div className="relative flex items-center justify-center w-[90px] h-[45px]">
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  width={90}
+                  height={45}
+                  className="object-contain transition-all duration-300 group-hover:scale-105"
+                />
+              </div>
+
               <span
-                style={{ fontSize: "var(--text-xs)", color: "var(--text-300)" }}
+                className="transition-colors duration-300"
+                style={{
+                  fontSize: "var(--text-xs)",
+                  color: "var(--text-300)",
+                }}
               >
                 {partner.name}
               </span>

@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", figtree.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", figtree.variable)}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-app __processed_a4927776-6fde-4654-8bb4-813aff7a0597__="true"`}>
         <TawkToWidget />
         {children}
