@@ -1,118 +1,112 @@
+// auth.ts
+import NextAuth, { NextAuthOptions, Session, User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthOptions, Session } from "next-auth";
-import type { JWT } from "next-auth/jwt";
-import bcrypt from "bcrypt";
-import connectDB from "@/lib/mongodb";
+import { JWT } from "next-auth/jwt";
 import User from "@/models/User";
+import bcrypt from "bcrypt";
+import { connectToDB } from "./lib/connectDB";
 
-type CustomUser = {
-  id: string;
-  email: string;
-  name?: string;
-  role: string;
-};
+// ─── Extend next-auth types ───────────────────────────────────────────────────
 
-type CustomToken = JWT & { role?: string; id?: string };
-type CustomSession = Session & {
-  user?: {
-    id?: string;
+declare module "next-auth" {
+  interface User {
+    id: string;
+    email: string;
+    username?: string;
     role?: string;
-    name?: string | null;
-    email?: string | null;
-  };
-};
+  }
 
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      username?: string;
+      role?: string;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    email: string;
+    username?: string;
+    role?: string;
+  }
+}
+
+// ─── Auth Options ─────────────────────────────────────────────────────────────
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "credentials",
-
+      name: "Credentials",
+      id: "credentials",
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-        },
-
-        password: {
-          label: "Password",
-          type: "password",
-        },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
+      async authorize(credentials): Promise<NextAuthUser | null> {
+        await connectToDB();
 
-      async authorize(credentials): Promise<CustomUser | null> {
-        try {
-          await connectDB();
-
-          const user = await User.findOne({
-            email: credentials?.email,
-          });
-
-          if (!user) {
-            throw new Error("Invalid credentials");
-          }
-
-          const isPasswordCorrect = await bcrypt.compare(
-            credentials!.password,
-            user.password
-          );
-
-          if (!isPasswordCorrect) {
-            throw new Error("Invalid credentials");
-          }
-
-          return {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.username || user.name,
-            role: String(user.role || "user"),
-          } as CustomUser;
-        } catch (error) {
-          console.error("Auth error:", error);
-          return null;
+        const { email, password } = credentials ?? {};
+        if (!email || !password) {
+          throw new Error("Email and password are required");
         }
+
+        const user = await User.findOne({ email }).select("+password");
+        if (!user || !user.password) throw new Error("Invalid credentials");
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) throw new Error("Invalid credentials");
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          username: user.username,
+          role: user.role ?? "user",
+        };
       },
     }),
   ],
 
   session: {
     strategy: "jwt" as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   callbacks: {
-    async jwt(params: any) {
-      const { token, user } = params as {
-        token: CustomToken;
-        user?: CustomUser | null;
-      };
-
-      // First login
+    async jwt({ token, user }): Promise<JWT> {
       if (user) {
         token.id = user.id;
+        token.email = user.email;
+        token.username = user.username;
         token.role = user.role;
       }
-
       return token;
     },
 
-    async session(params: any) {
-      const { session, token } = params as {
-        session: CustomSession;
-        token: CustomToken;
+    async session({ session, token }): Promise<Session> {
+      session.user = {
+        id: token.id,
+        email: token.email,
+        username: token.username,
+        role: token.role,
       };
-
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
-
       return session;
+    },
+
+    async redirect({ url, baseUrl }): Promise<string> {
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
 
   pages: {
-    signIn: "/signin",
+    signIn: "/login",
+    error: "/error",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+export default NextAuth(authOptions);
