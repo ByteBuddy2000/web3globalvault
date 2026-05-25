@@ -259,7 +259,7 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
-    const livePrice = await getLivePrice(asset);
+    const livePrice = await getLivePrice(asset as AssetLike);
     if (!livePrice || livePrice <= 0)
       return NextResponse.json(
         { message: "Unable to fetch current asset price. Please try again." },
