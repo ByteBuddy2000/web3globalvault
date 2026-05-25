@@ -416,7 +416,7 @@ function InputField({
   value,
   onChange,
   type = "text",
-}: InputFieldProps): JSX.Element {
+}: InputFieldProps){
   return (
     <div>
       <label className="block text-sm text-muted-foreground mb-1">
@@ -448,7 +448,7 @@ function SelectField({
   value,
   onChange,
   options,
-}: SelectFieldProps): JSX.Element {
+}: SelectFieldProps){
   return (
     <div>
       <label className="block text-sm text-muted-foreground mb-1">
@@ -484,7 +484,7 @@ interface StatCardProps {
 function StatCard({
   label,
   value,
-}: StatCardProps): JSX.Element {
+}: StatCardProps){
   return (
     <div className="rounded-lg border border-border bg-card p-3">
       <div className="text-xs uppercase text-muted-foreground">
