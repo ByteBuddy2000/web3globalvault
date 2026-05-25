@@ -1,10 +1,9 @@
-// auth.ts
-import NextAuth, { NextAuthOptions, Session, User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
-import User from "@/models/User";
+import type { NextAuthOptions, Session } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcrypt";
-import connectDB  from "@/lib/mongodb";
+import connectDB from "@/lib/mongodb";
+import User from "@/models/User";
 
 // ─── Extend next-auth types ───────────────────────────────────────────────────
 
@@ -12,15 +11,14 @@ declare module "next-auth" {
   interface User {
     id: string;
     email: string;
-    username?: string;
+    name?: string;
     role?: string;
   }
-
   interface Session {
     user: {
       id: string;
       email: string;
-      username?: string;
+      name?: string;
       role?: string;
     };
   }
@@ -30,7 +28,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     email: string;
-    username?: string;
+    name?: string;
     role?: string;
   }
 }
@@ -46,24 +44,23 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<NextAuthUser | null> {
-        await connectDB();
-
-        const { email, password } = credentials ?? {};
-        if (!email || !password) {
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
 
-        const user = await User.findOne({ email });
+        await connectDB();
+
+        const user = await User.findOne({ email: credentials.email });
         if (!user || !user.passwordHash) throw new Error("Invalid credentials");
 
-        const isValid = await bcrypt.compare(password, user.passwordHash);
+        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
         if (!isValid) throw new Error("Invalid credentials");
 
         return {
           id: user._id.toString(),
           email: user.email,
-          username: user.username,
+          name: user.fullName,
           role: user.role ?? "user",
         };
       },
@@ -80,7 +77,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.username = user.username;
+        token.name = user.name;
         token.role = user.role;
       }
       return token;
@@ -90,7 +87,7 @@ export const authOptions: NextAuthOptions = {
       session.user = {
         id: token.id,
         email: token.email,
-        username: token.username,
+        name: token.name,
         role: token.role,
       };
       return session;
@@ -102,11 +99,9 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/login",
-    error: "/error",
+    signIn: "/signin",
+    
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-export default NextAuth(authOptions);
