@@ -113,7 +113,7 @@ export async function DELETE(req: NextRequest) {
     const user = await User.findById(userId);
     if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    await user.remove();
+    await user.deleteOne();
     return NextResponse.json({ message: "User removed" });
   } catch (err) {
     console.error("Admin users DELETE error:", err);
