@@ -1,9 +1,21 @@
 import CredentialsProvider from "next-auth/providers/credentials";
+import type { NextAuthOptions, Session } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcrypt";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 
-export const authOptions = {
+type CustomToken = JWT & { role?: string; id?: string };
+type CustomSession = Session & {
+  user?: {
+    id?: string;
+    role?: string;
+    name?: string | null;
+    email?: string | null;
+  };
+};
+
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -55,7 +67,12 @@ export const authOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt(params: any) {
+      const { token, user } = params as {
+        token: CustomToken;
+        user?: { id: string; role: string } | null;
+      };
+
       // First login
       if (user) {
         token.id = user.id;
@@ -65,7 +82,12 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token }) {
+    async session(params: any) {
+      const { session, token } = params as {
+        session: CustomSession;
+        token: CustomToken;
+      };
+
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
