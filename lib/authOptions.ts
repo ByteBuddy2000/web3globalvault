@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import User from "@/models/User";
 import bcrypt from "bcrypt";
-import { connectToDB } from "./lib/connectDB";
+import connectDB  from "@/lib/mongodb";
 
 // ─── Extend next-auth types ───────────────────────────────────────────────────
 
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials): Promise<NextAuthUser | null> {
-        await connectToDB();
+        await connectDB();
 
         const { email, password } = credentials ?? {};
         if (!email || !password) {
