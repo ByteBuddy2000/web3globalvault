@@ -21,6 +21,7 @@ export interface IUser extends Document {
   loans: mongoose.Types.ObjectId[];
   address: string;
   phone: string;
+  profileImage?: string;
   resetPasswordToken: string | null;
   resetPasswordExpires: Date | null;
   createdAt: Date;
@@ -52,6 +53,7 @@ const UserSchema = new Schema<IUser>(
     loans: [{ type: mongoose.Schema.Types.ObjectId, ref: "Loan" }],
     address: { type: String, default: "" },
     phone: { type: String, default: "" },
+    profileImage: { type: String, default: null },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: Date, default: null },
   },
