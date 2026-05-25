@@ -54,10 +54,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const user = await User.findOne({ email }).select("+password");
-        if (!user || !user.password) throw new Error("Invalid credentials");
+        const user = await User.findOne({ email });
+        if (!user || !user.passwordHash) throw new Error("Invalid credentials");
 
-        const isValid = await bcrypt.compare(password, user.password);
+        const isValid = await bcrypt.compare(password, user.passwordHash);
         if (!isValid) throw new Error("Invalid credentials");
 
         return {
