@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Search,
   Bell,
   Menu,
   X,
@@ -11,6 +10,7 @@ import {
   User,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import CryptoPriceTicker from '../CryptoPriceTicker';
 
 type UserData = {
   username: string;
@@ -20,9 +20,7 @@ type UserData = {
 
 const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
   const [user, setUser] = useState<UserData | null>(null);
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const profileRef = useRef<HTMLDivElement | null>(null);
 
@@ -95,38 +93,13 @@ const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
           </div>
         </div>
 
-        {/* Center — search */}
-        <div className="flex-1 flex justify-center min-w-0">
-          {/* Desktop search */}
-          <div className="nb-search-wrap flex items-center gap-2.5 w-full max-w-md bg-glass-white-xs border border-border hover:border-border-strong rounded-lg p-3.5 h-9 transition-all focus-within:border-brand-400 focus-within:shadow-brand-sm">
-            <kbd className="text-xs text-muted-foreground bg-glass-white-xs border border-border rounded px-1.5 py-0.5 font-mono tracking-wider">
-              ⌘K
-            </kbd>
-          </div>
-
-          {/* Mobile search toggle */}
-          {!showMobileSearch ? (
-            <button
-              onClick={() => setShowMobileSearch(true)}
-              aria-label="Search"
-              className="nb-mobile-search-btn hidden w-8 h-8 rounded-lg bg-glass-white-xs border border-border items-center justify-center cursor-pointer outline-none text-muted-foreground hover:text-foreground"
-            >
-              <Search size={14} />
-            </button>
-          ) : (
-            <div className="nb-mobile-search-open hidden items-center gap-2 bg-glass-white-xs border border-brand-400/25 rounded-lg px-3 h-9 flex-1">
-              <Search size={13} color="var(--brand-400)" />
-              <input
-                autoFocus
-                type="text"
-                placeholder="Search..."
-                className="nb-search flex-1 bg-transparent border-none text-xs text-muted-foreground font-mono outline-none placeholder:text-muted-foreground"
-              />
-              <button onClick={() => setShowMobileSearch(false)} className="bg-transparent border-none cursor-pointer text-muted-foreground p-0 leading-none">
-                <X size={13} />
-              </button>
-            </div>
-          )}
+        {/* Center — Crypto Price Ticker */}
+        <div className="flex-1 flex justify-center min-w-0 px-2">
+          <CryptoPriceTicker 
+            symbols={['BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'DOGE']}
+            scrollSpeed={35000}
+            className="w-full max-w-2xl"
+          />
         </div>
 
         {/* Right — clock + notif + profile */}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   Wallet, TrendingUp, SendHorizontal, Repeat,
   Copy, Check, ArrowUpRight, ArrowDownLeft,
-  ChevronRight, Activity, BarChart2, Clock,
+  ChevronRight, Activity, BarChart2, Clock,BedDouble
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import StockDashboard from './components/StockDashboard';
@@ -674,6 +674,7 @@ export default function DashboardContent() {
             <QBtn icon={<ArrowUpRight  size={15} />} label="Withdraw" color="var(--mag-500)"   onClick={() => router.push('/dashboard/withdraw')} />
             <QBtn icon={<TrendingUp    size={15} />} label="Invest"   color="var(--cyan-500)"  onClick={() => router.push('/dashboard/my-investment')} />
             <QBtn icon={<Repeat        size={15} />} label="Swap"     color="var(--amber-500)" onClick={() => router.push('/dashboard/swap')} />
+            <QBtn icon={<BedDouble     size={15} />} label="Medbed" color="var(--vio-300)"   onClick={() => router.push('/dashboard/medbed')} />
             <QBtn icon={<SendHorizontal size={15}/>} label="Transfer" color="var(--vio-300)"   onClick={() => router.push('/dashboard/transfer-money')} />
           </motion.div>
 

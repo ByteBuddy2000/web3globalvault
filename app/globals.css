@@ -1869,7 +1869,33 @@ body {
 .stagger-children>*:nth-child(6) {
   animation-delay: 400ms;
 }
+/* =========================================
+   CRYPTO TICKER
+========================================= */
 
+@keyframes crypto-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.crypto-ticker-container {
+  position: relative;
+}
+
+.crypto-ticker-scroll {
+  width: max-content;
+  animation: crypto-scroll var(--scroll-duration, 30000ms) linear infinite;
+  will-change: transform;
+}
+
+.crypto-ticker-container:hover .crypto-ticker-scroll {
+  animation-play-state: paused;
+}
 /* =========================================
    RESPONSIVE — breakpoints
 ========================================= */
