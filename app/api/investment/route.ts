@@ -247,14 +247,14 @@ export async function POST(req: NextRequest) {
     if (!user)
       return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    const asset = (user.assets || []).find((a: any) =>
+    const asset = ((user.assets as unknown as AssetLike[]) || []).find((a: any) =>
       String(a.symbol).toUpperCase() === String(assetSymbol).toUpperCase()
     );
     if (!asset)
       return NextResponse.json(
         {
           message: "Asset not found in your portfolio",
-          availableAssets: user.assets.map((a:any) => a.symbol),
+          availableAssets: (user.assets as unknown as AssetLike[]).map((a:any) => a.symbol),
         },
         { status: 404 }
       );
