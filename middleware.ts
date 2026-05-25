@@ -1,14 +1,25 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import type { JWT } from "next-auth/jwt";
 
-export async function middleware(request: NextRequest) {
+// ─── Type Definition ──────────────────────────────────────────────────────────
+
+interface AuthToken extends JWT {
+  id: string;
+  email: string;
+  role: string;
+}
+
+// ─── Middleware Function ──────────────────────────────────────────────────────
+
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  const { pathname } = request.nextUrl;
+
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  const { pathname } = request.nextUrl;
+  }) as AuthToken | null;
 
   // Redirect authenticated users away from auth pages
   if ((pathname === "/signin" || pathname === "/signup" || pathname.startsWith("/(auth)")) && token) {
@@ -19,50 +30,63 @@ export async function middleware(request: NextRequest) {
   // Protect admin routes
   if (pathname.startsWith("/admin")) {
     if (!token) {
-      return NextResponse.redirect(
-        new URL("/signin", request.url)
-      );
+      return NextResponse.redirect(new URL("/signin", request.url));
     }
 
     if (token.role !== "admin") {
-      return NextResponse.redirect(
-        new URL("/dashboard", request.url)
-      );
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
   // Protect dashboard routes
   if (pathname.startsWith("/dashboard")) {
     if (!token) {
-      return NextResponse.redirect(
-        new URL("/signin", request.url)
-      );
+      return NextResponse.redirect(new URL("/signin", request.url));
     }
 
     if (token.role === "admin") {
-      return NextResponse.redirect(
-        new URL("/admin", request.url)
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+  }
+
+  // Protect API routes - admin endpoints
+  if (pathname.startsWith("/api/admin")) {
+    if (!token) {
+      return NextResponse.json(
+        { error: "Unauthorized: No token provided" },
+        { status: 401 }
+      );
+    }
+
+    if (token.role !== "admin") {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
       );
     }
   }
 
-  // Protect API routes
-  if (pathname.startsWith("/api/dashboard") || pathname.startsWith("/api/admin")) {
+  // Protect API routes - dashboard endpoints
+  if (pathname.startsWith("/api/dashboard")) {
     if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized: No token provided" },
+        { status: 401 }
+      );
     }
 
-    if (pathname.startsWith("/api/admin") && token.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    if (pathname.startsWith("/api/dashboard") && token.role === "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (token.role === "admin") {
+      return NextResponse.json(
+        { error: "Forbidden: User access only" },
+        { status: 403 }
+      );
     }
   }
 
   return NextResponse.next();
 }
+
+// ─── Middleware Configuration ──────────────────────────────────────────────────
 
 export const config = {
   matcher: [
@@ -71,7 +95,7 @@ export const config = {
     "/signin",
     "/signup",
     "/(auth)/:path*",
-    "/api/dashboard/:path*",
     "/api/admin/:path*",
+    "/api/dashboard/:path*",
   ],
 };

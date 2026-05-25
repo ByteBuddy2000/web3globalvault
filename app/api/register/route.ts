@@ -15,13 +15,20 @@ export async function POST(req: Request) {
     const { fullName, email, password, phone, address } = await req.json();
 
     if (!fullName || !email || !password || !phone || !address) {
+      console.error("[Register] Missing required fields");
       return NextResponse.json({ message: "Missing fields" }, { status: 400 });
     }
 
     await connectDB();
+    console.log("[Register] Database connected");
 
-    const existingUser = await User.findOne({ email });
+    // Normalize email (lowercase)
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log("[Register] Attempting to register:", normalizedEmail);
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
+      console.error("[Register] Email already in use:", normalizedEmail);
       return NextResponse.json({ message: "Email already in use" }, { status: 409 });
     }
 
@@ -32,18 +39,19 @@ export async function POST(req: Request) {
       accountNumber = generateAccountNumber();
       accountExists = !!(await User.findOne({ accountNumber }));
     }
+    console.log("[Register] Generated account number:", accountNumber);
 
     const passwordHash = await bcrypt.hash(password, 12);
     const newUser = await User.create({
       fullName,
-      email,
+      email: normalizedEmail,
       passwordHash,
       accountNumber,
       phone,
       address,
     });
 
-    // ✅ Top 20 stocks (static list for now)
+    console.log("[Register] User created successfully:", newUser.email, "ID:", newUser._id);
     const topStocks = [
       { symbol: "AAPL", name: "Apple", sector: "Technology", market: "NASDAQ" },
       { symbol: "MSFT", name: "Microsoft", sector: "Technology", market: "NASDAQ" },
