@@ -24,7 +24,7 @@ interface ConfirmResponse {
   error?: string;
 }
 
-export default function MedbedSignupPage(): {
+export default function MedbedSignupPage() {
   const router = useRouter();
 
   const [name, setName] = useState<string>("");
