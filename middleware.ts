@@ -10,26 +10,39 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  console.log("TOKEN:", token);
+
   // Protect admin routes
   if (pathname.startsWith("/admin")) {
+    // Not logged in
     if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url));
+      return NextResponse.redirect(
+        new URL("/signin", request.url)
+      );
     }
 
+    // Not admin
     if (token.role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(
+        new URL("/dashboard", request.url)
+      );
     }
   }
 
   // Protect dashboard routes
   if (pathname.startsWith("/dashboard")) {
+    // Not logged in
     if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url));
+      return NextResponse.redirect(
+        new URL("/signin", request.url)
+      );
     }
 
     // Prevent admin from entering user dashboard
     if (token.role === "admin") {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(
+        new URL("/admin", request.url)
+      );
     }
   }
 
