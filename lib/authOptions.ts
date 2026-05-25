@@ -5,6 +5,13 @@ import bcrypt from "bcrypt";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 
+type CustomUser = {
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
+};
+
 type CustomToken = JWT & { role?: string; id?: string };
 type CustomSession = Session & {
   user?: {
@@ -14,6 +21,7 @@ type CustomSession = Session & {
     email?: string | null;
   };
 };
+
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -32,32 +40,37 @@ export const authOptions: NextAuthOptions = {
         },
       },
 
-      async authorize(credentials) {
-        await connectDB();
+      async authorize(credentials): Promise<CustomUser | null> {
+        try {
+          await connectDB();
 
-        const user = await User.findOne({
-          email: credentials?.email,
-        });
+          const user = await User.findOne({
+            email: credentials?.email,
+          });
 
-        if (!user) {
-          throw new Error("Invalid credentials");
+          if (!user) {
+            throw new Error("Invalid credentials");
+          }
+
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials!.password,
+            user.password
+          );
+
+          if (!isPasswordCorrect) {
+            throw new Error("Invalid credentials");
+          }
+
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.username || user.name,
+            role: String(user.role || "user"),
+          } as CustomUser;
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
         }
-
-        const isPasswordCorrect = await bcrypt.compare(
-          credentials!.password,
-          user.password
-        );
-
-        if (!isPasswordCorrect) {
-          throw new Error("Invalid credentials");
-        }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.username || user.name,
-          role: String(user.role || "user"),
-        };
       },
     }),
   ],
@@ -70,7 +83,7 @@ export const authOptions: NextAuthOptions = {
     async jwt(params: any) {
       const { token, user } = params as {
         token: CustomToken;
-        user?: { id: string; role: string } | null;
+        user?: CustomUser | null;
       };
 
       // First login
