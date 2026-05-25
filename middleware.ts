@@ -10,18 +10,20 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  console.log("TOKEN:", token);
+  // Redirect authenticated users away from auth pages
+  if ((pathname === "/signin" || pathname === "/signup" || pathname.startsWith("/(auth)")) && token) {
+    const redirectUrl = token.role === "admin" ? "/admin" : "/dashboard";
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
 
   // Protect admin routes
   if (pathname.startsWith("/admin")) {
-    // Not logged in
     if (!token) {
       return NextResponse.redirect(
         new URL("/signin", request.url)
       );
     }
 
-    // Not admin
     if (token.role !== "admin") {
       return NextResponse.redirect(
         new URL("/dashboard", request.url)
@@ -31,14 +33,12 @@ export async function middleware(request: NextRequest) {
 
   // Protect dashboard routes
   if (pathname.startsWith("/dashboard")) {
-    // Not logged in
     if (!token) {
       return NextResponse.redirect(
         new URL("/signin", request.url)
       );
     }
 
-    // Prevent admin from entering user dashboard
     if (token.role === "admin") {
       return NextResponse.redirect(
         new URL("/admin", request.url)
@@ -46,9 +46,32 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Protect API routes
+  if (pathname.startsWith("/api/dashboard") || pathname.startsWith("/api/admin")) {
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (pathname.startsWith("/api/admin") && token.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (pathname.startsWith("/api/dashboard") && token.role === "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/signin",
+    "/signup",
+    "/(auth)/:path*",
+    "/api/dashboard/:path*",
+    "/api/admin/:path*",
+  ],
 };
