@@ -647,7 +647,7 @@ export default function DashboardContent() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className="text-[11px] max-w-[140px] truncate sm:max-w-none"
+                    className="text-[11px] max-w-35 truncate sm:max-w-none"
                     style={{ color: 'var(--text-secondary)' }}
                   >
                     {userData?.accountNumber ?? '—'}
@@ -787,6 +787,9 @@ export default function DashboardContent() {
             </SideCard>
             <SideCard title="Transactions" onViewAll={() => router.push('/dashboard/transactions')} delay={0.25}>
               <TransactionsWidget transactions={transactions} />
+              
+              <CryptoDashboard />
+
             </SideCard>
           </div>
         </div>
