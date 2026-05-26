@@ -101,6 +101,7 @@ export default function TradingViewProChart({ investments }: Props) {
 
   const [timeframe, setTimeframe] = useState<Timeframe>("1Y");
   const [investmentData, setInvestmentData] = useState<InvestmentHistory[]>([]);
+  const [fetchedInvestments, setFetchedInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch actual investment growth data
@@ -112,13 +113,18 @@ export default function TradingViewProChart({ investments }: Props) {
         if (!response.ok) throw new Error("Failed to fetch investment data");
         
         const data = await response.json();
+        const apiInvestments = data.investments || [];
+        
+        // Store the fetched investments for stats calculation
+        setFetchedInvestments(apiInvestments);
         
         // Calculate portfolio value over time based on transactions
-        const history = calculatePortfolioGrowth(data.investments || [], timeframe);
+        const history = calculatePortfolioGrowth(apiInvestments, timeframe);
         setInvestmentData(history);
       } catch (error) {
         console.error("Error fetching investment data:", error);
         setInvestmentData([]);
+        setFetchedInvestments([]);
       } finally {
         setLoading(false);
       }
@@ -253,28 +259,12 @@ export default function TradingViewProChart({ investments }: Props) {
 
   // Calculate stats from investment data - use actual invested amount
   const calculateStats = () => {
-    if (investmentData.length === 0) return null;
+    if (investmentData.length === 0 || fetchedInvestments.length === 0) return null;
 
     const lastEntry = investmentData[investmentData.length - 1];
-    const firstEntry = investmentData[0];
 
-    // Find total invested by checking all investments that existed on the first tracked date
-    let totalInvested = 0;
-    const investments_data = Array.isArray(investments) ? investments : [];
-    investments_data.forEach((inv) => {
-      const invDate = new Date(inv.createdAt || new Date());
-      const firstDate = new Date(firstEntry.date);
-      if (invDate <= firstDate) {
-        totalInvested += inv.amount;
-      }
-    });
-
-    // If no investments on first date, use current total invested
-    if (totalInvested === 0) {
-      investments_data.forEach((inv) => {
-        totalInvested += inv.amount;
-      });
-    }
+    // Calculate current total invested from fetched investments
+    const totalInvested = fetchedInvestments.reduce((sum, inv) => sum + (inv.amount || 0), 0);
 
     const currentValue = lastEntry.value;
     const totalGain = lastEntry.gain;
