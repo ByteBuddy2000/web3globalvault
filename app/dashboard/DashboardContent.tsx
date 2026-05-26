@@ -579,7 +579,7 @@ export default function DashboardContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="relative overflow-hidden rounded-2xl p-5 sm:p-6"
+            className="relative overflow-hidden rounded-xl p-5 sm:p-6"
             style={{
               background: 'linear-gradient(135deg, rgba(123,47,255,0.12) 0%, rgba(0,229,255,0.04) 60%, rgba(13,11,24,0.92) 100%)',
               border: '1px solid rgba(123,47,255,0.28)',
