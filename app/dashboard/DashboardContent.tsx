@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import {
   Wallet, TrendingUp, SendHorizontal, Repeat,
   Copy, Check, ArrowUpRight, ArrowDownLeft,
-  ChevronRight, Activity, BarChart2, Clock,BedDouble,
-  TriangleAlert
+  ChevronRight, Activity, BarChart2, Clock, BedDouble,
+  TriangleAlert, Eye, EyeOff
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import StockDashboard from './components/StockDashboard';
+import CryptoDashboard from './components/CryptoDashboard';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -56,7 +57,7 @@ function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
-      className="flex-1 min-w-0 rounded-2xl p-4"
+      className="flex-1 min-w-0 rounded-xl p-4"
       style={{
         background: 'rgba(123,47,255,0.07)',
         border: '1px solid var(--surface-border)',
@@ -108,7 +109,7 @@ function QBtn({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 py-3 px-2 flex-1 min-w-[60px] rounded-2xl transition-all outline-none cursor-pointer"
+      className="flex flex-col items-center gap-1.5 py-3 px-2 flex-1 min-w-[60px] rounded-xl transition-all outline-none cursor-pointer"
       style={{
         background: 'var(--surface-1)',
         border: '1px solid var(--surface-border)',
@@ -338,7 +339,7 @@ function DashModal({
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 28 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-t-3xl sm:rounded-2xl p-6 w-full sm:max-w-md relative shadow-2xl font-mono"
+        className="rounded-t-3xl sm:rounded-xl p-6 w-full sm:max-w-md relative shadow-xl font-mono"
         style={{
           background: 'var(--card)',
           border: '1px solid var(--surface-border)',
@@ -462,6 +463,7 @@ export default function DashboardContent() {
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [copiedAcct,   setCopiedAcct]   = useState(false);
   const [currentTime,  setCurrentTime]  = useState('');
+  const [showBalance,  setShowBalance]  = useState(true);
   const router = useRouter();
 
   /* Live clock */
@@ -550,18 +552,18 @@ export default function DashboardContent() {
   if (loading) {
     return (
       <div className="py-4 flex flex-col gap-4 animate-pulse">
-        <div className="h-32 rounded-2xl" style={{ background: 'rgba(123,47,255,0.06)' }} />
+        <div className="h-32 rounded-xl" style={{ background: 'rgba(123,47,255,0.06)' }} />
         <div className="flex gap-2">
           {[1,2,3,4,5].map(i => (
             <div key={i} className="flex-1 h-16 rounded-xl" style={{ background: 'rgba(123,47,255,0.06)' }} />
           ))}
         </div>
         <div className="flex gap-3">
-          <div className="flex-1 h-20 rounded-2xl" style={{ background: 'rgba(123,47,255,0.06)' }} />
-          <div className="flex-1 h-20 rounded-2xl hidden sm:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
-          <div className="flex-1 h-20 rounded-2xl hidden sm:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
+          <div className="flex-1 h-20 rounded-xl" style={{ background: 'rgba(123,47,255,0.06)' }} />
+          <div className="flex-1 h-20 rounded-xl hidden sm:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
+          <div className="flex-1 h-20 rounded-xl hidden sm:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
         </div>
-        <div className="h-56 rounded-2xl hidden md:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
+        <div className="h-56 rounded-xl hidden md:block" style={{ background: 'rgba(123,47,255,0.06)' }} />
       </div>
     );
   }
@@ -604,10 +606,31 @@ export default function DashboardContent() {
                   className="text-[10px] tracking-[0.14em] uppercase mb-2"
                   style={{ color: 'var(--text-muted)' }}
                 >
-                  Total Balance
+                  Total Balance:
                 </div>
-                <div className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-none text-gradient">
-                  ${fmt(totalValueNumber)}
+                <div className="flex items-center gap-2">
+                  <div className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-none text-gradient">
+                    {showBalance ? `$${fmt(totalValueNumber)}` : '••••••'}
+                  </div>
+                  <button
+                    onClick={() => setShowBalance(!showBalance)}
+                    className="mt-2 p-2 rounded-lg outline-none cursor-pointer transition-all"
+                    style={{
+                      background: 'rgba(123,47,255,0.08)',
+                      border: '1px solid rgba(123,47,255,0.20)',
+                      color: 'var(--text-muted)',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(123,47,255,0.14)';
+                      e.currentTarget.style.color = 'var(--vio-300)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'rgba(123,47,255,0.08)';
+                      e.currentTarget.style.color = 'var(--text-muted)';
+                    }}
+                  >
+                    {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
+                  </button>
                 </div>
                 <div className="mt-2 text-xs" style={{ color: 'var(--green-500)' }}>
                   {userData?.totalValueChange || '+0.00%'} today
@@ -734,6 +757,27 @@ export default function DashboardContent() {
               </span>
             </div>
             <StockDashboard />
+          </motion.div>
+
+          {/* ── Crypto Market Chart ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.4 }}
+            className="hidden sm:block card p-4 sm:p-5"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+                Market Overview
+              </h3>
+              <span
+                className="badge badge-amber"
+                style={{ fontSize: '9px' }}
+              >
+                LIVE
+              </span>
+            </div>
+            <CryptoDashboard />
           </motion.div>
 
           {/* ── Tablet: assets + txns below chart ── */}
