@@ -102,6 +102,11 @@ export async function PATCH(request: NextRequest) {
         ? `Medbed Registration Approved: ${registrationId}`
         : `Medbed Registration Rejected: ${registrationId}`;
 
+    const emailText =
+      action === "approve"
+        ? `Medbed Registration Approved\n\nDear ${registration.name},\n\nYour medbed registration has been verified and approved by our admin team.\n\nRegistration ID: ${registrationId}\nBed Color: ${registration.color}\n\nYour medbed will be set up shortly. You will receive further instructions via email.\n\nThank you for choosing our medbed service!`
+        : `Medbed Registration Status Update\n\nDear ${registration.name},\n\nYour medbed registration (ID: ${registrationId}) has been reviewed.\n\nStatus: Rejected\n${notes ? `Reason: ${notes}` : ""}\n\nPlease contact our support team for more information.`;
+
     const emailHtml =
       action === "approve"
         ? `
@@ -126,6 +131,7 @@ export async function PATCH(request: NextRequest) {
       await sendEmail({
         to: registration.email,
         subject: emailSubject,
+        text: emailText,
         html: emailHtml,
       });
     } catch (emailError) {
@@ -135,9 +141,11 @@ export async function PATCH(request: NextRequest) {
     // Notify admin/support
     const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@GlobalVaultbank.com";
     try {
+      const supportText = `Medbed Registration ${action === "approve" ? "Approved" : "Rejected"}\n\nRegistration ID: ${registrationId}\nName: ${registration.name}\nEmail: ${registration.email}\nAction: ${action === "approve" ? "APPROVED" : "REJECTED"}\nVerified By: ${user.fullName || user.email}\n${notes ? `Notes: ${notes}` : ""}`;
       await sendEmail({
         to: SUPPORT_EMAIL,
         subject: `Medbed Registration ${action === "approve" ? "Approved" : "Rejected"}: ${registrationId}`,
+        text: supportText,
         html: `
           <h2>Medbed Registration ${action === "approve" ? "Approved" : "Rejected"}</h2>
           <p><strong>Registration ID:</strong> ${registrationId}</p>
