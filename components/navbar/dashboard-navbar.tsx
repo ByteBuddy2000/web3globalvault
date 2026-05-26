@@ -111,15 +111,7 @@ const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
             <span className="text-[10px] text-muted-foreground tracking-widest">{currentTime}</span>
           </div>
 
-          {/* Notifications */}
-          <button
-            aria-label="Notifications"
-            className="w-8 h-8 rounded-lg bg-glass-white-xs border border-border flex items-center justify-center cursor-pointer outline-none text-muted-foreground hover:text-foreground hover:bg-glass-white-sm hover:border-brand-400/25 transition-all relative"
-          >
-            <Bell size={14} />
-            {/* unread dot */}
-            <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-warning-500 border border-surface-100" />
-          </button>
+          
 
           {/* Profile */}
           <div ref={profileRef} className="relative">

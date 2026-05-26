@@ -184,7 +184,7 @@ export default function Sidebar({
           ${collapsed && !isMobile ? 'px-2' : 'px-3'}`}
       >
         <NavSection title="Menu"             links={mainLinks} />
-        <NavSection title="Tools & Partners" links={toolsLinks} />
+        <NavSection title="Tools" links={toolsLinks} />
         <NavSection title="Account"          links={settingsLinks} />
       </nav>
 
