@@ -768,7 +768,7 @@ export default function HomePage() {
             icon: Lock,
           },
           {
-            img: "/asset/card2.jpeg",
+            img: "/asset/card2.png",
             tag: "Analytics",
             title: "Real-Time Investment Tracking",
             desc: "Track and grow your investments with real-time insights and powerful dashboards.",
