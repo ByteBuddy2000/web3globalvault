@@ -164,8 +164,7 @@ export default function CryptoPriceTicker({
       <div
         className={`crypto-ticker-container flex items-center overflow-hidden rounded-lg px-3 py-2 ${className}`}
         style={{
-          background: 'rgba(123, 47, 255, 0.05)',
-          border: '1px solid var(--surface-border)',
+          background: 'transparent',
         }}
       >
         <div className="crypto-ticker-scroll flex gap-6 whitespace-nowrap">
