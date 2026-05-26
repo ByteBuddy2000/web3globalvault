@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
       await sendEmail({
         to: SUPPORT_EMAIL,
         subject: `Medbed Payment Confirmed: ${registrationId}`,
+        text: `Medbed Payment Confirmed\n\nRegistration ID: ${registrationId}\nName: ${registration.name}\nEmail: ${registration.email}\nAmount XRP: ${registration.amountXrp}\nTransaction Hash: ${txHash}\nStatus: Awaiting admin verification`,
         html: `
           <h2>Medbed Payment Confirmed</h2>
           <p><strong>Registration ID:</strong> ${registrationId}</p>
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       await sendEmail({
         to: registration.email,
         subject: `Payment Confirmed - Medbed Registration ${registrationId}`,
+        text: `Payment Confirmed!\n\nDear ${registration.name},\n\nYour medbed registration payment has been received and confirmed.\n\nTransaction Hash: ${txHash}\n\nYour registration is now pending admin verification. You will receive an email once it has been verified.\n\nThank you for choosing our medbed service!`,
         html: `
           <h2>Payment Confirmed!</h2>
           <p>Dear ${registration.name},</p>
