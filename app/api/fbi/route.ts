@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       await sendEmail({
         to: email,
         subject: `Complaint Received: ${subject}`,
+        text: `Thank You for Your Report\n\nDear ${fullName},\n\nWe have received your complaint and it has been assigned a reference number.\n\nReference Number: ${complaint._id}\nSubject: ${subject}\n\nOur team will review your complaint and respond as soon as possible.\n\nThank you for helping us maintain a safe and secure platform.\n\nBest regards,\nGlobal Vault Security Team`,
         html: `
           <h2>Thank You for Your Report</h2>
           <p>Dear ${fullName},</p>
@@ -51,9 +52,11 @@ export async function POST(request: NextRequest) {
 
     // Send notification to support
     try {
+      const supportText = `New FBI Complaint Report\n\nReference ID: ${complaint._id}\nSubmitted by: ${fullName}\nEmail: ${email}\nContact Email: ${contactEmail || email}\nSubject: ${subject}\nMessage:\n${message}\n\nSubmitted on: ${new Date().toLocaleString()}`;
       await sendEmail({
         to: SUPPORT_EMAIL,
         subject: `New FBI Complaint: ${subject}`,
+        text: supportText,
         html: `
           <h2>New FBI Complaint Report</h2>
           <p><strong>Reference ID:</strong> ${complaint._id}</p>
