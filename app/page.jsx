@@ -761,7 +761,7 @@ export default function HomePage() {
       >
         {[
           {
-            img: "/asset/card1.jpeg",
+            img: "/asset/card1.png",
             tag: "Advisory",
             title: "Expert Financial Advice",
             desc: "Talk to certified consultants about business growth and smart investments.",
