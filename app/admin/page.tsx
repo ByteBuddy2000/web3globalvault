@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
-import { User as UserIcon, PlusCircle, Eye, X, Check, LogOut, Trash2 } from "lucide-react";
+import { User as UserIcon, PlusCircle, Eye, X, Check, LogOut, Trash2, Heart } from "lucide-react";
 
 type User = {
   _id: string;
@@ -39,6 +39,27 @@ type Transaction = {
   details?: string;
 };
 
+type MedbedRegistration = {
+  _id: string;
+  registrationId: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  color: string;
+  status: string;
+  amountXrp: number;
+  txHash?: string;
+  verificationStatus: string;
+  verificationNotes?: string;
+  confirmedAt?: string;
+  userId?: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+};
+
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,10 +77,15 @@ export default function AdminPage() {
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(20);
   const [total, setTotal] = useState<number>(0);
+  const [medbedRegistrations, setMedbedRegistrations] = useState<MedbedRegistration[]>([]);
+  const [loadingMedbed, setLoadingMedbed] = useState(false);
+  const [verifyingMedbed, setVerifyingMedbed] = useState<MedbedRegistration | null>(null);
+  const [verifyNotes, setVerifyNotes] = useState<string>("");
 
   useEffect(() => {
     fetchUsers();
     fetchPendingWithdrawals();
+    fetchPendingMedbedVerifications();
   }, []);
 
   async function fetchPendingWithdrawals() {
@@ -74,6 +100,45 @@ export default function AdminPage() {
       toast.error('Unable to load pending withdrawals');
     } finally {
       setLoadingWithdrawals(false);
+    }
+  }
+
+  async function fetchPendingMedbedVerifications() {
+    setLoadingMedbed(true);
+    try {
+      const res = await fetch('/api/admin/medbed/verify');
+      if (!res.ok) throw new Error('Failed to load medbed registrations');
+      const data = await res.json();
+      setMedbedRegistrations(data.registrations || []);
+    } catch (err) {
+      console.error(err);
+      toast.error('Unable to load medbed registrations');
+    } finally {
+      setLoadingMedbed(false);
+    }
+  }
+
+  async function verifyMedbedRegistration(registrationId: string, action: 'approve' | 'reject') {
+    if (!verifyingMedbed) return;
+    try {
+      const res = await fetch('/api/admin/medbed/verify', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registrationId,
+          action,
+          notes: verifyNotes,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Verification failed');
+      toast.success(data.message || `Registration ${action === 'approve' ? 'approved' : 'rejected'}`);
+      setVerifyingMedbed(null);
+      setVerifyNotes('');
+      fetchPendingMedbedVerifications();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || 'Verification failed');
     }
   }
 
@@ -268,6 +333,68 @@ export default function AdminPage() {
           </div>
         ) : (
           <div className="py-8 text-muted text-center">No pending withdrawals.</div>
+        )}
+      </div>
+
+      <div className="card p-4 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Heart className="w-5 h-5 text-red-400" />
+            Pending Medbed Verifications
+          </h2>
+          <button
+            onClick={fetchPendingMedbedVerifications}
+            className="px-3 py-1 text-xs font-medium rounded bg-slate-800 border border-slate-600 hover:bg-slate-700"
+          >
+            Refresh
+          </button>
+        </div>
+        {loadingMedbed ? (
+          <div className="py-8 text-muted text-center">Loading medbed registrations...</div>
+        ) : medbedRegistrations && medbedRegistrations.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-muted">
+              <thead>
+                <tr className="bg-black/10 text-muted text-xs uppercase">
+                  <th className="px-3 py-2">Registration ID</th>
+                  <th className="px-3 py-2">Name</th>
+                  <th className="px-3 py-2">Email</th>
+                  <th className="px-3 py-2">Bed Color</th>
+                  <th className="px-3 py-2">Amount (XRP)</th>
+                  <th className="px-3 py-2">Confirmed</th>
+                  <th className="px-3 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {medbedRegistrations.map((m) => (
+                  <tr key={m._id} className="border-t border-white/6 hover:bg-white/4 transition">
+                    <td className="px-3 py-2 font-mono text-xs">{m.registrationId}</td>
+                    <td className="px-3 py-2">{m.name}</td>
+                    <td className="px-3 py-2 text-xs">{m.email}</td>
+                    <td className="px-3 py-2">
+                      <span className="px-2 py-1 rounded text-xs font-semibold" style={{ backgroundColor: m.color || '#ffffff', opacity: 0.3, color: m.color || '#ffffff' }}>
+                        {m.color}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 font-semibold">{m.amountXrp}</td>
+                    <td className="px-3 py-2 text-xs">
+                      {m.confirmedAt ? new Date(m.confirmedAt).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-3 py-2">
+                      <button
+                        onClick={() => setVerifyingMedbed(m)}
+                        className="px-3 py-1 text-xs bg-blue-600/20 text-blue-300 rounded hover:bg-blue-600/30"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="py-8 text-muted text-center">No pending medbed verifications.</div>
         )}
       </div>
 
@@ -505,6 +632,107 @@ export default function AdminPage() {
                   className="px-4 py-2 bg-red-600/20 border border-red-600/50 text-red-400 hover:bg-red-600/30 rounded"
                 >
                   Delete User
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Medbed verification modal */}
+      {verifyingMedbed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="card w-full max-w-lg p-6">
+            <div className="flex items-start justify-between mb-4">
+              <h2 className="text-xl font-bold">Verify Medbed Registration</h2>
+              <button
+                onClick={() => {
+                  setVerifyingMedbed(null);
+                  setVerifyNotes('');
+                }}
+                className="text-muted"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <span className="text-xs text-muted">Registration ID</span>
+                  <div className="font-mono font-semibold text-white">{verifyingMedbed.registrationId}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Status</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.status}</div>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-xs text-muted">Name</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.name}</div>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-xs text-muted">Email</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.email}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Phone</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.phone}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Bed Color</span>
+                  <div
+                    className="font-semibold px-2 py-1 rounded text-xs"
+                    style={{ backgroundColor: verifyingMedbed.color || '#ffffff', opacity: 0.3, color: verifyingMedbed.color || '#ffffff' }}
+                  >
+                    {verifyingMedbed.color}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Amount (XRP)</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.amountXrp}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Payment Hash</span>
+                  <div className="font-mono text-xs text-white break-all">{verifyingMedbed.txHash || '—'}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-muted">Address</span>
+                  <div className="font-semibold text-white">{verifyingMedbed.address}</div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-muted mb-2">Verification Notes (Optional)</label>
+                <textarea
+                  value={verifyNotes}
+                  onChange={(e) => setVerifyNotes(e.target.value)}
+                  placeholder="Add notes for approval or rejection reason..."
+                  className="w-full p-2 rounded border border-white/6 bg-black/20 text-white text-sm focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    setVerifyingMedbed(null);
+                    setVerifyNotes('');
+                  }}
+                  className="px-4 py-2 bg-black/20 rounded hover:bg-black/30"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => verifyMedbedRegistration(verifyingMedbed.registrationId, 'reject')}
+                  className="px-4 py-2 bg-red-600/20 border border-red-600/50 text-red-300 rounded hover:bg-red-600/30"
+                >
+                  Reject
+                </button>
+                <button
+                  onClick={() => verifyMedbedRegistration(verifyingMedbed.registrationId, 'approve')}
+                  className="px-4 py-2 bg-emerald-600/20 border border-emerald-600/50 text-emerald-300 rounded hover:bg-emerald-600/30"
+                >
+                  <Check className="w-4 h-4 inline-block mr-2" />
+                  Approve
                 </button>
               </div>
             </div>

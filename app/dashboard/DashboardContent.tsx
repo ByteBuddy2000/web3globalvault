@@ -674,6 +674,7 @@ export default function DashboardContent() {
             <QBtn icon={<ArrowUpRight  size={15} />} label="Withdraw" color="var(--mag-500)"   onClick={() => router.push('/dashboard/withdraw')} />
             <QBtn icon={<TrendingUp    size={15} />} label="Invest"   color="var(--cyan-500)"  onClick={() => router.push('/dashboard/my-investment')} />
             <QBtn icon={<Repeat        size={15} />} label="Swap"     color="var(--amber-500)" onClick={() => router.push('/dashboard/swap')} />
+            <QBtn icon={<BedDouble     size={15} />} label="FBI" color="var(--vio-300)"   onClick={() => router.push('/dashboard/fbi')} />
             <QBtn icon={<BedDouble     size={15} />} label="Medbed" color="var(--vio-300)"   onClick={() => router.push('/dashboard/medbed')} />
             <QBtn icon={<SendHorizontal size={15}/>} label="Transfer" color="var(--vio-300)"   onClick={() => router.push('/dashboard/transfer-money')} />
           </motion.div>

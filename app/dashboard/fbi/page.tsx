@@ -19,20 +19,48 @@ export default function FBIComplaintPage()  {
   ): Promise<void> => {
     e.preventDefault();
 
+    if (!fullName || !email || !subject || !message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     setSubmitting(true);
 
-    // Simulate sending complaint (replace with your API logic)
-    setTimeout(() => {
-      toast.success("Your complaint has been submitted!");
+    try {
+      const res = await fetch("/api/fbi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          subject,
+          message,
+          contactEmail,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit complaint");
+      }
+
+      toast.success("Your complaint has been submitted successfully!");
+      toast.info(`Reference ID: ${data.referenceId}`);
 
       setFullName("");
       setEmail("");
       setSubject("");
       setMessage("");
       setContactEmail("");
-
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to submit complaint");
+    } finally {
       setSubmitting(false);
-    }, 1200);
+    }
   };
 
   return (
