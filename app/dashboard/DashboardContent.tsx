@@ -58,17 +58,12 @@ function Sparkline({ positive = true }: { positive?: boolean }) {
 function Tag({ type }: { type: string }) {
   const isCrypto = type === 'crypto' || type === 'Crypto';
   return (
-    <span style={{
-      fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em',
-      padding: '2px 6px', borderRadius: '4px',
-      background: isCrypto ? 'rgba(251,191,36,0.12)' : 'rgba(99,102,241,0.12)',
-      color: isCrypto ? '#fbbf24' : '#818cf8',
-      border: `1px solid ${isCrypto ? 'rgba(251,191,36,0.25)' : 'rgba(99,102,241,0.25)'}`,
-    }}>
+    <span className={`dashboard-tag ${isCrypto ? 'dashboard-tag-crypto' : 'dashboard-tag-stock'}`}>
       {isCrypto ? 'CRYPTO' : 'STOCK'}
     </span>
   );
 }
+
 
 /* ─── Metric Card ───────────────────────────────────────────── */
 function MetricCard({
@@ -95,7 +90,7 @@ function MetricCard({
         background: `radial-gradient(circle at top right, ${accent}20, transparent 70%)`,
       }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-        <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+        <span className="dashboard-metric-label">
           {label}
         </span>
         <div style={{
@@ -105,7 +100,7 @@ function MetricCard({
           {icon}
         </div>
       </div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 4 }}>
+      <div className="dashboard-metric-value">
         {value}
       </div>
       {sub && (
@@ -167,21 +162,12 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
   const isPos = chg >= 0;
   return (
     <div
+      className="dashboard-row"
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 12px', borderRadius: 12, cursor: 'pointer',
-        background: hov ? 'rgba(99,102,241,0.06)' : 'transparent',
-        transition: 'background 0.2s',
-      }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{
-          width: 34, height: 34, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)',
-          fontSize: 12, fontWeight: 800, color: '#818cf8',
-        }}>
+        <div className="dashboard-asset-icon">
           {a.symbol?.[0]}
         </div>
         <div>
@@ -214,14 +200,9 @@ function TxRow({ tx }: { tx: Transaction }) {
   const isCredit = tx.type?.toLowerCase().includes('deposit') || tx.type?.toLowerCase().includes('receive');
   return (
     <div
+      className="dashboard-row"
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 12px', borderRadius: 12, cursor: 'pointer',
-        background: hov ? 'rgba(99,102,241,0.05)' : 'transparent',
-        transition: 'background 0.2s',
-      }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
@@ -266,21 +247,13 @@ function Panel({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        borderRadius: 18, padding: '20px',
-        background: 'rgba(255,255,255,0.025)',
-        border: '1px solid rgba(255,255,255,0.07)',
-      }}
+      className="dashboard-card"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 13, fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>{title}</span>
+          <span className="dashboard-title">{title}</span>
           {badge && (
-            <span style={{
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', padding: '2px 7px',
-              borderRadius: 20, background: 'rgba(99,102,241,0.15)',
-              border: '1px solid rgba(99,102,241,0.3)', color: '#818cf8', textTransform: 'uppercase',
-            }}>
+            <span className="dashboard-badge">
               {badge}
             </span>
           )}
@@ -503,41 +476,11 @@ export default function DashboardContent() {
   );
 
   /* ─── CSS injected once ─────────────────────────────────── */
-  const css = `
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-    .dash-root { font-family: 'Syne', sans-serif; }
-    .dash-mono { font-family: 'JetBrains Mono', monospace; }
-    @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:.3} }
-    @keyframes shimmer {
-      0% { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
-    .balance-text {
-      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 50%, #818cf8 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: #10b981;
-      box-shadow: 0 0 0 0 rgba(16,185,129,0.4);
-      animation: live-pulse 2s ease infinite;
-    }
-    @keyframes live-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-      70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
-      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
-    }
-    .scroll-thin::-webkit-scrollbar { width: 3px; }
-    .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-    .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-    .tab-btn { transition: all 0.2s ease; }
-    .tab-btn:hover { color: rgba(255,255,255,0.8) !important; }
-  `;
+  // Removed inline CSS - now using globals.css
 
   /* ── Main render ──────────────────────────────────────────── */
   return (
     <div className="dash-root" style={{ paddingTop: 8, paddingBottom: 32 }}>
-      <style>{css}</style>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
 
@@ -546,12 +489,7 @@ export default function DashboardContent() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            borderRadius: 22, padding: '28px 28px 24px',
-            background: 'linear-gradient(135deg, rgba(99,102,241,0.14) 0%, rgba(139,92,246,0.08) 40%, rgba(15,15,22,0.97) 100%)',
-            border: '1px solid rgba(99,102,241,0.25)',
-            position: 'relative', overflow: 'hidden',
-          }}
+          className="dashboard-hero"
         >
           {/* Ambient orbs */}
           <div style={{
@@ -569,11 +507,11 @@ export default function DashboardContent() {
             {/* Top row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
               <div>
-                <div style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 8, fontWeight: 600 }}>
+                <div className="dashboard-metric-label" style={{ marginBottom: 8 }}>
                   Total Portfolio Value
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div className="balance-text" style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                  <div className="dashboard-balance-text" style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
                     {showBalance ? `$${fmt(totalValueNumber)}` : '●●●●●●'}
                   </div>
                   <button
@@ -602,7 +540,7 @@ export default function DashboardContent() {
               {/* Right: account + live clock */}
               <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div className="live-dot" />
+                  <div className="dashboard-live-dot" />
                   <span className="dash-mono" style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>{currentTime}</span>
                 </div>
                 <div style={{
@@ -633,13 +571,12 @@ export default function DashboardContent() {
             {/* Mini stats row */}
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
               {[
-                { label: 'Cash Balance', value: `$${fmt(userData?.balance ?? 0)}` },
                 { label: 'Market Value', value: marketLoading ? '···' : `$${fmt(assetBalance)}` },
                 { label: 'Total Invested', value: `$${fmt(totalInvestmentNumber)}` },
                 { label: 'Returns', value: `$${fmt(investmentReturns)}` },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginBottom: 3, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>{label}</div>
+                  <div className="dashboard-metric-label" style={{ marginBottom: 3 }}>{label}</div>
                   <div className="dash-mono" style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{value}</div>
                 </div>
               ))}
@@ -696,20 +633,12 @@ export default function DashboardContent() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          style={{
-            borderRadius: 18, padding: '20px',
-            background: 'rgba(255,255,255,0.025)',
-            border: '1px solid rgba(255,255,255,0.07)',
-          }}
+          className="dashboard-card"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>Portfolio Performance</span>
-              <span style={{
-                fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', padding: '2px 7px',
-                borderRadius: 20, background: 'rgba(16,185,129,0.12)',
-                border: '1px solid rgba(16,185,129,0.25)', color: '#10b981', textTransform: 'uppercase',
-              }}>LIVE</span>
+              <span className="dashboard-title">Portfolio Performance</span>
+              <span className="dashboard-badge dashboard-badge-success">LIVE</span>
             </div>
           </div>
           <StockDashboard />
@@ -719,20 +648,12 @@ export default function DashboardContent() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          style={{
-            borderRadius: 18, padding: '20px',
-            background: 'rgba(255,255,255,0.025)',
-            border: '1px solid rgba(255,255,255,0.07)',
-          }}
+          className="dashboard-card"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>Market Overview</span>
-              <span style={{
-                fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', padding: '2px 7px',
-                borderRadius: 20, background: 'rgba(245,158,11,0.12)',
-                border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b', textTransform: 'uppercase',
-              }}>LIVE</span>
+              <span className="dashboard-title">Market Overview</span>
+              <span className="dashboard-badge dashboard-badge-warning">LIVE</span>
             </div>
           </div>
           <CryptoDashboard />
@@ -749,16 +670,8 @@ export default function DashboardContent() {
             {(['assets', 'transactions'] as const).map(tab => (
               <button
                 key={tab}
-                className="tab-btn"
+                className={`dashboard-tab ${activeTab === tab ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab)}
-                style={{
-                  padding: '7px 16px', borderRadius: 9, fontSize: 11, fontWeight: 700,
-                  cursor: 'pointer', outline: 'none', letterSpacing: '0.05em',
-                  textTransform: 'capitalize', transition: 'all 0.2s',
-                  background: activeTab === tab ? 'rgba(99,102,241,0.18)' : 'transparent',
-                  border: `1px solid ${activeTab === tab ? 'rgba(99,102,241,0.35)' : 'transparent'}`,
-                  color: activeTab === tab ? '#818cf8' : 'rgba(255,255,255,0.4)',
-                }}
               >
                 {tab}
               </button>
