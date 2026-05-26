@@ -1,6 +1,4 @@
 "use client";
-import { CandlestickSeries } from "lightweight-charts";
-import { HistogramSeries } from "lightweight-charts";
 import { LineSeries } from "lightweight-charts";
 
 import { useEffect, useRef, useState } from "react";
@@ -8,12 +6,20 @@ import {
   createChart,
   ColorType,
   IChartApi,
-  ISeriesApi,
 } from "lightweight-charts";
 
 interface Investment {
+  _id?: string;
   amount: number;
   expectedAnnualReturn?: number;
+  createdAt?: string;
+  status?: string;
+}
+
+interface InvestmentHistory {
+  date: string;
+  value: number;
+  gain: number;
 }
 
 interface Props {
@@ -23,15 +29,106 @@ interface Props {
 const TIMEFRAMES = ["1M", "3M", "6M", "1Y"] as const;
 type Timeframe = (typeof TIMEFRAMES)[number];
 
+// Calculate portfolio growth from actual investment data
+function calculatePortfolioGrowth(investments: Investment[], timeframe: Timeframe): InvestmentHistory[] {
+  const now = new Date();
+  let startDate = new Date(now);
+
+  // Set start date based on timeframe
+  if (timeframe === "1M") {
+    startDate.setMonth(now.getMonth() - 1);
+  } else if (timeframe === "3M") {
+    startDate.setMonth(now.getMonth() - 3);
+  } else if (timeframe === "6M") {
+    startDate.setMonth(now.getMonth() - 6);
+  } else {
+    startDate.setFullYear(now.getFullYear() - 1);
+  }
+
+  // Sort investments by date
+  const sortedInvestments = [...investments].sort((a, b) => {
+    const dateA = new Date(a.createdAt || now).getTime();
+    const dateB = new Date(b.createdAt || now).getTime();
+    return dateA - dateB;
+  });
+
+  const history: InvestmentHistory[] = [];
+  let currentDate = new Date(startDate);
+  const trackedInvestments = new Set<string>();
+
+  // Generate daily data points
+  while (currentDate <= now) {
+    let totalInvested = 0;
+    let dailyPortfolioValue = 0;
+
+    // Calculate total invested and current value on this date
+    sortedInvestments.forEach((inv) => {
+      const invDate = new Date(inv.createdAt || now);
+      if (invDate <= currentDate) {
+        // Add to total invested
+        totalInvested += inv.amount;
+
+        // Calculate growth
+        const daysInvested = Math.floor((currentDate.getTime() - invDate.getTime()) / (1000 * 60 * 60 * 24));
+        const rate = (inv.expectedAnnualReturn ?? 6) / 100 / 365; // Daily rate
+        const value = inv.amount * Math.pow(1 + rate, daysInvested);
+        dailyPortfolioValue += value;
+      }
+    });
+
+    // Only add to history if there are investments
+    if (totalInvested > 0) {
+      const gain = dailyPortfolioValue - totalInvested;
+
+      history.push({
+        date: currentDate.toISOString(),
+        value: dailyPortfolioValue,
+        gain,
+      });
+    }
+
+    // Move to next day
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return history.length > 0 ? history : [];
+}
+
 export default function TradingViewProChart({ investments }: Props) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<IChartApi | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [timeframe, setTimeframe] = useState<Timeframe>("1Y");
+  const [investmentData, setInvestmentData] = useState<InvestmentHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch actual investment growth data
+  useEffect(() => {
+    const fetchInvestmentData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/investment", { credentials: "include" });
+        if (!response.ok) throw new Error("Failed to fetch investment data");
+        
+        const data = await response.json();
+        
+        // Calculate portfolio value over time based on transactions
+        const history = calculatePortfolioGrowth(data.investments || [], timeframe);
+        setInvestmentData(history);
+      } catch (error) {
+        console.error("Error fetching investment data:", error);
+        setInvestmentData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInvestmentData();
+  }, [timeframe]);
 
   useEffect(() => {
-    if (!chartRef.current || !containerRef.current) return;
+    if (!chartRef.current || !containerRef.current || loading || investmentData.length === 0) return;
 
     // Clear previous chart safely
     if (chartInstance.current) {
@@ -70,80 +167,25 @@ export default function TradingViewProChart({ investments }: Props) {
 
     chartInstance.current = chart;
 
-    // 🔥 Candlestick Series
+    // Portfolio value line series
+    const portfolioSeries = chart.addSeries(LineSeries, {
+      color: "#10b981",
+      lineWidth: 2,
+      title: "Portfolio Value",
+    });
 
-const candleSeries = chart.addSeries(CandlestickSeries, {
-  upColor: "#10B981",
-  downColor: "#ef4444",
-  borderUpColor: "#10B981",
-  borderDownColor: "#ef4444",
-  wickUpColor: "#10B981",
-  wickDownColor: "#ef4444",
-});
-    // 🔥 Volume Series
-    
+    // Generate line chart data from investment history
+    const lineData: any[] = [];
 
-const volumeSeries = chart.addSeries(HistogramSeries, {
-  priceFormat: { type: "volume" },
-  priceScaleId: "",
-});
-    // 🔥 EMA Line
-    const emaSeries = chart.addSeries(LineSeries, {
-  color: "#f0b429",
-  lineWidth: 2,
-});
-
-    // 📊 Generate Data Based on Timeframe
-    const points =
-      timeframe === "1M" ? 30 :
-      timeframe === "3M" ? 90 :
-      timeframe === "6M" ? 180 :
-      365;
-
-    const candleData: any[] = [];
-    const volumeData: any[] = [];
-
-    let emaPrev = 0;
-    const k = 2 / (10 + 1); // EMA 10
-
-    for (let i = 0; i < points; i++) {
-      let open = 0;
-      let close = 0;
-
-      investments.forEach((inv) => {
-        const amt = inv.amount;
-        const rate = (inv.expectedAnnualReturn ?? 6) / 100;
-        const monthly = Math.pow(1 + rate, 1 / 12) - 1;
-
-        open += amt;
-        close += amt * Math.pow(1 + monthly, i + 1);
-      });
-
-      const high = Math.max(open, close) * 1.02;
-      const low = Math.min(open, close) * 0.98;
-
-      const time = Math.floor(Date.now() / 1000) - (points - i) * 86400;
-
-      candleData.push({ time, open, high, low, close });
-
-      const volume = Math.abs(close - open) * 10;
-
-      volumeData.push({
+    investmentData.forEach((entry, index) => {
+      const time = Math.floor(new Date(entry.date).getTime() / 1000);
+      lineData.push({
         time,
-        value: volume,
-        color: close >= open ? "#10B98155" : "#ef444455",
+        value: entry.value,
       });
+    });
 
-      // EMA Calculation
-      const price = close;
-      emaPrev = i === 0 ? price : price * k + emaPrev * (1 - k);
-
-      emaSeries.update({ time: time as any, value: emaPrev });
-    }
-
-    candleSeries.setData(candleData);
-    volumeSeries.setData(volumeData);
-
+    portfolioSeries.setData(lineData);
     chart.timeScale().fitContent();
 
     // 🔄 Resize
@@ -167,9 +209,9 @@ const volumeSeries = chart.addSeries(HistogramSeries, {
         chartInstance.current = null;
       }
     };
-  }, [investments, timeframe]);
+  }, [investmentData, timeframe]);
 
-  if (!investments || investments.length === 0) {
+  if (loading || !investmentData || investmentData.length === 0) {
     return (
       <div style={{
         width: "100%",
@@ -180,15 +222,109 @@ const volumeSeries = chart.addSeries(HistogramSeries, {
         minHeight: "250px"
       }}>
         <div style={{ textAlign: "center", color: "#8b949e" }}>
-          <p style={{ fontSize: 14, marginBottom: 8 }}>No investments yet</p>
-          <p style={{ fontSize: 12, opacity: 0.7 }}>Create an investment to see growth projections</p>
+          {loading ? (
+            <>
+              <p style={{ fontSize: 14, marginBottom: 8 }}>Loading investment growth data...</p>
+              <div style={{
+                width: 24,
+                height: 24,
+                border: "2px solid rgba(139, 148, 158, 0.2)",
+                borderTop: "2px solid #8b949e",
+                borderRadius: "50%",
+                animation: "spin 0.8s linear infinite",
+                margin: "0 auto",
+              }} />
+              <style>{`
+                @keyframes spin {
+                  to { transform: rotate(360deg); }
+                }
+              `}</style>
+            </>
+          ) : (
+            <>
+              <p style={{ fontSize: 14, marginBottom: 8 }}>No investment growth data available</p>
+              <p style={{ fontSize: 12, opacity: 0.7 }}>Create an investment to see growth projections</p>
+            </>
+          )}
         </div>
       </div>
     );
   }
 
+  // Calculate stats from investment data - use actual invested amount
+  const calculateStats = () => {
+    if (investmentData.length === 0) return null;
+
+    const lastEntry = investmentData[investmentData.length - 1];
+    const firstEntry = investmentData[0];
+
+    // Find total invested by checking all investments that existed on the first tracked date
+    let totalInvested = 0;
+    const investments_data = Array.isArray(investments) ? investments : [];
+    investments_data.forEach((inv) => {
+      const invDate = new Date(inv.createdAt || new Date());
+      const firstDate = new Date(firstEntry.date);
+      if (invDate <= firstDate) {
+        totalInvested += inv.amount;
+      }
+    });
+
+    // If no investments on first date, use current total invested
+    if (totalInvested === 0) {
+      investments_data.forEach((inv) => {
+        totalInvested += inv.amount;
+      });
+    }
+
+    const currentValue = lastEntry.value;
+    const totalGain = lastEntry.gain;
+    const gainPercent = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
+
+    return {
+      currentValue,
+      totalGain,
+      gainPercent,
+      totalInvested,
+    };
+  };
+
+  const stats = calculateStats();
+
   return (
     <div ref={containerRef} style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      
+      {/* Performance Stats */}
+      {stats && (
+        <div style={{
+          display: "flex",
+          gap: 16,
+          marginBottom: 16,
+          flexWrap: "wrap",
+          padding: "12px",
+          borderRadius: "8px",
+          background: "rgba(255, 255, 255, 0.04)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}>
+          <div>
+            <p style={{ fontSize: 10, color: "#8b949e", marginBottom: 4 }}>Current Value</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
+              ${stats.currentValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </p>
+          </div>
+          <div>
+            <p style={{ fontSize: 10, color: "#8b949e", marginBottom: 4 }}>Total Gain</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: stats.totalGain >= 0 ? "#10b981" : "#ef4444" }}>
+              ${stats.totalGain.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </p>
+          </div>
+          <div>
+            <p style={{ fontSize: 10, color: "#8b949e", marginBottom: 4 }}>Return %</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: stats.gainPercent >= 0 ? "#10b981" : "#ef4444" }}>
+              {stats.gainPercent.toFixed(2)}%
+            </p>
+          </div>
+        </div>
+      )}
       
       {/* Controls */}
       <div style={{
@@ -201,9 +337,7 @@ const volumeSeries = chart.addSeries(HistogramSeries, {
         minHeight: "32px"
       }}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <Legend color="#10B981" label="Bullish" />
-          <Legend color="#ef4444" label="Bearish" />
-          <Legend color="#f0b429" label="EMA 10" />
+          <Legend color="#10B981" label="Portfolio Value" />
         </div>
 
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
