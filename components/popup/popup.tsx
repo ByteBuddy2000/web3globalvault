@@ -5,23 +5,28 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 type TransactionType = 'deposit' | 'withdrawal';
 
+type AssetCategory = 'crypto' | 'stock';
+
 interface Transaction {
   id: number;
   username: string;
   country: string;
   amount: number;
   type: TransactionType;
-  coin: string;
+  assetType: AssetCategory;
+  asset: string;
 }
 
 const mockTransactions: Transaction[] = [
+  // Crypto Transactions
   {
     id: 1,
     username: 'Michael',
     country: 'Nigeria',
     amount: 2500,
     type: 'deposit',
-    coin: 'BTC',
+    assetType: 'crypto',
+    asset: 'BTC',
   },
   {
     id: 2,
@@ -29,7 +34,8 @@ const mockTransactions: Transaction[] = [
     country: 'United Kingdom',
     amount: 1200,
     type: 'withdrawal',
-    coin: 'ETH',
+    assetType: 'crypto',
+    asset: 'ETH',
   },
   {
     id: 3,
@@ -37,7 +43,8 @@ const mockTransactions: Transaction[] = [
     country: 'Canada',
     amount: 850,
     type: 'deposit',
-    coin: 'USDT',
+    assetType: 'crypto',
+    asset: 'USDT',
   },
   {
     id: 4,
@@ -45,9 +52,97 @@ const mockTransactions: Transaction[] = [
     country: 'Germany',
     amount: 4300,
     type: 'withdrawal',
-    coin: 'SOL',
+    assetType: 'crypto',
+    asset: 'SOL',
+  },
+  {
+    id: 5,
+    username: 'David',
+    country: 'Australia',
+    amount: 6700,
+    type: 'deposit',
+    assetType: 'crypto',
+    asset: 'BTC',
+  },
+  {
+    id: 6,
+    username: 'Sophia',
+    country: 'France',
+    amount: 980,
+    type: 'withdrawal',
+    assetType: 'crypto',
+    asset: 'ETH',
+  },
+
+  // Stock Transactions
+  {
+    id: 7,
+    username: 'James',
+    country: 'United States',
+    amount: 15200,
+    type: 'deposit',
+    assetType: 'stock',
+    asset: 'AAPL',
+  },
+  {
+    id: 8,
+    username: 'Emma',
+    country: 'Switzerland',
+    amount: 9200,
+    type: 'withdrawal',
+    assetType: 'stock',
+    asset: 'TSLA',
+  },
+  {
+    id: 9,
+    username: 'Noah',
+    country: 'Singapore',
+    amount: 4300,
+    type: 'deposit',
+    assetType: 'stock',
+    asset: 'NVDA',
+  },
+  {
+    id: 10,
+    username: 'Olivia',
+    country: 'South Africa',
+    amount: 7400,
+    type: 'withdrawal',
+    assetType: 'stock',
+    asset: 'META',
+  },
+  {
+    id: 11,
+    username: 'Ethan',
+    country: 'Japan',
+    amount: 12800,
+    type: 'deposit',
+    assetType: 'stock',
+    asset: 'AMZN',
+  },
+  {
+    id: 12,
+    username: 'Mia',
+    country: 'Netherlands',
+    amount: 5600,
+    type: 'withdrawal',
+    assetType: 'stock',
+    asset: 'GOOGL',
   },
 ];
+
+const ASSET_ICONS: Record<string, string> = {
+  BTC: '₿',
+  ETH: 'Ξ',
+  USDT: '₮',
+  SOL: '◎',
+  AAPL: '🍎',
+  TSLA: '🚗',
+  NVDA: '🟢',
+  META: '∞',
+  AMZN: '📦',
+  GOOGL: '🔍',
+};
 
 export default function LiveTransactionPopup() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -69,37 +164,51 @@ export default function LiveTransactionPopup() {
 
   const transaction = mockTransactions[currentIndex];
 
+  const isDeposit = transaction.type === 'deposit';
+  const isCrypto = transaction.assetType === 'crypto';
+
   return (
     <div
-      className="fixed bottom-5 right-5 z-[999999] pointer-events-auto"
-      style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999999 }}
+      className="fixed bottom-5 right-5 z-[999999] pointer-events-none"
     >
       <AnimatePresence mode="wait">
         <motion.div
           key={transaction.id}
-          initial={{ opacity: 0, x: 120 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 120 }}
+          initial={{ opacity: 0, x: 120, scale: 0.95 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: 120, scale: 0.95 }}
           transition={{ duration: 0.45 }}
-          className="w-[320px] rounded-2xl border border-white/10 bg-[#111318]/95 p-4 shadow-2xl backdrop-blur-xl"
+          className="w-[340px] rounded-2xl border border-white/10 bg-[#111318]/95 p-4 shadow-2xl backdrop-blur-xl"
         >
           <div className="flex items-start gap-3">
-            {/* ICON */}
+            {/* TRANSACTION ICON */}
             <div
-              className={`flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold ${
-                transaction.type === 'deposit'
-                  ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                  : 'bg-red-500/10 text-red-400 border border-red-500/20'
+              className={`flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold border ${
+                isDeposit
+                  ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                  : 'bg-red-500/10 text-red-400 border-red-500/20'
               }`}
             >
-              {transaction.type === 'deposit' ? '↓' : '↑'}
+              {isDeposit ? '↓' : '↑'}
             </div>
 
             {/* CONTENT */}
             <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                Live Transaction
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
+                  Live Transaction
+                </p>
+
+                <span
+                  className={`rounded-full px-2 py-1 text-[9px] font-bold tracking-[0.1em] ${
+                    isCrypto
+                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                      : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                  }`}
+                >
+                  {isCrypto ? 'CRYPTO' : 'STOCK'}
+                </span>
+              </div>
 
               <h3 className="mt-1 text-sm font-bold text-white">
                 {transaction.username} from {transaction.country}
@@ -109,9 +218,7 @@ export default function LiveTransactionPopup() {
                 just made a{' '}
                 <span
                   className={`font-bold ${
-                    transaction.type === 'deposit'
-                      ? 'text-green-400'
-                      : 'text-red-400'
+                    isDeposit ? 'text-green-400' : 'text-red-400'
                   }`}
                 >
                   {transaction.type}
@@ -123,8 +230,15 @@ export default function LiveTransactionPopup() {
                   ${transaction.amount.toLocaleString()}
                 </span>
 
-                <span className="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2 py-1 text-[10px] font-bold tracking-[0.08em] text-yellow-400">
-                  {transaction.coin}
+                <span
+                  className={`flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold tracking-[0.08em] ${
+                    isCrypto
+                      ? 'border border-yellow-500/20 bg-yellow-500/10 text-yellow-400'
+                      : 'border border-blue-500/20 bg-blue-500/10 text-blue-400'
+                  }`}
+                >
+                  <span>{ASSET_ICONS[transaction.asset] || '•'}</span>
+                  {transaction.asset}
                 </span>
               </div>
             </div>
