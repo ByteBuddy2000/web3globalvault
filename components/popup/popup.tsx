@@ -22,7 +22,7 @@ const mockTransactions: Transaction[] = [
   {
     id: 1,
     username: 'Michael',
-    country: 'Nigeria',
+    country: 'Switzerland',
     amount: 2500,
     type: 'deposit',
     assetType: 'crypto',
