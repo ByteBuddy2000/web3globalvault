@@ -369,14 +369,31 @@ export default function HomePage() {
       <motion.section
         ref={heroRef}
         className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 z-10"
-        style={{ opacity: heroOpacity, y: heroY }}
+        style={{
+          opacity: heroOpacity,
+          y: heroY,
+          backgroundImage: "url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXB5MDNlYmJrbmhjY3RkbGgwYTAwZmFtYjR6MGdkaW01OTV3amswMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ov9k1173PdfJWRsoE/giphy.gif')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
       >
-        {/* eyebrow pill */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+        {/* Overlay for text readability */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background: "linear-gradient(135deg, rgba(6, 7, 10, 0.75) 0%, rgba(6, 7, 10, 0.65) 100%)",
+          }}
+        />
+
+        {/* Content wrapper */}
+        <div className="relative z-10 flex flex-col items-center w-full">
+          {/* eyebrow pill */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
           style={{
             border: "1px solid var(--border-brand)",
             background: "var(--glass-brand-sm)",
@@ -471,6 +488,7 @@ export default function HomePage() {
           </span>
           <ChevronDown className="w-4 h-4" />
         </motion.div>
+        </div>
       </motion.section>
 
       {/* ══════════════════════════════════════════════════════
@@ -911,7 +929,13 @@ export default function HomePage() {
           </ul>
         </div>
         <div className="flex justify-center">
-          <GlobeVisual />
+          <Image
+            src="/asset/vrshot.png"
+            alt="VR Experience"
+            width={500}
+            height={500}
+            className="w-full max-w-md h-auto object-contain"
+          />
         </div>
       </motion.section>
 
