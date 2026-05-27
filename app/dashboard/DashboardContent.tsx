@@ -35,8 +35,28 @@ function fmt(n: number) {
 
 function getAssetImagePath(symbol: string, type: string): string {
   const isCrypto = type === 'crypto' || type === 'Crypto';
-  const iconPath = isCrypto ? `/asset/crypto/${symbol.toLowerCase()}` : `/asset/stock/${symbol.toLowerCase()}`;
-  return `${iconPath}.png`;
+  
+  // Stock symbol to filename mapping
+  const stockSymbolMap: Record<string, string> = {
+    'NFLX': 'netflix',
+    'AMZN': 'amazon',
+    'MSFT': 'microsoft',
+    'TSLA': 'tesla',
+    'V': 'visa',
+    'BABA': 'alibaba',
+    'GOOGL': 'google',
+    'IN': 'intel',
+    'DIS': 'disney',
+    'amd': 'amd',
+    'me': 'meta'
+  };
+  
+  if (isCrypto) {
+    return `/asset/crypto/${symbol.toLowerCase()}.png`;
+  } else {
+    const filename = stockSymbolMap[symbol.toUpperCase()] || symbol.toLowerCase();
+    return `/asset/stock/${filename}.png`;
+  }
 }
 
 /* ─── Sparkline ─────────────────────────────────────────────── */
@@ -176,15 +196,15 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div className="dashboard-asset-icon" style={{ position: 'relative', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="dashboard-asset-icon" style={{ position: 'relative', overflow: 'hidden', width: 52, height: 52, flexShrink: 0 }}>
           {!imgErr ? (
             <Image
               src={imagePath}
               alt={a.name}
-              width={36}
-              height={36}
-              className="rounded-full object-cover"
+              width={52}
+              height={52}
+              className="rounded-lg object-cover"
               onError={() => setImgErr(true)}
               style={{ width: '100%', height: '100%' }}
             />
@@ -196,7 +216,7 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
               alignItems: 'center',
               justifyContent: 'center',
               background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(16,185,129,0.2))',
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: 700,
               color: '#fff'
             }}>
@@ -205,9 +225,9 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
           )}
         </div>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>{a.symbol}</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
-            {a.quantity?.toLocaleString(undefined, { maximumFractionDigits: 4 })} units
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>{a.name}</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+            {a.quantity?.toLocaleString(undefined, { maximumFractionDigits: 4 })} {a.symbol}
           </div>
         </div>
       </div>
