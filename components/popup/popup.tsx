@@ -71,7 +71,8 @@ export default function LiveTransactionPopup() {
 
   return (
     <div
-      className="fixed bottom-5 right-5 z-[999999] pointer-events-none"
+      className="fixed bottom-5 right-5 z-[999999] pointer-events-auto"
+      style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999999 }}
     >
       <AnimatePresence mode="wait">
         <motion.div

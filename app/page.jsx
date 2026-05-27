@@ -23,6 +23,7 @@ import Footer from "../components/footer/footer";
 import NewsSection from "./dashboard/components/NewsSection";
 import Link from "next/link";
 import Navbar from "@/components/navbar/navbar";
+import LiveTransactionPopup from "@/components/popup/popup";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 const companyPlans = [
@@ -1240,6 +1241,8 @@ export default function HomePage() {
       <div className="z-10">
         <Footer />
       </div>
+
+      <LiveTransactionPopup />
     </div>
   );
 }
