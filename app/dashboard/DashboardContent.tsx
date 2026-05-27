@@ -48,7 +48,9 @@ function getAssetImagePath(symbol: string, type: string): string {
     'IN': 'intel',
     'DIS': 'disney',
     'amd': 'amd',
-    'me': 'meta'
+    'me': 'meta',
+    'APPL': 'apple'
+    
   };
   
   if (isCrypto) {

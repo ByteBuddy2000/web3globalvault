@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Search, RefreshCw, Wallet, BarChart2, ArrowUpRight } from 'lucide-react';
+import LiveTransactionPopup from '@/components/popup/popup';
 import { motion } from 'framer-motion';
 
 type Asset = {
@@ -456,6 +457,8 @@ export default function AssetsPage() {
           Prices update every 60s · Powered by CoinGecko & Finnhub
         </div>
       </div>
+        <LiveTransactionPopup />
+
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
