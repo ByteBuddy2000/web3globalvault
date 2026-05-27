@@ -12,6 +12,7 @@ import {
   ChevronDown, MoreHorizontal, Layers, PieChart
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import StockDashboard from './components/StockDashboard';
 import CryptoDashboard from './components/CryptoDashboard';
 import { toast } from 'sonner';
@@ -20,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 /* ─── Types ─────────────────────────────────────────────────── */
 type Asset = {
   _id: string; name: string; symbol: string; type: string;
-  quantity: number; price?: number; change?: number; changePercent?: number;
+  quantity: number; price?: number; change?: number; changePercent?: number; image?: string;
 };
 type Transaction = {
   _id: string; type: string; asset: string;
@@ -30,6 +31,12 @@ type Transaction = {
 /* ─── Helpers ───────────────────────────────────────────────── */
 function fmt(n: number) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function getAssetImagePath(symbol: string, type: string): string {
+  const isCrypto = type === 'crypto' || type === 'Crypto';
+  const iconPath = isCrypto ? `/asset/crypto/${symbol.toLowerCase()}` : `/asset/stock/${symbol.toLowerCase()}`;
+  return `${iconPath}.png`;
 }
 
 /* ─── Sparkline ─────────────────────────────────────────────── */
@@ -158,8 +165,11 @@ function Action({ icon, label, onClick, accent = '#6366f1' }: {
 /* ─── Asset Row ─────────────────────────────────────────────── */
 function AssetRow({ a, price, value }: { a: Asset; price: number; value: number }) {
   const [hov, setHov] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
   const chg = a.changePercent ?? 0;
   const isPos = chg >= 0;
+  const imagePath = a.image || getAssetImagePath(a.symbol, a.type);
+  
   return (
     <div
       className="dashboard-row"
@@ -167,8 +177,32 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
       onMouseLeave={() => setHov(false)}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div className="dashboard-asset-icon">
-          {a.symbol?.[0]}
+        <div className="dashboard-asset-icon" style={{ position: 'relative', overflow: 'hidden' }}>
+          {!imgErr ? (
+            <Image
+              src={imagePath}
+              alt={a.name}
+              width={36}
+              height={36}
+              className="rounded-full object-cover"
+              onError={() => setImgErr(true)}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(16,185,129,0.2))',
+              fontSize: 14,
+              fontWeight: 700,
+              color: '#fff'
+            }}>
+              {a.symbol?.[0]}
+            </div>
+          )}
         </div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>{a.symbol}</div>

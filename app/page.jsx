@@ -465,7 +465,7 @@ export default function HomePage() {
           <a href="/signup" className="btn-primary btn-lg">
             Get Started Free <ArrowRight className="w-4 h-4" />
           </a>
-          <a href="#" className="btn-secondary btn-lg">
+          <a href="#video-demo" className="btn-secondary btn-lg">
             Watch Demo
           </a>
         </motion.div>
@@ -771,6 +771,7 @@ export default function HomePage() {
           VIDEO SECTION
       ══════════════════════════════════════════════════════ */}
       <motion.section
+        id="video-demo"
         className="max-w-7xl mx-auto px-6 py-20 z-10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -821,7 +822,7 @@ export default function HomePage() {
           <div className="relative w-full pt-[56.25%] bg-black rounded-2xl overflow-hidden">
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://youtu.be/w8KA0hBt-L4?si=Aa10YKGgO268brxz"
+              src="https://www.youtube.com/embed/w8KA0hBt-L4?autoplay=1&mute=1&controls=1&modestbranding=1"
               title="GlobalVault Demo"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
