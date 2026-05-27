@@ -768,6 +768,100 @@ export default function HomePage() {
       <SectionDivider />
 
       {/* ══════════════════════════════════════════════════════
+          VIDEO SECTION
+      ══════════════════════════════════════════════════════ */}
+      <motion.section
+        className="max-w-7xl mx-auto px-6 py-20 z-10"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true }}
+      >
+        <div className="text-center mb-12">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            See It In Action
+          </p>
+          <h3
+            className="section-header mb-4"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Experience GlobalVault
+          </h3>
+          <p
+            className="max-w-2xl mx-auto text-lg leading-relaxed"
+            style={{ color: "var(--text-200)" }}
+          >
+            Watch how our platform simplifies your financial journey with secure banking, smart investments, and global transfers.
+          </p>
+        </div>
+
+        <motion.div
+          className="relative rounded-2xl overflow-hidden group"
+          style={{
+            border: "1px solid var(--border-brand)",
+            background: "var(--surface-0)",
+          }}
+          whileHover={{ boxShadow: "0 0 30px rgba(59, 130, 246, 0.2)" }}
+          transition={{ duration: 0.3 }}
+        >
+          {/* Glow effect behind video */}
+          <div
+            className="absolute -inset-8 rounded-3xl pointer-events-none -z-10"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 50%, var(--glass-brand-md) 0%, transparent 60%)",
+              filter: "blur(24px)",
+            }}
+          />
+
+          {/* Video Container with 16:9 aspect ratio */}
+          <div className="relative w-full pt-[56.25%] bg-black rounded-2xl overflow-hidden">
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=1&modestbranding=1"
+              title="GlobalVault Demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                border: "none",
+              }}
+            />
+          </div>
+
+          {/* Overlay gradient for aesthetics */}
+          <div
+            className="absolute inset-0 pointer-events-none rounded-2xl"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(6,7,10,0.1) 0%, transparent 50%)",
+            }}
+          />
+        </motion.div>
+
+        {/* CTA below video */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-12">
+          <a
+            href="/signup"
+            className="btn-primary btn-lg"
+          >
+            Get Started <ArrowRight className="w-4 h-4" />
+          </a>
+          <a
+            href="#"
+            className="btn-secondary btn-lg"
+          >
+            Learn More
+          </a>
+        </div>
+      </motion.section>
+
+      <SectionDivider />
+
+      {/* ══════════════════════════════════════════════════════
           IMAGE CARDS
       ══════════════════════════════════════════════════════ */}
       <motion.section

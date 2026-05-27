@@ -103,11 +103,11 @@ const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
         </div>
 
         {/* Right — clock + notif + profile */}
-        <div className="flex items-center gap-1.5 flex-shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
 
           {/* Live clock */}
           <div className="nb-clock hidden flex items-center gap-1.5 px-2.5 h-7 bg-glass-white-xs border border-border rounded-lg">
-            <span className="w-1 h-1 rounded-full bg-success-500 inline-block animate-pulse flex-shrink-0" />
+            <span className="w-1 h-1 rounded-full bg-success-500 inline-block animate-pulse shrink-0" />
             <span className="text-[10px] text-muted-foreground tracking-widest">{currentTime}</span>
           </div>
 

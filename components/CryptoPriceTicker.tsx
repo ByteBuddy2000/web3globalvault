@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import Image from 'next/image';
 
 interface CryptoData {
   symbol: string;
   price: number;
   change24h: number;
   changePercent24h: number;
+  logoUrl: string;
 }
 
 interface CryptoPriceTickerProps {
@@ -52,20 +54,20 @@ export default function CryptoPriceTicker({
         setError(null);
 
         // Symbol -> CoinGecko ID mapping
-        const coinMap: Record<string, string> = {
-          BTC: 'bitcoin',
-          ETH: 'ethereum',
-          XRP: 'ripple',
-          SOL: 'solana',
-          ADA: 'cardano',
-          DOGE: 'dogecoin',
-          USDT: 'tether',
-          TON: 'the-open-network',
+        const coinMap: Record<string, { id: string; logo: string }> = {
+          BTC: { id: 'bitcoin', logo: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png' },
+          ETH: { id: 'ethereum', logo: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png' },
+          XRP: { id: 'ripple', logo: 'https://assets.coingecko.com/coins/images/44/small/xrp.png' },
+          SOL: { id: 'solana', logo: 'https://assets.coingecko.com/coins/images/4128/small/solana.png' },
+          ADA: { id: 'cardano', logo: 'https://assets.coingecko.com/coins/images/975/small/cardano.png' },
+          DOGE: { id: 'dogecoin', logo: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png' },
+          USDT: { id: 'tether', logo: 'https://assets.coingecko.com/coins/images/325/small/tether.png' },
+          TON: { id: 'the-open-network', logo: 'https://assets.coingecko.com/coins/images/17980/small/ton_symbol.png' },
         };
 
         // Convert symbols to CoinGecko IDs
         const ids = symbols
-          .map((symbol) => coinMap[symbol.toUpperCase()])
+          .map((symbol) => coinMap[symbol.toUpperCase()]?.id)
           .filter(Boolean);
 
         if (ids.length === 0) {
@@ -87,13 +89,14 @@ export default function CryptoPriceTicker({
         console.log('Price data:', data);
 
         const transformed: CryptoData[] = symbols.map((symbol) => {
-          const coinId = coinMap[symbol.toUpperCase()];
+          const coinData = coinMap[symbol.toUpperCase()];
 
           return {
             symbol,
-            price: data[coinId]?.usd || 0,
+            price: data[coinData?.id]?.usd || 0,
             change24h: 0,
             changePercent24h: 0,
+            logoUrl: coinData?.logo || '',
           };
         });
 
@@ -173,16 +176,26 @@ export default function CryptoPriceTicker({
               key={`${crypto.symbol}-${idx}`}
               className="flex items-center gap-2 flex-shrink-0"
             >
-              <div
-                className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold"
-                style={{
-                  background: 'rgba(59, 130, 246, 0.15)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                  color: 'var(--brand-400)',
-                }}
-              >
-                {crypto.symbol[0]}
-              </div>
+              {crypto.logoUrl ? (
+                <Image
+                  src={crypto.logoUrl}
+                  alt={crypto.symbol}
+                  width={20}
+                  height={20}
+                  className="w-5 h-5 rounded-full flex-shrink-0 object-contain"
+                />
+              ) : (
+                <div
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0"
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.15)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    color: 'var(--brand-400)',
+                  }}
+                >
+                  {crypto.symbol[0]}
+                </div>
+              )}
 
               <span
                 className="text-xs font-bold tracking-widest"
