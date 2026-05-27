@@ -788,13 +788,13 @@ export default function HomePage() {
             className="section-header mb-4"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Experience GlobalVault
+            Experience GlobalVault MedBed Innovation
           </h3>
           <p
             className="max-w-2xl mx-auto text-lg leading-relaxed"
             style={{ color: "var(--text-200)" }}
           >
-            Watch how our platform simplifies your financial journey with secure banking, smart investments, and global transfers.
+            Watch how our platform simplifies your financial journey with secure banking, smart investments, and healthcare benefits.
           </p>
         </div>
 
@@ -821,7 +821,7 @@ export default function HomePage() {
           <div className="relative w-full pt-[56.25%] bg-black rounded-2xl overflow-hidden">
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=1&modestbranding=1"
+              src="https://youtu.be/w8KA0hBt-L4?si=Aa10YKGgO268brxz"
               title="GlobalVault Demo"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
