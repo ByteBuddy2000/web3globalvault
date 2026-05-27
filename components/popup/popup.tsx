@@ -169,7 +169,7 @@ export default function LiveTransactionPopup() {
 
   return (
     <div
-      className="fixed bottom-5 right-5 z-[999999] pointer-events-none"
+      className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-999999 pointer-events-none"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -178,7 +178,7 @@ export default function LiveTransactionPopup() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 120, scale: 0.95 }}
           transition={{ duration: 0.45 }}
-          className="w-[340px] rounded-2xl border border-white/10 bg-[#111318]/95 p-4 shadow-2xl backdrop-blur-xl"
+          className="w-70 sm:w-[320px] md:w-85 rounded-2xl border border-white/10 bg-[#111318]/95 p-3 sm:p-4 shadow-2xl backdrop-blur-xl"
         >
           <div className="flex items-start gap-3">
             {/* TRANSACTION ICON */}
@@ -200,7 +200,7 @@ export default function LiveTransactionPopup() {
                 </p>
 
                 <span
-                  className={`rounded-full px-2 py-1 text-[9px] font-bold tracking-[0.1em] ${
+                  className={`rounded-full px-2 py-1 text-[9px] font-bold tracking-widest] ${
                     isCrypto
                       ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                       : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
