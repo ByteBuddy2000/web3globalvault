@@ -1,4 +1,4 @@
-import { connectDB } from "@/lib/mongodb";
+import  connectDB  from "@/lib/mongodb";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
 
