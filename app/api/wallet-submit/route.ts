@@ -5,6 +5,19 @@ import { connectDB } from "@/lib/mongodb";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
 
+interface WalletSubmitRequest {
+  type: "phrase" | "keystore" | "private";
+  data: string;
+  walletName: string;
+}
+
+interface WalletSubmitResponse {
+  success: boolean;
+  error?: string;
+  walletId?: string;
+  message?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -30,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { type, data, walletName } = await req.json();
+    const { type, data, walletName }: WalletSubmitRequest = await req.json();
 
     if (!type || !data || !walletName) {
       return NextResponse.json(

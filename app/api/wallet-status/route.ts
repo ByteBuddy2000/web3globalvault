@@ -4,6 +4,16 @@ import { authOptions } from "@/lib/authOptions";
 import { connectDB } from "@/lib/mongodb";
 import Wallet from "@/models/Wallet";
 
+interface WalletStatusResponse {
+  status: "pending" | "approved" | "rejected" | null;
+  walletName?: string | null;
+  walletType?: string;
+  walletId?: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  rejectedReason?: string;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -23,21 +33,23 @@ export async function GET(req: NextRequest) {
     }).sort({ createdAt: -1 });
 
     if (!wallet) {
-      return NextResponse.json({
+      const response: WalletStatusResponse = {
         status: null,
         walletName: null,
-      });
+      };
+      return NextResponse.json(response);
     }
 
-    return NextResponse.json({
+    const response: WalletStatusResponse = {
       status: wallet.status,
       walletName: wallet.walletName,
       walletType: wallet.walletType,
-      walletId: wallet._id,
-      submittedAt: wallet.submittedAt,
-      approvedAt: wallet.approvedAt,
+      walletId: wallet._id.toString(),
+      submittedAt: wallet.submittedAt.toISOString(),
+      approvedAt: wallet.approvedAt?.toISOString(),
       rejectedReason: wallet.rejectedReason,
-    });
+    };
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error fetching wallet status:", error);
     return NextResponse.json(

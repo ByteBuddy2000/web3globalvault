@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import  connectDB  from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
+
+interface WalletFilter {
+  status: string;
+  walletType?: string;
+}
+
+interface WalletActionRequest {
+  walletId: string;
+  action: "approve" | "reject";
+  reason?: string;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -35,8 +46,8 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
 
-    // Build filter
-    const filter: any = { status };
+    // Build filter with proper typing
+    const filter: WalletFilter = { status };
     if (walletType) {
       filter.walletType = walletType;
     }
@@ -93,7 +104,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { walletId, action, reason } = await req.json();
+    const { walletId, action, reason }: WalletActionRequest = await req.json();
 
     if (!walletId || !action) {
       return NextResponse.json(
