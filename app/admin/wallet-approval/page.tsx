@@ -24,7 +24,7 @@ interface Wallet {
   rejectedReason?: string;
 }
 
-export default function WalletAdminPage(): JSX.Element {
+export default function WalletAdminPage(){
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
