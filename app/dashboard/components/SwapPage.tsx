@@ -384,10 +384,10 @@ export default function SwapPage() {
               width: '48px',
               height: '48px',
               border: '2px solid rgba(251,191,36,0.15)',
-              borderTopColor: '#fbbf24',
+              borderTopColor: '#0a3e88',
               borderRadius: '50%',
               animation: 'spin 0.8s linear infinite',
-              margin: '0 auto 16px',
+              margin: '0 auto 16px', 
             }}
           />
           <p style={{ fontFamily: "'DM Mono', monospace", color: '#4b5563', fontSize: '12px', letterSpacing: '0.1em' }}>
