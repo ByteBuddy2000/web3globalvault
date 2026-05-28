@@ -178,7 +178,7 @@ export default function LiveTransactionPopup() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 120, scale: 0.95 }}
           transition={{ duration: 0.45 }}
-          className="w-70 sm:w-[320px] md:w-85 rounded-2xl border border-white/10 bg-[#111318]/95 p-3 sm:p-4 shadow-2xl backdrop-blur-xl"
+          className="w-70 sm:w-[300px] md:w-[250px] rounded-2xl border border-white/10 bg-[#111318]/95 p-3 sm:p-4 shadow-2xl backdrop-blur-xl"
         >
           <div className="flex items-start gap-3">
             {/* TRANSACTION ICON */}
