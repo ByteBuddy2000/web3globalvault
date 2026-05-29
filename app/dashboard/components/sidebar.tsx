@@ -7,7 +7,7 @@ import { signOut } from 'next-auth/react';
 import {
   Home, TrendingUp, Wallet, DollarSign, ShoppingCart,
   FileText, Users, Briefcase, Settings, HelpCircle,
-  LogOut, ChevronLeft, X, Zap, Repeat2, Zap as WalletConnect,
+  LogOut, ChevronLeft, X, Zap, Repeat2, Zap as WalletConnect, ShieldCheck,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const mainLinks = [
   { href: '/dashboard',                label: 'Dashboard',    icon: Home },
   { href: '/dashboard/my-investment',  label: 'Investments',  icon: TrendingUp },
+  { href: '/dashboard/kyc',            label: 'KYC',          icon: ShieldCheck },
   { href: '/dashboard/connect-wallet', label: 'Connect Wallet', icon: Wallet },
   { href: '/dashboard/deposit',        label: 'Deposit',      icon: Wallet },
   { href: '/dashboard/withdraw',       label: 'Withdraw',     icon: DollarSign },

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { CreditCard, Banknote, Bitcoin, Copy } from "lucide-react";
 import QRCode from "qrcode";
+import { KYCGuard } from "@/components/KYCGuard";
 
 /* ---------------- HELPERS ---------------- */
 
@@ -15,9 +16,9 @@ function getCardType(number: string) {
   return "Unknown";
 }
 
-/* ---------------- COMPONENT ---------------- */
+/* ---------------- COMPONENT CONTENT ---------------- */
 
-export default function DepositPage() {
+function DepositContent() {
   const [depositMethod, setDepositMethod] = useState("bank");
   const [crypto, setCrypto] = useState("BTC");
   const [network, setNetwork] = useState("Bitcoin");
@@ -331,5 +332,13 @@ export default function DepositPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function DepositPage() {
+  return (
+    <KYCGuard requiredFor="make deposits">
+      <DepositContent />
+    </KYCGuard>
   );
 }

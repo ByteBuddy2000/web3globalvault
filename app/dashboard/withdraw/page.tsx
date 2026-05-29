@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Banknote, Bitcoin, ChevronRight, X, AlertCircle, Zap, TrendingUp, Copy, CheckCircle2, ShieldCheck } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { submitWithdrawal } from "./actions";
+import { KYCGuard } from "@/components/KYCGuard";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WithdrawMethod = "bank" | "crypto";
@@ -635,7 +636,7 @@ const onBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
 };
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-export default function WithdrawPage() {
+function WithdrawContent() {
   const [method,         setMethod]         = useState<WithdrawMethod>("bank");
   const [bankAmount,     setBankAmount]     = useState("");
   const [bankName,       setBankName]       = useState("");
@@ -973,5 +974,13 @@ export default function WithdrawPage() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function WithdrawPage() {
+  return (
+    <KYCGuard requiredFor="make withdrawals">
+      <WithdrawContent />
+    </KYCGuard>
   );
 }
