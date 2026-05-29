@@ -476,8 +476,6 @@ function SeedPhraseTab({
 	const [showPhrase, setShowPhrase] =
 		useState<boolean>(false);
 
-	const { data: session } = useSession();
-
 	const { globalPending } = useGlobalPending();
 
 	const handleWordChange = (
