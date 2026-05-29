@@ -91,7 +91,7 @@ export default function ConnectWallet(){
 		if (walletStatus === "approved" || walletStatus === "pending") return;
 
 		setSelectedWallet(wallet);
-		setModalOpen(true);
+		setModalOpen(true); 
 	};
 
 	const handleCloseModal = (): void => {
