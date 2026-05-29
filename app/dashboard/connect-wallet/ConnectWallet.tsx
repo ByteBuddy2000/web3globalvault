@@ -59,7 +59,8 @@ export default function ConnectWallet(){
 	const [walletStatus, setWalletStatus] =
 		useState<WalletStatus>(null);
 
-	const { data: session } = useSession();
+	const sessionResult = useSession();
+	const session = sessionResult?.data;
 
 	useEffect(() => {
 		async function fetchConnectedWallet() {
