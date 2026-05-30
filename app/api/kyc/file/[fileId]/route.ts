@@ -9,9 +9,10 @@ import { ObjectId } from "mongodb";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { fileId: string } }
+  { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
+    const { fileId } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user?.email) {
@@ -34,8 +35,8 @@ export async function GET(
     // Verify that the file belongs to the user's KYC submission (or user is admin)
     const kyc = await KYC.findOne({
       $or: [
-        { user: user._id, documentImageId: new ObjectId(params.fileId) },
-        { user: user._id, selfieImageId: new ObjectId(params.fileId) },
+        { user: user._id, documentImageId: new ObjectId(fileId) },
+        { user: user._id, selfieImageId: new ObjectId(fileId) },
       ],
     });
 
@@ -50,11 +51,11 @@ export async function GET(
     }
 
     // Download file from GridFS
-    const fileBuffer = await downloadFileFromGridFS(new ObjectId(params.fileId));
+    const fileBuffer = await downloadFileFromGridFS(new ObjectId(fileId));
 
     // Determine content type
     let contentType = "application/octet-stream";
-    if (params.fileId.includes("image")) {
+    if (fileId.includes("image")) {
       contentType = "image/jpeg"; // Default to JPEG, could be enhanced to detect type
     }
 
