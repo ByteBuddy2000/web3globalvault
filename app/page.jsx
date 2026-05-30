@@ -1006,7 +1006,7 @@ export default function HomePage() {
           </p>
           <ul className="space-y-3">
             {[
-              "Offices in North America, Europe, Africa & Asia",
+              "Offices in North America, Europe & Asia",
               "24/7 multilingual support in 12 languages",
               "International compliance & regulatory standards",
             ].map((item) => (

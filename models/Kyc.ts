@@ -17,8 +17,10 @@ const KYCSchema = new mongoose.Schema(
     country: { type: String, required: true },
     documentType: { type: String, required: true }, // e.g., Passport, ID Card, Driver's License
     documentNumber: { type: String, required: true },
-    documentImage: { type: String }, // URL or path to uploaded image
-    selfieImage: { type: String }, // Selfie with document
+    documentImageId: { type: mongoose.Schema.Types.ObjectId }, // GridFS file ID
+    documentImageFilename: { type: String }, // Original filename
+    selfieImageId: { type: mongoose.Schema.Types.ObjectId }, // GridFS file ID
+    selfieImageFilename: { type: String }, // Original filename
     status: {
       type: String,
       enum: ["pending", "verified", "rejected"],

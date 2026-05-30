@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { initializeGridFS } from "./gridfs";
 
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
@@ -23,6 +24,10 @@ async function connectDB(): Promise<typeof mongoose> {
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
+    }).then((mongoose) => {
+      // Initialize GridFS after connection
+      initializeGridFS(mongoose.connection);
+      return mongoose;
     });
   }
   cached.conn = await cached.promise;

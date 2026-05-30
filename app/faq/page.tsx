@@ -79,7 +79,7 @@ const faqs = [
   {
     category: "Transfers",
     q: "Which countries can I send money to?",
-    a: "GlobalVault supports transfers to 40+ countries across Africa, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
+    a: "GlobalVault supports transfers to 40+ countries across the world, Europe, North America, Asia, and the Middle East. The full list is available in the app under 'Send Money → International'.",
   },
   {
     category: "Investments",
