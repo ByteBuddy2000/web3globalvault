@@ -111,8 +111,41 @@ export default function AdminPage() {
     fetchUsers();
     fetchPendingWithdrawals();
     fetchPendingMedbedVerifications();
-    // loadDashboardStats();
+    loadDashboardStats();
+    fetchKycData();
   }, []);
+
+  async function loadDashboardStats() {
+    try {
+      const res = await fetch('/api/admin/dashboard');
+      if (!res.ok) throw new Error('Failed to load stats');
+      const data = await res.json();
+      setStats({
+        totalUsers: data.totalUsers || 0,
+        totalBalance: data.totalBalance || 0,
+        pendingWithdrawals: data.pendingWithdrawals || 0,
+        pendingKYC: data.pendingKYC || 0,
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error('Unable to load dashboard stats');
+    }
+  }
+
+  async function fetchKycData() {
+    setLoadingKyc(true);
+    try {
+      const res = await fetch('/api/admin/kyc');
+      if (!res.ok) throw new Error('Failed to load KYC data');
+      const data = await res.json();
+      setKycData(data.kyc || []);
+    } catch (err) {
+      console.error(err);
+      toast.error('Unable to load KYC data');
+    } finally {
+      setLoadingKyc(false);
+    }
+  }
 
   async function fetchPendingWithdrawals() {
     setLoadingWithdrawals(true);
@@ -626,9 +659,67 @@ export default function AdminPage() {
 
           {/* KYC Tab */}
           {activeTab === "kyc" && (
-            <div className="card p-6">
-              <h2 className="text-lg font-semibold mb-4">KYC Verifications</h2>
-              <div className="py-8 text-center text-text-300">KYC management feature coming soon...</div>
+            <div className="space-y-4">
+              <div className="card p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">KYC Verifications</h2>
+                  <button
+                    onClick={fetchKycData}
+                    className="text-xs px-3 py-1 rounded bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30 transition"
+                  >
+                    Refresh
+                  </button>
+                </div>
+                {loadingKyc ? (
+                  <div className="py-8 text-center text-text-300">Loading...</div>
+                ) : kycData && kycData.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border-default bg-white/5">
+                          <th className="px-4 py-3 text-left font-semibold">User</th>
+                          <th className="px-4 py-3 text-left font-semibold">Email</th>
+                          <th className="px-4 py-3 text-left font-semibold">Status</th>
+                          <th className="px-4 py-3 text-left font-semibold">Date Submitted</th>
+                          <th className="px-4 py-3 text-left font-semibold">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border-default">
+                        {kycData.map((kyc: any) => (
+                          <tr key={kyc._id} className="hover:bg-white/5 transition">
+                            <td className="px-4 py-3">
+                              <p className="font-medium">{kyc.fullName || kyc.userId?.fullName || '—'}</p>
+                            </td>
+                            <td className="px-4 py-3 text-text-200">{kyc.email || kyc.userId?.email || '—'}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-xs px-2 py-1 rounded font-medium ${
+                                kyc.status === 'approved' ? 'bg-green-500/20 text-green-300' :
+                                kyc.status === 'rejected' ? 'bg-red-500/20 text-red-300' :
+                                'bg-yellow-500/20 text-yellow-300'
+                              }`}>
+                                {kyc.status || 'Pending'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-text-200">
+                              {kyc.createdAt ? new Date(kyc.createdAt).toLocaleDateString() : '—'}
+                            </td>
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => viewUser(kyc.userId?._id || kyc.userId)}
+                                className="px-3 py-1 text-xs rounded bg-white/10 hover:bg-white/20 transition border border-border-default"
+                              >
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-text-300">No KYC submissions</div>
+                )}
+              </div>
             </div>
           )}
 

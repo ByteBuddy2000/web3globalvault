@@ -647,7 +647,7 @@ export default function DashboardContent() {
           transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}
         >
-          <Action icon={<ArrowDownLeft size={15} />} label="Deposit"  accent="#10b981" onClick={() => setShowDeposit(true)} />
+          <Action icon={<ArrowDownLeft size={15} />} label="Deposit"  accent="#10b981" onClick={() => router.push('/dashboard/deposit')} />
           <Action icon={<ArrowUpRight  size={15} />} label="Withdraw" accent="#f43f5e" onClick={() => router.push('/dashboard/withdraw')} />
           <Action icon={<TrendingUp    size={15} />} label="Invest"   accent="#6366f1" onClick={() => router.push('/dashboard/my-investment')} />
           <Action icon={<Repeat        size={15} />} label="Swap"     accent="#f59e0b" onClick={() => router.push('/dashboard/swap')} />
