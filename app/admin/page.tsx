@@ -111,34 +111,16 @@ export default function AdminPage() {
     fetchUsers();
     fetchPendingWithdrawals();
     fetchPendingMedbedVerifications();
-    loadDashboardStats();
     fetchKycData();
   }, []);
-
-  async function loadDashboardStats() {
-    try {
-      const res = await fetch('/api/admin/dashboard');
-      if (!res.ok) throw new Error('Failed to load stats');
-      const data = await res.json();
-      setStats({
-        totalUsers: data.totalUsers || 0,
-        totalBalance: data.totalBalance || 0,
-        pendingWithdrawals: data.pendingWithdrawals || 0,
-        pendingKYC: data.pendingKYC || 0,
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error('Unable to load dashboard stats');
-    }
-  }
 
   async function fetchKycData() {
     setLoadingKyc(true);
     try {
-      const res = await fetch('/api/admin/kyc');
+      const res = await fetch('/api/admin/kyc?status=pending');
       if (!res.ok) throw new Error('Failed to load KYC data');
       const data = await res.json();
-      setKycData(data.kyc || []);
+      setKycData(data.data || []);
     } catch (err) {
       console.error(err);
       toast.error('Unable to load KYC data');
@@ -385,8 +367,9 @@ export default function AdminPage() {
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <div className="space-y-6">
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Stats Grid - Currently unavailable without dedicated dashboard API */}
+              {/* Uncomment when /api/admin/dashboard endpoint is implemented */}
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <DashboardCard
                   icon={Users}
                   title="Total Users"
@@ -411,7 +394,7 @@ export default function AdminPage() {
                   value={stats.pendingKYC}
                   color="purple"
                 />
-              </div>
+              </div> */}
 
               {/* Recent Activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -688,9 +671,9 @@ export default function AdminPage() {
                         {kycData.map((kyc: any) => (
                           <tr key={kyc._id} className="hover:bg-white/5 transition">
                             <td className="px-4 py-3">
-                              <p className="font-medium">{kyc.fullName || kyc.userId?.fullName || '—'}</p>
+                              <p className="font-medium">{kyc.user?.fullName || '—'}</p>
                             </td>
-                            <td className="px-4 py-3 text-text-200">{kyc.email || kyc.userId?.email || '—'}</td>
+                            <td className="px-4 py-3 text-text-200">{kyc.user?.email || '—'}</td>
                             <td className="px-4 py-3">
                               <span className={`text-xs px-2 py-1 rounded font-medium ${
                                 kyc.status === 'approved' ? 'bg-green-500/20 text-green-300' :
@@ -701,11 +684,11 @@ export default function AdminPage() {
                               </span>
                             </td>
                             <td className="px-4 py-3 text-text-200">
-                              {kyc.createdAt ? new Date(kyc.createdAt).toLocaleDateString() : '—'}
+                              {kyc.submittedAt ? new Date(kyc.submittedAt).toLocaleDateString() : '—'}
                             </td>
                             <td className="px-4 py-3">
                               <button
-                                onClick={() => viewUser(kyc.userId?._id || kyc.userId)}
+                                onClick={() => viewUser(kyc.user?._id)}
                                 className="px-3 py-1 text-xs rounded bg-white/10 hover:bg-white/20 transition border border-border-default"
                               >
                                 View
