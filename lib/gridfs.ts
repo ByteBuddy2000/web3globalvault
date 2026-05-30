@@ -1,21 +1,19 @@
 import mongoose from 'mongoose';
-import { GridFSBucket, ObjectId } from 'mongodb';
 import { Readable } from 'stream';
 
-let gfsImage: GridFSBucket;
+let gfsImage: mongoose.mongo.GridFSBucket;
 
 export function initializeGridFS(db: mongoose.Connection) {
-  // db.db is the underlying native MongoDB Db instance
   if (!db.db) {
     throw new Error('MongoDB connection not established');
   }
-  gfsImage = new GridFSBucket(db.db as any, {
+  gfsImage = new mongoose.mongo.GridFSBucket(db.db, {
     bucketName: 'kyc_images',
   });
   return gfsImage;
 }
 
-export function getGridFS(): GridFSBucket {
+export function getGridFS(): mongoose.mongo.GridFSBucket {
   if (!gfsImage) {
     throw new Error('GridFS not initialized. Call initializeGridFS first.');
   }
@@ -46,8 +44,9 @@ export async function downloadFileFromGridFS(
   fileId: mongoose.Types.ObjectId
 ): Promise<Buffer> {
   const gfs = getGridFS();
-  // Convert Mongoose ObjectId → native MongoDB ObjectId
-  const downloadStream = gfs.openDownloadStream(new ObjectId(fileId.toString()));
+  const downloadStream = gfs.openDownloadStream(
+    new mongoose.mongo.ObjectId(fileId.toString())
+  );
 
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
@@ -62,5 +61,5 @@ export async function deleteFileFromGridFS(
   fileId: mongoose.Types.ObjectId
 ): Promise<void> {
   const gfs = getGridFS();
-  await gfs.delete(new ObjectId(fileId.toString()));
+  await gfs.delete(new mongoose.mongo.ObjectId(fileId.toString()));
 }
