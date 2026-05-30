@@ -450,6 +450,9 @@ export default function AdminPage() {
                             <p className="text-xs text-text-300">{m.amountXrp} XRP</p>
                           </div>
                           <span className="text-xs px-2 py-1 rounded bg-red-500/20 text-red-300">{m.status}</span>
+                          {m.txHash && (
+                            <div className="text-xs text-text-200 mt-1">Tx Hash: <span className="font-mono">{m.txHash}</span></div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -688,7 +691,7 @@ export default function AdminPage() {
                             </td>
                             <td className="px-4 py-3">
                               <button
-                                onClick={() => viewUser(kyc.user?._id)}
+                                onClick={() => window.open(`/admin/kyc-verification/${kyc._id}`, '_blank')}
                                 className="px-3 py-1 text-xs rounded bg-white/10 hover:bg-white/20 transition border border-border-default"
                               >
                                 View
