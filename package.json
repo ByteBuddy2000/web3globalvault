@@ -20,6 +20,7 @@
     "framer-motion": "^12.23.21",
     "lightweight-charts": "^5.1.0",
     "lucide-react": "^0.523.0",
+    "mongodb": "^7.2.0",
     "mongoose": "^8.16.5",
     "next": "^15.5.9",
     "next-auth": "^4.24.11",

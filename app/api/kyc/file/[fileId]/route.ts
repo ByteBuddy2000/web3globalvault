@@ -5,7 +5,7 @@ import connectDB from "@/lib/mongodb";
 import KYC from "@/models/Kyc";
 import User from "@/models/User";
 import { downloadFileFromGridFS } from "@/lib/gridfs";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export async function GET(
   req: NextRequest,
@@ -16,53 +16,42 @@ export async function GET(
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Verify that the file belongs to the user's KYC submission (or user is admin)
+    const objectId = new mongoose.mongo.ObjectId(fileId);
+
     const kyc = await KYC.findOne({
       $or: [
-        { user: user._id, documentImageId: new ObjectId(fileId) },
-        { user: user._id, selfieImageId: new ObjectId(fileId) },
+        { user: user._id, documentImageId: objectId },
+        { user: user._id, selfieImageId: objectId },
       ],
     });
 
-    // Check if user is admin
     const isAdmin = user.role === "admin";
 
     if (!kyc && !isAdmin) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // Download file from GridFS
-    const fileBuffer = await downloadFileFromGridFS(new ObjectId(fileId));
+    const fileBuffer = await downloadFileFromGridFS(
+      new mongoose.Types.ObjectId(fileId)
+    );
 
-    // Determine content type
-    let contentType = "application/octet-stream";
-    if (fileId.includes("image")) {
-      contentType = "image/jpeg"; // Default to JPEG, could be enhanced to detect type
-    }
+    // Convert Node Buffer to Uint8Array/ArrayBuffer for NextResponse
+    const body = new Uint8Array(fileBuffer);
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(body, {
       headers: {
-        "Content-Type": contentType,
-        "Content-Length": fileBuffer.length.toString(),
+        "Content-Type": "image/jpeg",
+        "Content-Length": String(body.byteLength),
         "Cache-Control": "public, max-age=3600",
       },
     });
