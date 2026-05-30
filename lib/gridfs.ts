@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
-import { GridFSBucket } from 'mongodb';
+import { GridFSBucket, ObjectId } from 'mongodb';
 import { Readable } from 'stream';
 
 let gfsImage: GridFSBucket;
 
 export function initializeGridFS(db: mongoose.Connection) {
-  gfsImage = new GridFSBucket(db.getClient().db(db.getName()), {
+  // db.db is the underlying native MongoDB Db instance
+  if (!db.db) {
+    throw new Error('MongoDB connection not established');
+  }
+  gfsImage = new GridFSBucket(db.db as any, {
     bucketName: 'kyc_images',
   });
   return gfsImage;
@@ -21,20 +25,19 @@ export function getGridFS(): GridFSBucket {
 export async function uploadFileToGridFS(
   buffer: Buffer,
   filename: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<mongoose.Types.ObjectId> {
   const gfs = getGridFS();
   const uploadStream = gfs.openUploadStream(filename, {
-    metadata: metadata || {},
+    metadata: metadata ?? {},
   });
 
   return new Promise((resolve, reject) => {
-    const readable = Readable.from(buffer);
-    readable
+    Readable.from(buffer)
       .pipe(uploadStream)
       .on('error', reject)
       .on('finish', () => {
-        resolve(uploadStream.id as mongoose.Types.ObjectId);
+        resolve(uploadStream.id as unknown as mongoose.Types.ObjectId);
       });
   });
 }
@@ -43,16 +46,15 @@ export async function downloadFileFromGridFS(
   fileId: mongoose.Types.ObjectId
 ): Promise<Buffer> {
   const gfs = getGridFS();
-  const downloadStream = gfs.openDownloadStream(fileId);
+  // Convert Mongoose ObjectId → native MongoDB ObjectId
+  const downloadStream = gfs.openDownloadStream(new ObjectId(fileId.toString()));
 
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
     downloadStream
-      .on('data', (chunk) => chunks.push(chunk))
+      .on('data', (chunk: Buffer) => chunks.push(chunk))
       .on('error', reject)
-      .on('end', () => {
-        resolve(Buffer.concat(chunks));
-      });
+      .on('end', () => resolve(Buffer.concat(chunks)));
   });
 }
 
@@ -60,5 +62,5 @@ export async function deleteFileFromGridFS(
   fileId: mongoose.Types.ObjectId
 ): Promise<void> {
   const gfs = getGridFS();
-  await gfs.delete(fileId);
+  await gfs.delete(new ObjectId(fileId.toString()));
 }

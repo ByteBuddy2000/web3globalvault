@@ -1026,4 +1026,4 @@ function DashboardCard({ icon: Icon, title, value, color }: { icon: any; title: 
     </div>
   );
 }
-}
+
