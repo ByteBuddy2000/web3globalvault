@@ -222,7 +222,7 @@ export default function ConnectWallet(){
 					walletStatus !== "approved" &&
 					walletStatus !== "pending" &&
 					selectedWallet && (
-						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
+						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
 							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", position: "relative", overflow: "hidden", margin: "0 0.5rem" }}>
 								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "var(--space-4)", borderBottom: "1px solid var(--border-default)" }}>
 									<button
@@ -300,7 +300,7 @@ export default function ConnectWallet(){
 					walletStatus !== "approved" &&
 					walletStatus !== "pending" &&
 					selectedWallet && (
-						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
+						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
 							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", margin: "0 0.5rem" }}>
 								<div style={{ padding: "var(--space-6)" }}>
 									<h3 style={{ fontSize: "var(--text-lg)", fontWeight: 500, color: "var(--foreground)", display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-6)" }}>
