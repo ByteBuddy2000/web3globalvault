@@ -43,13 +43,13 @@ function DepositContent() {
   const [qrCode, setQrCode] = useState<string | null>(null);
 
   const cryptoAddresses: Record<string, Record<string, string>> = {
-    BTC: { Bitcoin: "bc1qpycmsxnlarnay4jgwa3y535m802qevq7ffnp5x" },
+    BTC: { Bitcoin: "bc1q876w5vxqlpgzyyxzhxr24chalg5z74ztvp75dp" },
     ETH: {
-      ERC20: "0xD41DCAc22335d26a391F97C4a9DdE1b2745936b3",
+      ERC20: "0xfE09a5D6Cd24f4E6172627011b85866DE3fBf447",
     },
     USDT: {
-      ERC20: "0xD41DCAc22335d26a391F97C4a9DdE1b2745936b3",
-      TRC20: "TAtGDx2KpwrcFnY4qcSQgzGy4aEkajKEZ9",
+      ERC20: "0xfE09a5D6Cd24f4E6172627011b85866DE3fBf447",
+      TRC20: "TRr2kB36MdKnXanodWFyp5D9zub1tLxpCm",
     },
   };
 
