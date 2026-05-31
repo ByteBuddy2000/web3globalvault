@@ -17,6 +17,7 @@ import {
   Lock,
   Zap,
   Wifi,
+  Play,
 } from "lucide-react";
 import Image from "next/image";
 import Footer from "../components/footer/footer";
@@ -65,6 +66,113 @@ const testimonials = [
   },
 ];
 
+const VIDEOS = [
+  { id: "w8KA0hBt-L4", label: "Overview" },
+  { id: "8QA6T9R1WyQ", label: "Platform" },
+  { id: "UU3c-1akOZw", label: "Investments" },
+  { id: "4OVgWbvYzIY", label: "MedBed" },
+  { id: "mcUX-TiAaxU", label: "Banking" },
+  { id: "hoO8wBozHzI", label: "Transfers" },
+];
+
+type Video = {
+  id: string;
+  label: string;
+};
+
+/* ─── Video Player ──────────────────────────────────────────── */
+function VideoPlayer({ videos }: { videos: Video[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = videos[activeIndex];
+
+  return (
+    <div className="space-y-4">
+      {/* Tab pills */}
+      <div className="flex flex-wrap justify-center gap-2">
+        {videos.map((v, i) => (
+          <button
+            key={v.id}
+            onClick={() => setActiveIndex(i)}
+            className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
+            style={{
+              border: `1px solid ${activeIndex === i ? "var(--border-brand)" : "var(--border-default)"}`,
+              background: activeIndex === i ? "var(--glass-brand-sm)" : "var(--glass-white-xs)",
+              color: activeIndex === i ? "var(--brand-400)" : "var(--text-300)",
+            }}
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main player */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="relative w-full pt-[56.25%] bg-black rounded-2xl overflow-hidden"
+        >
+          <iframe
+            className="absolute inset-0 w-full h-full"
+            src={`https://www.youtube.com/embed/${active.id}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`}
+            title={active.label}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ border: "none" }}
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Thumbnail strip */}
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {videos.map((v, i) => (
+          <button
+            key={v.id}
+            onClick={() => setActiveIndex(i)}
+            className="group relative rounded-xl overflow-hidden transition-all duration-200"
+            style={{
+              border: `2px solid ${activeIndex === i ? "var(--border-brand)" : "var(--border-default)"}`,
+              opacity: activeIndex === i ? 1 : 0.55,
+            }}
+          >
+            <div className="relative w-full pt-[56.25%] bg-black">
+              <img
+                src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
+                alt={v.label}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center"
+                  style={{
+                    background: activeIndex === i ? "var(--brand-500)" : "rgba(255,255,255,0.15)",
+                    backdropFilter: "blur(4px)",
+                  }}
+                >
+                  <Play className="w-3 h-3 text-white fill-white ml-0.5" />
+                </div>
+              </div>
+            </div>
+            <p
+              className="text-center text-xs py-1 font-medium truncate px-1"
+              style={{
+                color: activeIndex === i ? "var(--brand-400)" : "var(--text-300)",
+                background: "var(--glass-white-xs)",
+              }}
+            >
+              {v.label}
+            </p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Section Divider ───────────────────────────────────────── */
 const SectionDivider = () => (
   <div className="max-w-7xl mx-auto px-6">
@@ -100,10 +208,9 @@ const Orbs = () => (
           left: o.left,
           width: o.size,
           height: o.size,
-          background: `radial-gradient(circle, ${i === 1
-            ? "rgba(34,211,238,0.07)"
-            : "rgba(59,130,246,0.08)"
-            } 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${
+            i === 1 ? "rgba(34,211,238,0.07)" : "rgba(59,130,246,0.08)"
+          } 0%, transparent 70%)`,
           filter: "blur(50px)",
         }}
         animate={{ scale: [1, 1.18, 1], opacity: [0.5, 1, 0.5] }}
@@ -114,7 +221,7 @@ const Orbs = () => (
 );
 
 /* ─── Stat Card ─────────────────────────────────────────────── */
-function StatCard({ value, label }) {
+function StatCard({ value, label }: { value: string | number; label: string }) {
   return (
     <div
       className="text-center px-8 py-6"
@@ -142,6 +249,11 @@ function FeatureCard({
   title,
   desc,
   delay,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  delay: number;
 }) {
   return (
     <motion.div
@@ -152,7 +264,6 @@ function FeatureCard({
       viewport={{ once: true }}
       whileHover={{ y: -6 }}
     >
-      {/* hover top-glow */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
@@ -160,8 +271,6 @@ function FeatureCard({
             "radial-gradient(circle at 50% 0%, var(--glass-brand-md) 0%, transparent 65%)",
         }}
       />
-
-      {/* icon badge */}
       <div
         className="w-14 h-14 rounded-xl flex items-center justify-center mb-6"
         style={{
@@ -171,21 +280,15 @@ function FeatureCard({
       >
         <Icon className="w-6 h-6" style={{ color: "var(--brand-400)" }} />
       </div>
-
       <h4
         className="text-xl font-bold mb-3"
-        style={{
-          fontFamily: "var(--font-display)",
-          color: "var(--text-0)",
-        }}
+        style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
       >
         {title}
       </h4>
-
       <p style={{ color: "var(--text-200)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-normal)" }}>
         {desc}
       </p>
-
       <div
         className="mt-6 inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
         style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
@@ -197,10 +300,7 @@ function FeatureCard({
 }
 
 /* ─── Testimonial Card ──────────────────────────────────────── */
-function TestimonialCard({
-  t,
-  delay,
-}) {
+function TestimonialCard({ t, delay }: { t: (typeof testimonials)[0]; delay: number }) {
   return (
     <motion.div
       className="card relative p-8"
@@ -210,28 +310,23 @@ function TestimonialCard({
       viewport={{ once: true }}
       whileHover={{ scale: 1.02 }}
     >
-      {/* decorative quote */}
       <span
         className="absolute top-4 right-6 text-6xl leading-none opacity-10 select-none"
         style={{ fontFamily: "Georgia, serif", color: "var(--brand-400)" }}
       >
         "
       </span>
-
-      {/* stars */}
       <div className="flex gap-1 mb-4">
         {Array.from({ length: t.rating }).map((_, i) => (
           <Star key={i} className="w-4 h-4 fill-current" style={{ color: "var(--brand-400)" }} />
         ))}
       </div>
-
       <p
         className="text-sm italic mb-6"
         style={{ color: "var(--text-100)", lineHeight: "var(--leading-normal)" }}
       >
         "{t.text}"
       </p>
-
       <div className="flex items-center gap-3">
         <Image
           src={t.avatar}
@@ -257,7 +352,6 @@ function TestimonialCard({
 /* ─── Globe Visual ──────────────────────────────────────────── */
 const GlobeVisual = () => (
   <div className="relative flex justify-center items-center w-72 h-72">
-    {/* orbital rings */}
     {[220, 175, 130].map((size, i) => (
       <motion.div
         key={i}
@@ -265,20 +359,15 @@ const GlobeVisual = () => (
         style={{
           width: size,
           height: size,
-          border: `1px solid ${i === 0
-            ? "var(--border-brand)"
-            : i === 1
-              ? "var(--border-cyan)"
-              : "var(--border-default)"
-            }`,
+          border: `1px solid ${
+            i === 0 ? "var(--border-brand)" : i === 1 ? "var(--border-cyan)" : "var(--border-default)"
+          }`,
           opacity: 0.5 + i * 0.15,
         }}
         animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
         transition={{ duration: 18 + i * 7, repeat: Infinity, ease: "linear" }}
       />
     ))}
-
-    {/* core sphere */}
     <div
       className="relative w-24 h-24 rounded-full flex items-center justify-center"
       style={{
@@ -289,17 +378,13 @@ const GlobeVisual = () => (
     >
       <Globe2 className="w-10 h-10" style={{ color: "#fff" }} />
     </div>
-
-    {/* orbiting dots */}
     {[0, 60, 120, 180, 240, 300].map((deg, i) => (
       <motion.div
         key={i}
         className="absolute w-2 h-2 rounded-full"
         style={{
           background: i % 2 === 0 ? "var(--brand-400)" : "var(--cyan-400)",
-          boxShadow: i % 2 === 0
-            ? "0 0 6px var(--brand-400)"
-            : "0 0 6px var(--cyan-400)",
+          boxShadow: i % 2 === 0 ? "0 0 6px var(--brand-400)" : "0 0 6px var(--cyan-400)",
           top: "50%",
           left: "50%",
           marginTop: -4,
@@ -326,14 +411,12 @@ export default function HomePage() {
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
   const heroY = useTransform(scrollY, [0, 500], [0, 80]);
 
-  /* scroll listener */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* typewriter */
   useEffect(() => {
     const phrase = companyPlans[typingIndex % companyPlans.length];
     let i = 0;
@@ -362,8 +445,6 @@ export default function HomePage() {
       <Navbar />
       <Orbs />
 
-
-
       {/* ══════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
@@ -379,116 +460,107 @@ export default function HomePage() {
           backgroundAttachment: "fixed",
         }}
       >
-        {/* Overlay for text readability */}
         <div
           className="absolute inset-0 z-0"
           style={{
             background: "linear-gradient(135deg, rgba(6, 7, 10, 0.75) 0%, rgba(6, 7, 10, 0.65) 100%)",
           }}
         />
-
-        {/* Content wrapper */}
         <div className="relative z-10 flex flex-col items-center w-full">
-          {/* eyebrow pill */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
-          style={{
-            border: "1px solid var(--border-brand)",
-            background: "var(--glass-brand-sm)",
-            color: "var(--brand-300)",
-            fontSize: "var(--text-xs)",
-            letterSpacing: "var(--tracking-wider)",
-            textTransform: "uppercase",
-          }}
-        >
-          <LiveDot />
-          Trusted by 2M+ customers worldwide
-        </motion.div>
-
-        {/* H1 */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-bold leading-none mb-6 max-w-5xl"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
-            letterSpacing: "var(--tracking-tight)",
-            color: "var(--text-0)",
-          }}
-        >
-          Where Finance{" "}
-          <span className="text-gradient">Meets</span>{" "}
-          the Future
-        </motion.h1>
-
-        {/* Sub-heading */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-lg md:text-xl mb-4 max-w-xl leading-relaxed"
-          style={{ color: "var(--text-200)" }}
-        >
-          Your gateway to smart, secure, and modern financial solutions crafted for today's world.
-        </motion.p>
-
-        {/* Typewriter */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.45 }}
-          className="mb-10 h-8 flex items-center justify-center"
-        >
-          <span
             style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-base)",
-              color: "var(--brand-400)",
-            }}
-          >
-            {displayedText}
-            <span className="animate-pulse">▌</span>
-          </span>
-        </motion.div>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
-          className="flex flex-col sm:flex-row gap-4 items-center"
-        >
-          <a href="/signup" className="btn-primary btn-lg">
-            Get Started Free <ArrowRight className="w-4 h-4" />
-          </a>
-          <a href="#video-demo" className="btn-secondary btn-lg">
-            Watch Demo
-          </a>
-        </motion.div>
-
-        {/* Scroll hint */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ color: "var(--text-400)" }}
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <span
-            style={{
+              border: "1px solid var(--border-brand)",
+              background: "var(--glass-brand-sm)",
+              color: "var(--brand-300)",
               fontSize: "var(--text-xs)",
               letterSpacing: "var(--tracking-wider)",
               textTransform: "uppercase",
             }}
           >
-            Scroll
-          </span>
-          <ChevronDown className="w-4 h-4" />
-        </motion.div>
+            <LiveDot />
+            Trusted by 2M+ customers worldwide
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-bold leading-none mb-6 max-w-5xl"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+              letterSpacing: "var(--tracking-tight)",
+              color: "var(--text-0)",
+            }}
+          >
+            Where Finance{" "}
+            <span className="text-gradient">Meets</span>{" "}
+            the Future
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-lg md:text-xl mb-4 max-w-xl leading-relaxed"
+            style={{ color: "var(--text-200)" }}
+          >
+            Your gateway to smart, secure, and modern financial solutions crafted for today's world.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.45 }}
+            className="mb-10 h-8 flex items-center justify-center"
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--text-base)",
+                color: "var(--brand-400)",
+              }}
+            >
+              {displayedText}
+              <span className="animate-pulse">▌</span>
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="flex flex-col sm:flex-row gap-4 items-center"
+          >
+            <a href="/signup" className="btn-primary btn-lg">
+              Get Started Free <ArrowRight className="w-4 h-4" />
+            </a>
+            <a href="#video-demo" className="btn-secondary btn-lg">
+              Watch Demo
+            </a>
+          </motion.div>
+
+          <motion.div
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            style={{ color: "var(--text-400)" }}
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <span
+              style={{
+                fontSize: "var(--text-xs)",
+                letterSpacing: "var(--tracking-wider)",
+                textTransform: "uppercase",
+              }}
+            >
+              Scroll
+            </span>
+            <ChevronDown className="w-4 h-4" />
+          </motion.div>
         </div>
       </motion.section>
 
@@ -504,22 +576,15 @@ export default function HomePage() {
       >
         <div
           className="card rounded-2xl grid grid-cols-2 md:grid-cols-4"
-          style={{
-            /* override card border-radius for strip */
-            borderRadius: "var(--radius-xl)",
-          }}
+          style={{ borderRadius: "var(--radius-xl)" }}
         >
-          {/* first child: no left border */}
           {[
             { value: "40+", label: "Countries" },
             { value: "2M+", label: "Customers" },
             { value: "14+", label: "Years" },
             { value: "$50B+", label: "Processed" },
           ].map((s, i) => (
-            <div
-              key={s.label}
-              style={i === 0 ? { borderLeft: "none" } : {}}
-            >
+            <div key={s.label} style={i === 0 ? { borderLeft: "none" } : {}}>
               <StatCard {...s} />
             </div>
           ))}
@@ -538,9 +603,7 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-        {/* Image */}
         <div className="relative">
-          {/* ambient glow behind image */}
           <div
             className="absolute -inset-6 rounded-3xl pointer-events-none"
             style={{
@@ -560,7 +623,6 @@ export default function HomePage() {
               height={450}
               className="w-full object-cover"
             />
-            {/* overlay badge */}
             <div
               className="absolute bottom-4 left-4 right-4 rounded-xl p-4 flex items-center gap-3"
               style={{
@@ -583,16 +645,11 @@ export default function HomePage() {
                   +24.6% this quarter
                 </p>
               </div>
-              <span
-                className="badge badge-success ml-auto"
-              >
-                Live
-              </span>
+              <span className="badge badge-success ml-auto">Live</span>
             </div>
           </div>
         </div>
 
-        {/* Copy */}
         <div>
           <p
             className="text-xs font-semibold tracking-wider uppercase mb-4"
@@ -617,8 +674,6 @@ export default function HomePage() {
             secure digital banking, automated investment tools, and trusted advisors —
             all at your fingertips.
           </p>
-
-          {/* Mini stats */}
           <div className="flex gap-4 mb-8">
             {[
               { num: "76+", label: "Projects Completed" },
@@ -644,7 +699,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-
           <a href="/signin" className="btn-primary">
             Plan Your Financial Future <ArrowRight className="w-4 h-4" />
           </a>
@@ -677,14 +731,10 @@ export default function HomePage() {
           >
             Ecosystem
           </p>
-          <h3
-            className="section-header"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <h3 className="section-header" style={{ fontFamily: "var(--font-display)" }}>
             Our Trusted Partners
           </h3>
         </div>
-
         <div className="flex flex-wrap justify-center gap-4">
           {partners.map((partner, idx) => (
             <motion.div
@@ -695,11 +745,7 @@ export default function HomePage() {
                 border: "1px solid var(--border-default)",
                 backdropFilter: "blur(12px)",
               }}
-              whileHover={{
-                borderColor: "var(--border-brand)",
-                y: -4,
-                transition: { duration: 0.2 },
-              }}
+              whileHover={{ borderColor: "var(--border-brand)", y: -4, transition: { duration: 0.2 } }}
             >
               <Image
                 src={partner.logo}
@@ -709,9 +755,7 @@ export default function HomePage() {
                 className="object-contain opacity-70 hover:opacity-100 transition-opacity"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
-              <span
-                style={{ fontSize: "var(--text-xs)", color: "var(--text-300)" }}
-              >
+              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-300)" }}>
                 {partner.name}
               </span>
             </motion.div>
@@ -732,14 +776,10 @@ export default function HomePage() {
           >
             Why Us
           </p>
-          <h3
-            className="section-header"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <h3 className="section-header" style={{ fontFamily: "var(--font-display)" }}>
             Why Choose GlobalVault?
           </h3>
         </div>
-
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
@@ -796,7 +836,8 @@ export default function HomePage() {
             className="max-w-2xl mx-auto text-lg leading-relaxed"
             style={{ color: "var(--text-200)" }}
           >
-            Watch how our platform simplifies your financial journey with secure banking, smart investments, and healthcare benefits.
+            Watch how our platform simplifies your financial journey with secure banking,
+            smart investments, and healthcare benefits.
           </p>
         </div>
 
@@ -809,7 +850,7 @@ export default function HomePage() {
           whileHover={{ boxShadow: "0 0 30px rgba(59, 130, 246, 0.2)" }}
           transition={{ duration: 0.3 }}
         >
-          {/* Glow effect behind video */}
+          {/* Glow */}
           <div
             className="absolute -inset-8 rounded-3xl pointer-events-none -z-10"
             style={{
@@ -819,43 +860,26 @@ export default function HomePage() {
             }}
           />
 
-          {/* Video Container with 16:9 aspect ratio */}
-          <div className="relative w-full pt-[56.25%] bg-black rounded-2xl overflow-hidden">
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/w8KA0hBt-L4?autoplay=1&mute=1&controls=1&modestbranding=1"
-              title="GlobalVault Demo"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{
-                border: "none",
-              }}
-            />
+          {/* Video player with tabs + thumbnails */}
+          <div className="p-4 sm:p-6">
+            <VideoPlayer videos={VIDEOS} />
           </div>
 
-          {/* Overlay gradient for aesthetics */}
+          {/* Bottom gradient overlay */}
           <div
             className="absolute inset-0 pointer-events-none rounded-2xl"
             style={{
-              background:
-                "linear-gradient(to top, rgba(6,7,10,0.1) 0%, transparent 50%)",
+              background: "linear-gradient(to top, rgba(6,7,10,0.05) 0%, transparent 50%)",
             }}
           />
         </motion.div>
 
-        {/* CTA below video */}
+        {/* CTA */}
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-12">
-          <a
-            href="/signup"
-            className="btn-primary btn-lg"
-          >
+          <a href="/signup" className="btn-primary btn-lg">
             Get Started <ArrowRight className="w-4 h-4" />
           </a>
-          <a
-            href="#"
-            className="btn-secondary btn-lg"
-          >
+          <a href="#" className="btn-secondary btn-lg">
             Learn More
           </a>
         </div>
@@ -894,7 +918,6 @@ export default function HomePage() {
             className="card group rounded-2xl overflow-hidden cursor-pointer"
             whileHover={{ y: -4 }}
           >
-            {/* image */}
             <div className="relative h-64 overflow-hidden">
               <Image
                 src={img}
@@ -910,14 +933,8 @@ export default function HomePage() {
                     "linear-gradient(to top, var(--surface-0) 0%, rgba(6,7,10,0.15) 60%, transparent 100%)",
                 }}
               />
-              <span
-                className="badge badge-brand absolute top-4 left-4"
-              >
-                {tag}
-              </span>
+              <span className="badge badge-brand absolute top-4 left-4">{tag}</span>
             </div>
-
-            {/* content */}
             <div className="p-6" style={{ background: "var(--glass-white-xs)" }}>
               <div className="flex items-start gap-3">
                 <div
@@ -933,9 +950,7 @@ export default function HomePage() {
                   >
                     {title}
                   </h4>
-                  <p style={{ fontSize: "var(--text-sm)", color: "var(--text-200)" }}>
-                    {desc}
-                  </p>
+                  <p style={{ fontSize: "var(--text-sm)", color: "var(--text-200)" }}>{desc}</p>
                 </div>
               </div>
             </div>
@@ -956,10 +971,7 @@ export default function HomePage() {
           >
             Social Proof
           </p>
-          <h3
-            className="section-header"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <h3 className="section-header" style={{ fontFamily: "var(--font-display)" }}>
             What Our Clients Say
           </h3>
         </div>
@@ -1047,7 +1059,6 @@ export default function HomePage() {
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        {/* Loans */}
         <div
           className="card-brand p-8 rounded-2xl relative overflow-hidden group"
           style={{
@@ -1056,7 +1067,6 @@ export default function HomePage() {
             border: "1px solid var(--border-brand)",
           }}
         >
-          {/* decorative blob */}
           <div
             className="absolute -top-12 -right-12 w-40 h-40 rounded-full pointer-events-none"
             style={{
@@ -1082,10 +1092,7 @@ export default function HomePage() {
           </a>
         </div>
 
-        {/* Offers */}
-        <div
-          className="card p-8 rounded-2xl relative overflow-hidden"
-        >
+        <div className="card p-8 rounded-2xl relative overflow-hidden">
           <div className="flex items-center gap-2 mb-5">
             <Star className="w-5 h-5 fill-current" style={{ color: "var(--brand-400)" }} />
             <h4
@@ -1108,7 +1115,10 @@ export default function HomePage() {
               >
                 <span
                   className="status-dot"
-                  style={{ background: "var(--success-400)", boxShadow: "0 0 6px var(--success-400)" }}
+                  style={{
+                    background: "var(--success-400)",
+                    boxShadow: "0 0 6px var(--success-400)",
+                  }}
                 />
                 {item}
               </li>
@@ -1120,8 +1130,8 @@ export default function HomePage() {
       <SectionDivider />
 
       {/* ══════════════════════════════════════════════════════
-    CTA BANNER
-══════════════════════════════════════════════════════ */}
+          CTA BANNER
+      ══════════════════════════════════════════════════════ */}
       <motion.section
         className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20"
         initial={{ opacity: 0, y: 30 }}
@@ -1131,20 +1141,13 @@ export default function HomePage() {
       >
         <div className="max-w-7xl mx-auto">
           <div
-            className="
-        relative overflow-hidden text-center
-        rounded-2xl sm:rounded-3xl
-        px-5 py-12
-        sm:px-8 sm:py-16
-        lg:px-16 lg:py-20
-      "
+            className="relative overflow-hidden text-center rounded-2xl sm:rounded-3xl px-5 py-12 sm:px-8 sm:py-16 lg:px-16 lg:py-20"
             style={{
               background:
                 "linear-gradient(135deg, var(--glass-brand-md) 0%, var(--glass-white-xs) 50%, var(--glass-brand-sm) 100%)",
               border: "1px solid var(--border-brand)",
             }}
           >
-            {/* Glow Overlay */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -1152,68 +1155,29 @@ export default function HomePage() {
                   "radial-gradient(ellipse at 50% 0%, var(--brand-glow-sm) 0%, transparent 65%)",
               }}
             />
-
-            {/* Content */}
             <div className="relative z-10 flex flex-col items-center">
-              {/* Label */}
               <p
-                className="
-            text-[10px] sm:text-xs
-            font-semibold uppercase
-            tracking-[0.25em]
-            mb-4
-          "
+                className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] mb-4"
                 style={{ color: "var(--brand-400)" }}
               >
                 Get Started Today
               </p>
-
-              {/* Heading */}
               <h3
-                className="
-            font-bold leading-tight
-            max-w-3xl mx-auto
-            mb-5
-            text-3xl
-            sm:text-4xl
-            md:text-5xl
-          "
-                style={{
-                  fontFamily: "var(--font-display)",
-                  color: "var(--text-0)",
-                }}
+                className="font-bold leading-tight max-w-3xl mx-auto mb-5 text-3xl sm:text-4xl md:text-5xl"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-0)" }}
               >
                 Ready to Take Control of Your Finances?
               </h3>
-
-              {/* Description */}
               <p
-                className="
-            max-w-xl mx-auto
-            text-sm sm:text-base md:text-lg
-            leading-relaxed
-            mb-8 sm:mb-10
-            px-1
-          "
+                className="max-w-xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed mb-8 sm:mb-10 px-1"
                 style={{ color: "var(--text-200)" }}
               >
-                Join over 2 million customers who trust
-                Web3GlobalVault for seamless, secure, and smart
-                banking.
+                Join over 2 million customers who trust Web3GlobalVault for seamless, secure, and smart banking.
               </p>
-
-              {/* CTA */}
               <div className="w-full sm:w-auto">
                 <a
                   href="/signup"
-                  className="
-              btn-primary btn-lg
-              inline-flex items-center justify-center gap-2
-              w-full sm:w-auto
-              min-h-[52px]
-              px-6 sm:px-8
-              text-sm sm:text-base
-            "
+                  className="btn-primary btn-lg inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[52px] px-6 sm:px-8 text-sm sm:text-base"
                 >
                   Open Your Free Account
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
