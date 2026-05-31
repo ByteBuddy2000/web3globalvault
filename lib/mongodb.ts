@@ -19,7 +19,11 @@ if (!cached) {
 }
 
 async function connectDB(): Promise<typeof mongoose> {
-  if (cached.conn) return cached.conn;
+  if (cached.conn) {
+    // Ensure GridFS is initialized even if we're reusing the connection
+    initializeGridFS(cached.conn.connection);
+    return cached.conn;
+  }
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
@@ -31,6 +35,8 @@ async function connectDB(): Promise<typeof mongoose> {
     });
   }
   cached.conn = await cached.promise;
+  // Ensure GridFS is initialized
+  initializeGridFS(cached.conn.connection);
   return cached.conn;
 }
 

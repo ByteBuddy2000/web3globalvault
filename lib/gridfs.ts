@@ -1,22 +1,34 @@
 import mongoose from 'mongoose';
 import { Readable } from 'stream';
 
-let gfsImage: mongoose.mongo.GridFSBucket;
+let gfsImage: mongoose.mongo.GridFSBucket | null = null;
+let dbConnection: mongoose.Connection | null = null;
 
 export function initializeGridFS(db: mongoose.Connection) {
-  if (!db.db) {
-    throw new Error('MongoDB connection not established');
-  }
-  gfsImage = new mongoose.mongo.GridFSBucket(db.db, {
-    bucketName: 'kyc_images',
-  });
-  return gfsImage;
+  dbConnection = db;
+  // Don't create the bucket immediately, wait until it's actually needed
+  // This ensures the connection is fully established
+  gfsImage = null; // Reset to force re-initialization
 }
 
 export function getGridFS(): mongoose.mongo.GridFSBucket {
-  if (!gfsImage) {
-    throw new Error('GridFS not initialized. Call initializeGridFS first.');
+  if (gfsImage) {
+    return gfsImage;
   }
+
+  if (!dbConnection) {
+    throw new Error('Database connection not initialized. Call initializeGridFS first.');
+  }
+
+  // Lazy initialization - create the bucket on first use
+  if (!dbConnection.db) {
+    throw new Error('MongoDB connection not fully established');
+  }
+
+  gfsImage = new mongoose.mongo.GridFSBucket(dbConnection.db, {
+    bucketName: 'kyc_images',
+  });
+
   return gfsImage;
 }
 
