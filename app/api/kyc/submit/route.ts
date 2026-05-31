@@ -96,18 +96,24 @@ export async function POST(req: NextRequest) {
     validateFile(documentImageFile);
     validateFile(selfieImageFile);
 
-    // Check if user already has a pending KYC
-    const existingKyc = await KYC.findOne({
+    // Check if user already has a pending KYC (don't allow multiple pending submissions)
+    const existingPendingKyc = await KYC.findOne({
       user: user._id,
       status: "pending",
     });
 
-    if (existingKyc) {
+    if (existingPendingKyc) {
       return NextResponse.json(
         { error: "You already have a pending KYC submission. Please wait for verification." },
         { status: 400 }
       );
     }
+
+    // Delete old rejected KYC records to allow fresh resubmission
+    await KYC.deleteMany({
+      user: user._id,
+      status: "rejected",
+    });
 
     // Upload files to GridFS
     let documentImageId, selfieImageId;
@@ -211,10 +217,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const kyc = await KYC.findOne({ user: user._id }).populate(
-      "user",
-      "email fullName"
-    );
+    // Get the most recent KYC record (latest submission)
+    const kyc = await KYC.findOne({ user: user._id })
+      .sort({ createdAt: -1 })
+      .populate("user", "email fullName");
 
     if (!kyc) {
       return NextResponse.json(

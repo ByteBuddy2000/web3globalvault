@@ -44,7 +44,8 @@ export async function GET(req: NextRequest) {
     // Get total count
     const total = await KYC.countDocuments({ status });
 
-    // Get KYCs with user info
+    // Get KYCs with user info, excluding duplicate rejected records from same user
+    // Get the most recent KYC per user for each status to avoid showing duplicates
     const kycRecords = await KYC.find({ status })
       .populate("user", "email fullName accountNumber")
       .populate("verifiedBy", "email fullName")
@@ -118,6 +119,13 @@ export async function POST(req: NextRequest) {
 
       // Update user's kycVerified status
       await User.findByIdAndUpdate(kyc.user, { kycVerified: true });
+
+      // Clean up rejected and pending KYC records for this user
+      await KYC.deleteMany({
+        user: kyc.user,
+        _id: { $ne: kyc._id },
+        status: { $in: ["rejected", "pending"] },
+      });
     } else if (action === "reject") {
       if (!rejectionReason?.trim()) {
         return NextResponse.json(
