@@ -12,9 +12,10 @@ import {
 import AdminKYCPage from "./components/kyc-page";
 import AdminTransactionsPage from "./components/transaction-page";
 import AdminMedbedPage from "./components/medbed-page";
+import AdminWalletPage from "./components/wallet-page";
 import { UserDrawer } from "./components/UserDrawer";
 
-type TabId = "dashboard" | "users" | "kyc" | "transactions" | "medbed" | "settings";
+type TabId = "dashboard" | "users" | "kyc" | "transactions" | "medbed" | "wallet" | "settings";
 
 type User = {
   _id: string;
@@ -37,6 +38,7 @@ const NAV_ITEMS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "transactions", label: "Transactions", icon: Wallet },
   { id: "kyc", label: "KYC", icon: FileText },
   { id: "medbed", label: "Medbed", icon: Heart },
+  { id: "wallet", label: "Wallet Approval", icon: Wallet },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -469,6 +471,7 @@ export default function AdminPage() {
         {activeTab === "kyc" && <AdminKYCPage />}
         {activeTab === "transactions" && <AdminTransactionsPage />}
         {activeTab === "medbed" && <AdminMedbedPage />}
+        {activeTab === "wallet" && <AdminWalletPage />}
 
         {/* Settings */}
         {activeTab === "settings" && (
