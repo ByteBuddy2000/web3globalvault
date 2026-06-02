@@ -119,7 +119,7 @@ export default function TransferMoneyPage() {
   }, []);
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8" style={{ background: 'var(--void-0)' }}>
+    <div className="min-h-screen px-4 sm:px-6 py-8 relative z-10" style={{ background: 'var(--void-0)' }}>
       <div className="max-w-2xl mx-auto rounded-2xl shadow-lg p-6 sm:p-8" style={{ background: 'var(--card)', border: '1px solid var(--surface-border)' }}>
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2 flex items-center justify-center gap-2" style={{ color: 'var(--cyan-500)' }}>

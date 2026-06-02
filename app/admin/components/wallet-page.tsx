@@ -310,14 +310,14 @@ export default function AdminWalletPage() {
                   </button>
                   <button
                     onClick={() => handleReject(selectedWallet._id)}
-                    disabled={actionLoading}
+                    disabled={!!actionLoading}
                     className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 text-sm hover:bg-red-500/30 disabled:opacity-50 transition"
                   >
                     {actionLoading ? "Processing..." : "Reject"}
                   </button>
                   <button
                     onClick={() => handleApprove(selectedWallet._id)}
-                    disabled={actionLoading}
+                    disabled={!!actionLoading}
                     className="px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/40 text-green-300 text-sm hover:bg-green-500/30 disabled:opacity-50 transition"
                   >
                     {actionLoading ? "Processing..." : "Approve"}
