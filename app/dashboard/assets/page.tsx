@@ -458,7 +458,7 @@ export default function AssetsPage() {
         </div>
       </div>
         <LiveTransactionPopup />
-
+ 
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>

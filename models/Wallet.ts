@@ -16,7 +16,7 @@ export interface IWallet extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-
+ 
 const WalletSchema = new Schema<IWallet>(
   {
     userId: {

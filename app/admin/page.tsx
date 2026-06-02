@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 import {
   BarChart3, Wallet, FileText, Heart, Users, Settings,
-  LogOut, Menu, X, TrendingUp, Clock, DollarSign,
+  LogOut, Menu, X, TrendingUp, Clock,
   PlusCircle, Trash2, ChevronRight
 } from "lucide-react";
 
@@ -67,7 +67,7 @@ export default function AdminPage() {
   const [loadingAssets, setLoadingAssets] = useState(false);
 
   // Dashboard stats
-  const [stats, setStats] = useState({ totalUsers: 0, totalBalance: 0, pendingWithdrawals: 0, pendingKYC: 0 });
+  const [stats, setStats] = useState({ totalUsers: 0, pendingWithdrawals: 0, pendingKYC: 0 });
   const [pendingWithdrawals, setPendingWithdrawals] = useState<Transaction[]>([]);
   const [medbedRegs, setMedbedRegs] = useState<MedbedReg[]>([]);
 
@@ -86,7 +86,7 @@ export default function AdminPage() {
         fetch("/api/admin/transactions?status=Pending"),
         fetch("/api/admin/medbed/verify"),
       ]);
-      if (statsRes.ok) { const d = await statsRes.json(); setStats({ totalUsers: d.totalUsers || 0, totalBalance: d.totalBalance || 0, pendingWithdrawals: d.pendingWithdrawals || 0, pendingKYC: d.pendingKYC || 0 }); }
+      if (statsRes.ok) { const d = await statsRes.json(); setStats({ totalUsers: d.totalUsers || 0, pendingWithdrawals: d.pendingWithdrawals || 0, pendingKYC: d.pendingKYC || 0 }); }
       if (txRes.ok) { const d = await txRes.json(); setPendingWithdrawals((d.transactions || []).slice(0, 5)); }
       if (mbRes.ok) { const d = await mbRes.json(); setMedbedRegs((d.registrations || []).slice(0, 5)); }
     } catch { toast.error("Failed to load dashboard"); }
@@ -246,10 +246,9 @@ export default function AdminPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {[
                 { label: "Total Users", value: stats.totalUsers, icon: Users, color: "blue" },
-                { label: "Total Balance", value: `$${stats.totalBalance.toLocaleString()}`, icon: DollarSign, color: "green" },
                 { label: "Pending Withdrawals", value: stats.pendingWithdrawals, icon: Clock, color: "yellow" },
                 { label: "Pending KYC", value: stats.pendingKYC, icon: FileText, color: "purple" },
               ].map(({ label, value, icon: Icon, color }) => (

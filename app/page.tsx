@@ -67,12 +67,12 @@ const testimonials = [
 ];
 
 const VIDEOS = [
-  { id: "w8KA0hBt-L4", label: "Overview" },
-  { id: "8QA6T9R1WyQ", label: "Platform" },
-  { id: "UU3c-1akOZw", label: "Investments" },
-  { id: "4OVgWbvYzIY", label: "MedBed" },
-  { id: "mcUX-TiAaxU", label: "Banking" },
-  { id: "hoO8wBozHzI", label: "Transfers" },
+  { id: "w8KA0hBt-L4", label: "Medbed" },
+  { id: "8QA6T9R1WyQ", label: "Uphold App" },
+  { id: "UU3c-1akOZw", label: "Kraken" },
+  { id: "4OVgWbvYzIY", label: "SafePal" },
+  { id: "mcUX-TiAaxU", label: "Crypto.com" },
+  { id: "hoO8wBozHzI", label: "RobinHood" },
 ];
 
 type Video = {

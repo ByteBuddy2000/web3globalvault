@@ -34,8 +34,7 @@ export default function WalletAdminPage(){
 
   useEffect(() => {
     fetchWallets();
-  }, []);
-
+  }, [])
   const fetchWallets = async () => {
     try {
       setLoading(true);

