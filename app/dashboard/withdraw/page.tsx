@@ -212,8 +212,8 @@ function Row({ label, value, highlight }: RowProps) {
     "text-foreground";
   return (
     <div className="flex justify-between items-center">
-      <span className="font-mono text-[13px] text-muted-foreground">{label}</span>
-      <span className={`font-mono text-[13px] ${color} ${highlight ? 'font-semibold' : 'font-normal'}`}>{value}</span>
+      <span className="font-mono text-xs text-slate-400">{label}</span>
+      <span className={`font-mono text-xs ${color} ${highlight ? 'font-semibold' : 'font-normal'}`}>{value}</span>
     </div>
   );
 }
@@ -230,10 +230,10 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border transition-all cursor-pointer text-[11px] font-mono font-semibold tracking-wider flex-shrink-0 ${
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border transition-all cursor-pointer text-xs font-mono font-semibold tracking-wider flex-shrink-0 ${
         copied
-          ? 'bg-glass-brand-sm border-brand text-success'
-          : 'bg-glass-white-xs border-border-subtle text-muted-foreground hover:bg-glass-white-sm hover:border-border-default'
+          ? 'bg-success/10 border-success text-success'
+          : 'bg-surface-200/50 border-border-default text-slate-400 hover:bg-surface-300 hover:border-slate-500'
       }`}
     >
       {copied ? <CheckCircle2 size={11} /> : <Copy size={11} />}
@@ -265,57 +265,53 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="relative w-full max-w-md card animate-fade-in-scale">
+      <div className="relative w-full max-w-md bg-card border border-border-default rounded-xl p-6 shadow-xl">
         {/* Close */}
         <button
           onClick={onClose}
           disabled={loading}
-          className="absolute top-4 right-4 w-7 h-7 rounded-lg flex items-center justify-center bg-glass-white-xs border border-border-subtle text-muted-foreground hover:bg-glass-white-sm hover:border-border-default transition-all cursor-pointer disabled:opacity-50"
+          className="absolute top-4 right-4 w-7 h-7 rounded-lg flex items-center justify-center bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition-all cursor-pointer disabled:opacity-50"
         >
           <X size={14} />
         </button>
 
         {/* Step indicator */}
-        <div className="flex gap-1.5 items-center mb-5">
+        <div className="flex gap-1.5 items-center mb-6">
           {(["review", "pay-fee"] as ModalStep[]).map((s, i) => (
             <div key={s} className="flex items-center gap-1.5">
               <div
-                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono transition-all ${
-                  step === s ? 'bg-glass-brand-sm border border-brand text-brand-300' :
-                  (step === "pay-fee" && s === "review") || step === "done" ? 'bg-glass-brand-sm border border-success text-success' : 'bg-glass-white-xs border border-border-subtle text-muted-foreground'
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono transition-all ${
+                  step === s ? 'bg-yellow-500/20 border border-yellow-500 text-yellow-400' :
+                  (step === "pay-fee" && s === "review") || step === "done" ? 'bg-success/10 border border-success text-success' : 'bg-surface-200/50 border border-border-default text-slate-400'
                 }`}
               >
                 {(step === "pay-fee" && s === "review") ? <CheckCircle2 size={11} /> : i + 1}
               </div>
               {i < 1 && (
                 <div className={`w-6 h-px transition-all ${
-                  step !== "review" ? 'bg-success' : 'bg-border-subtle'
+                  step !== "review" ? 'bg-success' : 'bg-border-default'
                 }`} />
               )}
             </div>
           ))}
-          <span className="font-mono text-[11px] text-muted-foreground ml-1.5 tracking-wider">
-            {step === "review" ? "REVIEW DETAILS" : "PAY WITHDRAWAL FEE"}
+          <span className="font-mono text-xs text-slate-400 ml-2 tracking-wider uppercase">
+            {step === "review" ? "Review Details" : "Pay Fee"}
           </span>
         </div>
 
         {/* ── STEP 1: Review ── */}
         {step === "review" && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-              <div style={{
-                width: "28px", height: "28px",
-                background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)",
-                borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Zap size={13} color="#fbbf24" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+                <Zap size={13} className="text-yellow-400" />
               </div>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "18px", color: "#f9fafb", margin: 0 }}>
+              <h3 className="text-lg font-bold text-foreground">
                 Review Withdrawal
               </h3>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div className="space-y-3 mb-6">
               <Row label="Method" value={details.method === "bank" ? "Bank Transfer" : "Crypto"} />
 
               {details.method === "bank" && (
@@ -332,57 +328,35 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
                 </>
               )}
 
-              <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "2px 0" }} />
+              <div className="border-t border-border-default my-3" />
               <Row label="Withdrawal Amount" value={`$${Number(details.amount).toLocaleString()}`} />
               <Row label={`Fee (${details.feeLabel})`} value={`$${details.fee.toLocaleString()}`} highlight="red" />
 
-              <div style={{
-                padding: "12px 14px",
-                background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.12)",
-                borderRadius: "10px", display: "flex", justifyContent: "space-between", alignItems: "center",
-              }}>
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280", letterSpacing: "0.1em" }}>YOU RECEIVE</span>
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "18px", fontWeight: 700, color: "#fbbf24" }}>
+              <div className="bg-yellow-500/5 border border-yellow-500/20 p-3 rounded-lg flex justify-between items-center">
+                <span className="font-mono text-xs text-slate-400 uppercase tracking-wider">You Receive</span>
+                <span className="font-mono text-xl font-bold text-yellow-400">
                   ${details.youReceive.toLocaleString()}
                 </span>
               </div>
 
               {/* Fee notice */}
-              <div style={{
-                display: "flex", gap: "8px", alignItems: "flex-start",
-                padding: "11px 13px",
-                background: "rgba(251,191,36,0.04)", border: "1px solid rgba(251,191,36,0.10)",
-                borderRadius: "10px",
-              }}>
-                <AlertCircle size={12} color="#fbbf24" style={{ marginTop: "1px", flexShrink: 0 }} />
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280", lineHeight: 1.7 }}>
-                  A withdrawal fee of <span style={{ color: "#fbbf24", fontWeight: 700 }}>${details.fee.toLocaleString()}</span> must be paid separately before your withdrawal is processed. You'll pay this in the next step.
+              <div className="flex gap-2 items-start bg-yellow-500/5 border border-yellow-500/15 p-3 rounded-lg">
+                <AlertCircle size={12} className="text-yellow-400 mt-0.5 flex-shrink-0" />
+                <span className="font-mono text-xs text-slate-400 leading-relaxed">
+                  A withdrawal fee of <span className="text-yellow-400 font-bold">${details.fee.toLocaleString()}</span> must be paid separately before your withdrawal is processed.
                 </span>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-              <button onClick={onClose} style={{
-                flex: 1, padding: "12px", borderRadius: "12px",
-                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                color: "#6b7280", fontFamily: "'DM Mono', monospace", fontWeight: 600, fontSize: "12px",
-                letterSpacing: "0.06em", cursor: "pointer",
-              }}>
-                CANCEL
+            <div className="flex gap-3 mt-6">
+              <button onClick={onClose} className="flex-1 px-4 py-3 rounded-lg bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition font-mono text-xs font-semibold tracking-wider uppercase">
+                Cancel
               </button>
               <button
                 onClick={() => setStep("pay-fee")}
-                className="cta-btn"
-                style={{
-                  flex: 2, padding: "12px", borderRadius: "12px", border: "none",
-                  background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
-                  color: "#111", fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: "12px",
-                  letterSpacing: "0.08em", cursor: "pointer",
-                  boxShadow: "0 4px 20px rgba(251,191,36,0.25)",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-                }}
+                className="flex-1 px-4 py-3 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 transition font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2"
               >
-                PAY FEE & CONTINUE <ChevronRight size={13} />
+                Pay Fee & Continue <ChevronRight size={13} />
               </button>
             </div>
           </>
@@ -391,80 +365,49 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
         {/* ── STEP 2: Pay Fee ── */}
         {step === "pay-fee" && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-              <div style={{
-                width: "28px", height: "28px",
-                background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)",
-                borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <ShieldCheck size={13} color="#fbbf24" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+                <ShieldCheck size={13} className="text-yellow-400" />
               </div>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "18px", color: "#f9fafb", margin: 0 }}>
+              <h3 className="text-lg font-bold text-foreground">
                 Pay Withdrawal Fee
               </h3>
             </div>
 
             {/* Fee amount badge */}
-            <div style={{
-              textAlign: "center", padding: "16px",
-              background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)",
-              borderRadius: "14px", marginBottom: "18px",
-            }}>
-              <p style={{ margin: "0 0 2px", fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280", letterSpacing: "0.1em" }}>
-                AMOUNT DUE
+            <div className="text-center bg-yellow-500/5 border border-yellow-500/15 p-4 rounded-lg mb-5">
+              <p className="font-mono text-xs text-slate-400 uppercase tracking-wider mb-1">
+                Amount Due
               </p>
-              <p style={{ margin: 0, fontFamily: "'Syne', sans-serif", fontSize: "28px", fontWeight: 800, color: "#fbbf24" }}>
+              <p className="text-3xl font-bold text-yellow-400 mb-1">
                 ${details.fee.toLocaleString()}
               </p>
-              <p style={{ margin: "4px 0 0", fontFamily: "'DM Mono', monospace", fontSize: "10px", color: "#4b5563", letterSpacing: "0.08em" }}>
+              <p className="font-mono text-xs text-slate-500 tracking-wider">
                 {feeNetworkLabel}
               </p>
             </div>
 
             {/* QR Code */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
-              <div style={{
-                position: "relative", width: "130px", height: "130px",
-                border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px", overflow: "hidden",
-                boxShadow: "0 0 0 4px rgba(251,191,36,0.06)",
-              }}>
+            <div className="flex justify-center mb-5">
+              <div className="relative w-32 h-32 border border-border-default rounded-lg overflow-hidden bg-surface-200/50 shadow-lg">
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(feeWallet)}&bgcolor=111318&color=f9fafb&margin=8`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(feeWallet)}&bgcolor=1f2937&color=f3f4f6&margin=8`}
                   alt="fee wallet QR"
-                  style={{ width: "100%", height: "100%", display: "block" }}
+                  className="w-full h-full"
                 />
-                <div style={{
-                  position: "absolute", top: "50%", left: "50%",
-                  transform: "translate(-50%,-50%)",
-                  width: "22px", height: "22px",
-                  background: "#111318", border: "2px solid #fbbf24",
-                  borderRadius: "5px", display: "flex", alignItems: "center",
-                  justifyContent: "center", color: "#fbbf24", fontSize: "8px", fontWeight: 800,
-                }}>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-surface-200/90 border-2 border-yellow-500 rounded-sm flex items-center justify-center text-xs font-bold text-yellow-400">
                   GB
                 </div>
               </div>
             </div>
 
             {/* Wallet address */}
-            <div style={{ marginBottom: "18px" }}>
-              <p style={{
-                fontFamily: "'DM Mono', monospace", fontSize: "10px",
-                color: "#6b7280", letterSpacing: "0.1em", margin: "0 0 8px",
-                textTransform: "uppercase",
-              }}>
+            <div className="mb-5">
+              <p className="font-mono text-xs text-slate-400 uppercase tracking-wider mb-2">
                 Send fee to this address
               </p>
-              <div style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                padding: "11px 13px",
-                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "10px",
-              }}>
-                <span style={{
-                  flex: 1, fontFamily: "'DM Mono', monospace", fontSize: "11px",
-                  color: "#d1d5db", wordBreak: "break-all", lineHeight: 1.6,
-                }}>
+              <div className="flex items-center gap-3 bg-surface-200/50 border border-border-default p-3 rounded-lg">
+                <span className="flex-1 font-mono text-xs text-slate-300 break-all">
                   {feeWallet}
                 </span>
                 <CopyButton text={feeWallet} />
@@ -473,67 +416,42 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
 
             {/* Confirmation checkbox */}
             <label
-              style={{
-                display: "flex", gap: "10px", alignItems: "flex-start",
-                padding: "12px 13px",
-                background: feePaid ? "rgba(74,222,128,0.04)" : "rgba(255,255,255,0.02)",
-                border: `1px solid ${feePaid ? "rgba(74,222,128,0.2)" : "rgba(255,255,255,0.07)"}`,
-                borderRadius: "10px", cursor: "pointer", marginBottom: "16px",
-                transition: "all 0.2s",
-              }}
+              className="flex gap-3 items-start bg-surface-200/50 border border-border-default p-3 rounded-lg cursor-pointer mb-5 transition hover:bg-surface-300/50"
             >
               <input
                 type="checkbox"
                 checked={feePaid}
                 onChange={(e) => sCryptoeePaid(e.target.checked)}
-                style={{ marginTop: "2px", accentColor: "#4ade80", cursor: "pointer" }}
+                className="mt-1 cursor-pointer accent-success"
               />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: feePaid ? "#9ca3af" : "#6b7280", lineHeight: 1.7 }}>
-                I confirm I have sent the fee of <span style={{ color: "#fbbf24", fontWeight: 700 }}>${details.fee.toLocaleString()}</span> to the address above and understand my withdrawal will be processed after verification.
+              <span className="font-mono text-xs text-slate-400">
+                I confirm I have sent the fee of <span className="text-yellow-400 font-bold">${details.fee.toLocaleString()}</span> to the address above and understand my withdrawal will be processed after verification.
               </span>
             </label>
 
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="flex gap-3">
               <button
                 onClick={() => setStep("review")}
-                style={{
-                  flex: 1, padding: "12px", borderRadius: "12px",
-                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                  color: "#6b7280", fontFamily: "'DM Mono', monospace", fontWeight: 600, fontSize: "12px",
-                  letterSpacing: "0.06em", cursor: "pointer",
-                }}
+                className="flex-1 px-4 py-3 rounded-lg bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition font-mono text-xs font-semibold tracking-wider uppercase"
               >
-                BACK
+                Back
               </button>
               <button
                 onClick={onConfirm}
                 disabled={!feePaid || loading}
-                className="cta-btn"
-                style={{
-                  flex: 2, padding: "12px", borderRadius: "12px", border: "none",
-                  cursor: feePaid && !loading ? "pointer" : "not-allowed",
-                  background: feePaid && !loading
-                    ? "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)"
-                    : "rgba(255,255,255,0.05)",
-                  color: feePaid && !loading ? "#0a1a0f" : "#4b5563",
-                  fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: "12px",
-                  letterSpacing: "0.08em",
-                  boxShadow: feePaid && !loading ? "0 4px 20px rgba(74,222,128,0.25)" : "none",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-                  transition: "all 0.2s",
-                }}
+                className={`flex-1 px-4 py-3 rounded-lg font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition ${
+                  feePaid && !loading
+                    ? 'bg-success/20 border border-success text-success hover:bg-success/30'
+                    : 'bg-surface-200/50 border border-border-default text-slate-500 cursor-not-allowed opacity-50'
+                }`}
               >
                 {loading ? (
                   <>
-                    <div style={{
-                      width: "12px", height: "12px",
-                      border: "2px solid rgba(10,26,15,0.3)", borderTopColor: "#0a1a0f",
-                      borderRadius: "50%", animation: "spin 0.7s linear infinite",
-                    }} />
-                    SUBMITTING...
+                    <div className="w-3 h-3 border-2 border-success border-t-transparent rounded-full animate-spin" />
+                    Submitting...
                   </>
                 ) : (
-                  <><CheckCircle2 size={13} /> CONFIRM WITHDRAWAL</>
+                  <><CheckCircle2 size={13} /> Confirm Withdrawal</>
                 )}
               </button>
             </div>
@@ -549,38 +467,25 @@ function FeeBreakdown({ amount }: FeeBreakdownProps) {
   const { label, fee, youReceive } = useMemo(() => gCryptoeeInfo(amount), [amount]);
   if (!amount || Number(amount) <= 0) {
     return (
-      <div style={{
-        marginTop: "8px", borderRadius: "10px",
-        border: "1px solid rgba(255,255,255,0.06)",
-        background: "rgba(255,255,255,0.02)",
-        padding: "10px 12px",
-        fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#4b5563",
-        letterSpacing: "0.04em",
-      }}>
+      <div className="mt-2 p-3 rounded-lg border border-border-default bg-surface-200/30 font-mono text-xs text-slate-400 tracking-wider">
         Enter an amount to see fee breakdown.
       </div>
     );
   }
   return (
-    <div style={{
-      marginTop: "8px", borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.07)",
-      background: "rgba(255,255,255,0.02)",
-      padding: "10px 12px",
-      display: "flex", flexDirection: "column", gap: "7px",
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280" }}>Amount</span>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#f9fafb" }}>${Number(amount).toLocaleString()}</span>
+    <div className="mt-2 p-3 rounded-lg border border-border-default bg-surface-200/30 flex flex-col gap-2">
+      <div className="flex justify-between">
+        <span className="font-mono text-xs text-slate-400">Amount</span>
+        <span className="font-mono text-xs text-foreground">${Number(amount).toLocaleString()}</span>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280" }}>Fee ({label})</span>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#ef4444" }}>+${fee.toLocaleString()} (paid separately)</span>
+      <div className="flex justify-between">
+        <span className="font-mono text-xs text-slate-400">Fee ({label})</span>
+        <span className="font-mono text-xs text-danger">+${fee.toLocaleString()} (paid separately)</span>
       </div>
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#6b7280" }}>You Receive</span>
-        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", color: "#fbbf24", fontWeight: 700 }}>${youReceive.toLocaleString()}</span>
+      <div className="border-t border-border-default" />
+      <div className="flex justify-between">
+        <span className="font-mono text-xs text-slate-400">You Receive</span>
+        <span className="font-mono text-xs text-yellow-400 font-bold">${youReceive.toLocaleString()}</span>
       </div>
     </div>
   );
@@ -595,16 +500,13 @@ function FeeTierBadges({ currentAmount }: FeeTierBadgesProps) {
     { range: "$10K+",    rate: "3%", active: num > 10_000 },
   ];
   return (
-    <div style={{ display: "flex", gap: "6px", marginTop: "8px", flexWrap: "wrap" }}>
+    <div className="flex gap-2 mt-2 flex-wrap">
       {tiers.map((tier) => (
-        <span key={tier.range} style={{
-          fontSize: "10px", fontFamily: "'DM Mono', monospace", fontWeight: 600,
-          letterSpacing: "0.06em", padding: "3px 8px", borderRadius: "6px",
-          background: tier.active ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.03)",
-          color: tier.active ? "#fbbf24" : "#4b5563",
-          border: `1px solid ${tier.active ? "rgba(251,191,36,0.25)" : "rgba(255,255,255,0.06)"}`,
-          transition: "all 0.2s",
-        }}>
+        <span key={tier.range} className={`text-xs font-mono font-semibold tracking-wider px-2 py-1 rounded-md transition ${
+          tier.active 
+            ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-400' 
+            : 'bg-surface-200/50 border border-border-default text-slate-400'
+        }`}>
           {tier.range} → {tier.rate}
         </span>
       ))}
@@ -749,10 +651,6 @@ function WithdrawContent() {
 
   return (
     <>
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
-
       <Toaster richColors position="top-center" />
 
       <ConfirmModal
@@ -763,41 +661,34 @@ function WithdrawContent() {
         details={buildDetails()}
       />
 
-      <main className="min-h-screen bg-app font-body py-6 px-4 sm:px-6">
-        <div className="mx-auto w-full max-w-[460px] theme-card p-6 animate-fade-in-up">
+      <main className="min-h-screen bg-app font-body py-8 px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-md bg-card border border-border-default p-6 rounded-xl">
 
           {/* Header */}
-          <div style={{ marginBottom: "28px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-              <div style={{
-                width: "28px", height: "28px",
-                background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)",
-                borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Zap size={14} color="#fbbf24" />
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+                <Zap size={14} className="text-yellow-400" />
               </div>
-              <h1 style={{
-                fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "26px",
-                color: "#f9fafb", margin: 0, letterSpacing: "-0.02em",
-              }}>
+              <h1 className="text-2xl font-bold text-foreground">
                 Withdraw
               </h1>
             </div>
-            <p style={{ color: "#4b5563", fontSize: "12px", margin: 0, letterSpacing: "0.04em" }}>
+            <p className="text-xs text-slate-400 tracking-wider">
               Select your preferred withdrawal method · Fees paid separately
             </p>
           </div>
 
           {/* Card */}
-          <div className="theme-card bg-surface-300/90 border-border-default p-6 shadow-lg backdrop-blur-sm">
+          <div className="bg-surface-200/50 border border-border-default p-5 rounded-lg">
             {/* Method Toggle */}
-            <div className="flex gap-2.5 p-1.5 rounded-[14px] bg-surface-200/80 border border-border-default mb-6">
+            <div className="flex gap-2 p-1 rounded-lg bg-surface-200/50 border border-border-default mb-6">
               {methods.map(m => {
                 const active = method === m.key;
                 return (
                   <button
                     key={m.key} type="button" onClick={() => setMethod(m.key)}
-                    className={`flex-1 flex items-center justify-center gap-2.5 rounded-[10px] px-3 py-2 text-[12px] font-semibold tracking-[0.06em] font-mono transition ${active ? 'border border-brand-500 bg-brand-500/10 text-brand-300' : 'border border-transparent bg-transparent text-slate-400 hover:bg-surface-200'}`}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold tracking-wider font-mono transition ${active ? 'border border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border border-transparent bg-transparent text-slate-400 hover:bg-surface-300'}`}
                   >
                     {m.icon} {m.label.toUpperCase()}
                   </button>
@@ -809,7 +700,7 @@ function WithdrawContent() {
             {method === "bank" && (
               <form onSubmit={handleProceed} className="flex flex-col gap-4">
                 <div>
-                  <label style={fieldLabel}>Amount (USD)</label>
+                  <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Amount (USD)</label>
                   <input
                     type="number" value={bankAmount}
                     onChange={e => setBankAmount(e.target.value)}
@@ -820,27 +711,23 @@ function WithdrawContent() {
                   <FeeTierBadges currentAmount={bankAmount} />
                 </div>
                 <div>
-                  <label style={fieldLabel}>Bank Name</label>
+                  <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Bank Name</label>
                   <input type="text" value={bankName} onChange={e => setBankName(e.target.value)}
                     placeholder="Enter bank name" required style={sharedInput} onFocus={onFocus} onBlur={onBlur} />
                 </div>
                 <div>
-                  <label style={fieldLabel}>Account Number</label>
+                  <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Account Number</label>
                   <input type="text" value={accountNumber} onChange={e => setAccountNumber(e.target.value)}
                     placeholder="Enter account number" required style={sharedInput} onFocus={onFocus} onBlur={onBlur} />
                 </div>
-                <div style={{
-                  display: "flex", gap: "10px", alignItems: "flex-start",
-                  padding: "12px 14px", background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.07)", borderRadius: "12px",
-                }}>
-                  <AlertCircle size={13} color="#fbbf24" style={{ marginTop: "1px", flexShrink: 0 }} />
-                  <span style={{ fontSize: "11px", color: "#4b5563", lineHeight: 1.6 }}>
+                <div className="flex gap-2 items-start bg-yellow-500/5 border border-yellow-500/20 p-3 rounded-lg">
+                  <AlertCircle size={13} className="text-yellow-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-slate-400 leading-relaxed">
                     Bank withdrawals process within 1–3 business days. A separate fee payment is required before funds are released.
                   </span>
                 </div>
-                <button type="submit" disabled={!bankCanProceed} className="theme-cta w-full justify-center" style={{ opacity: bankCanProceed ? 1 : 0.55 }}>
-                  REVIEW WITHDRAWAL <ChevronRight size={14} />
+                <button type="submit" disabled={!bankCanProceed} className="w-full px-4 py-3 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 disabled:opacity-50 transition font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2">
+                  Review Withdrawal <ChevronRight size={14} />
                 </button>
               </form>
             )}
@@ -850,8 +737,9 @@ function WithdrawContent() {
               <form onSubmit={handleProceed} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <div style={{ flex: 1 }}>
-                    <label style={fieldLabel}>Coin</label>
-                    <select value={coin} onChange={handleCoinChange} required className="theme-select theme-input"
+                    <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Coin</label>
+                    <select value={coin} onChange={handleCoinChange} required 
+                      className="w-full bg-surface-200/50 border border-border-default rounded-lg px-3 py-3 text-foreground text-sm font-mono outline-none transition hover:border-slate-400 focus:border-yellow-500 focus:shadow-[0_0_0_3px_rgba(251,191,36,0.06)]"
                       onFocus={onFocus} onBlur={onBlur} disabled={availableCryptoCoins.length === 0}>
                       <option value="" disabled>
                         {availableCryptoCoins.length > 0 ? "Select coin" : "No crypto assets"}
@@ -862,11 +750,11 @@ function WithdrawContent() {
                     </select>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={fieldLabel}>Network</label>
+                    <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Network</label>
                     <select
                       value={network} onChange={handleNetworkChange}
                       disabled={!coin} required
-                      className="theme-select theme-input"
+                      className="w-full bg-surface-200/50 border border-border-default rounded-lg px-3 py-3 text-foreground text-sm font-mono outline-none transition hover:border-slate-400 focus:border-yellow-500 focus:shadow-[0_0_0_3px_rgba(251,191,36,0.06)]"
                       style={{ opacity: !coin ? 0.4 : 1, cursor: !coin ? "not-allowed" : "pointer" }}
                       onFocus={onFocus} onBlur={onBlur}
                     >
@@ -880,19 +768,16 @@ function WithdrawContent() {
 
                 {/* Selected network pill */}
                 {network && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "-10px" }}>
-                    <div style={{
-                      width: "6px", height: "6px", borderRadius: "50%",
-                      background: "#4ade80", boxShadow: "0 0 6px #4ade80",
-                    }} />
-                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px", color: "#4ade80", letterSpacing: "0.08em" }}>
+                  <div className="flex items-center gap-2 mt-2 -mb-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-success shadow-sm" />
+                    <span className="font-mono text-xs text-success tracking-wider">
                       {getNetworks(coin).find(n => n.value === network)?.label ?? network}
                     </span>
                   </div>
                 )}
 
                 <div>
-                  <label style={fieldLabel}>Amount (USD equivalent)</label>
+                  <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Amount (USD equivalent)</label>
                   <input type="number" value={cryptoAmount} onChange={e => setCryptoAmount(e.target.value)}
                     placeholder="0.00" min="0" step="any" required
                     style={sharedInput} onFocus={onFocus} onBlur={onBlur} />
@@ -901,7 +786,7 @@ function WithdrawContent() {
                 </div>
 
                 <div>
-                  <label style={fieldLabel}>
+                  <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">
                     {coin ? `${coin} Wallet Address` : "Wallet Address"}
                   </label>
                   <input
@@ -918,56 +803,50 @@ function WithdrawContent() {
                     }
                     disabled={!coin || !network}
                     required
-                    className={`theme-input ${walletTouched && walletAddress ? (addrValidation?.valid ? 'addr-ok' : 'addr-error') : ''}`}
-                    style={{
-                      opacity: (!coin || !network) ? 0.45 : 1,
-                      cursor: (!coin || !network) ? "not-allowed" : "text",
-                    }}
+                    style={{...sharedInput, opacity: (!coin || !network) ? 0.45 : 1, cursor: (!coin || !network) ? "not-allowed" : "text"}}
+                    onFocus={onFocus}
+                    onBlur={e => { setWalletTouched(true); onBlur(e); }}
                   />
                   {/* Inline validation message */}
                   {walletTouched && walletAddress && addrValidation && (
-                    <div style={{
-                      display: "flex", gap: "6px", alignItems: "center",
-                      marginTop: "6px", padding: "7px 10px", borderRadius: "8px",
-                      background: addrValidation.valid ? "rgba(74,222,128,0.05)" : "rgba(239,68,68,0.06)",
-                      border: `1px solid ${addrValidation.valid ? "rgba(74,222,128,0.15)" : "rgba(239,68,68,0.15)"}`,
-                    }}>
+                    <div className={`flex gap-2 items-center mt-2 p-2 rounded-lg border ${
+                      addrValidation.valid 
+                        ? 'bg-success/5 border-success/20' 
+                        : 'bg-danger/5 border-danger/20'
+                    }`}>
                       {addrValidation.valid
-                        ? <CheckCircle2 size={11} color="#4ade80" />
-                        : <AlertCircle  size={11} color="#ef4444" />
+                        ? <CheckCircle2 size={11} className="text-success flex-shrink-0" />
+                        : <AlertCircle  size={11} className="text-danger flex-shrink-0" />
                       }
-                      <span className={`font-mono text-[10px] tracking-[0.04em] ${addrValidation.valid ? 'text-success' : 'text-danger'}`}>
+                      <span className={`font-mono text-xs tracking-wider ${addrValidation.valid ? 'text-success' : 'text-danger'}`}>
                         {addrValidation.valid ? `Valid ${coin} address` : addrValidation.message}
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="theme-panel-error">
-                  <div className="flex items-start gap-2">
-                    <AlertCircle size={13} color="#ef4444" className="mt-0.5 flex-shrink-0" />
-                    <span className="text-[11px] text-slate-400 leading-6">
-                      Double-check your wallet address and network. Funds sent to a wrong address cannot be recovered.
-                    </span>
-                  </div>
+                <div className="flex gap-2 items-start bg-red-500/5 border border-red-500/20 p-3 rounded-lg">
+                  <AlertCircle size={13} className="text-danger mt-0.5 flex-shrink-0" />
+                  <span className="text-xs text-slate-400 leading-relaxed">
+                    Double-check your wallet address and network. Funds sent to a wrong address cannot be recovered.
+                  </span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={!cryptoCanProceed}
-                  className="theme-cta w-full justify-center"
-                  style={{ opacity: cryptoCanProceed ? 1 : 0.55 }}
+                  className="w-full px-4 py-3 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 disabled:opacity-50 transition font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2"
                 >
-                  REVIEW WITHDRAWAL <ChevronRight size={14} />
+                  Review Withdrawal <ChevronRight size={14} />
                 </button>
               </form>
             )}
           </div>
 
           {/* Footer */}
-          <div style={{ marginTop: "16px", display: "flex", justifyContent: "center", alignItems: "center", gap: "6px" }}>
-            <TrendingUp size={11} color="#374151" />
-            <span style={{ fontSize: "11px", color: "#374151", letterSpacing: "0.04em" }}>
+          <div className="mt-4 flex justify-center items-center gap-2">
+            <TrendingUp size={10} className="text-slate-500" />
+            <span className="text-xs text-slate-500 tracking-wider">
               Secure withdrawals · Fee paid separately before release
             </span>
           </div>
