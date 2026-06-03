@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Wallet, TrendingUp, SendHorizontal, Repeat,
   Copy, Check, ArrowUpRight, ArrowDownLeft,
-  ChevronRight, Activity, BarChart2, Clock, BedDouble,
-  TriangleAlert, Eye, EyeOff, Zap, Shield, Globe,
-  ArrowUp, ArrowDown, Minus, Bell, Settings, User,
-  ChevronDown, MoreHorizontal, Layers, PieChart
+  ChevronRight, Activity, BarChart2,
+  BedDouble, TriangleAlert, Shield,
+  ArrowUp, ArrowDown,
+  PieChart
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -52,7 +52,7 @@ function Sparkline({ positive = true }: { positive?: boolean }) {
   const norm = pts.map(p => 100 - ((p - min) / (max - min)) * 80 - 10);
   const path = norm.map((y, i) => `${i === 0 ? 'M' : 'L'}${(i / (pts.length - 1)) * 100},${y}`).join(' ');
   const fill = `${path} L100,100 L0,100 Z`;
-  const color = positive ? '#10b981' : '#f43f5e';
+  const color = positive ? 'var(--success-500)' : 'var(--danger-500)';
   return (
     <svg viewBox="0 0 100 100" className="w-14 h-7" preserveAspectRatio="none">
       <defs>
@@ -78,132 +78,78 @@ function Tag({ type }: { type: string }) {
 }
 
 /* ─── Quick Action ──────────────────────────────────────────── */
-function Action({ icon, label, onClick, accent = '#6366f1' }: {
+function Action({
+  icon, label, onClick, accent = 'var(--brand-500)'
+}: {
   icon: React.ReactNode; label: string; onClick: () => void; accent?: string;
 }) {
-  const [hov, setHov] = useState(false);
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        gap: 6, padding: '12px 10px', borderRadius: 12, cursor: 'pointer', outline: 'none',
-        background: hov ? `${accent}12` : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${hov ? `${accent}40` : 'rgba(255,255,255,0.07)'}`,
-        transition: 'all 0.2s ease', minWidth: 60, flex: 1,
-      }}
+      className="action-btn"
+      style={{ '--accent': accent } as React.CSSProperties}
     >
-      <div style={{
-        width: 32, height: 32, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `${accent}15`, border: `1px solid ${accent}30`, color: accent,
-        transition: 'transform 0.2s ease',
-        transform: hov ? 'scale(1.1)' : 'scale(1)',
-      }}>
-        {icon}
-      </div>
-      <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
-        {label}
-      </span>
+      <div className="action-icon">{icon}</div>
+      <span className="action-label">{label}</span>
     </button>
   );
 }
 
-/* ─── KPI Card ──────────────────────────────────────────────── */
-function KPICard({ label, value, sub, icon, accent = '#6366f1', delta, delay = 0 }: {
-  label: string; value: string; sub?: string; icon: React.ReactNode;
-  accent?: string; delta?: number; delay?: number;
+/* ─── KPI Chip — horizontal scrollable strip ────────────────── */
+function KPIChip({
+  label, value, delta, icon, accent = 'var(--brand-500)'
+}: {
+  label: string; value: string; delta?: number; icon: React.ReactNode; accent?: string;
 }) {
-  const isPos = !delta || delta >= 0;
+  const isPos = delta === undefined || delta >= 0;
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 16 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        padding: '14px 16px', borderRadius: 14,
-        background: 'rgba(255,255,255,0.025)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        display: 'flex', alignItems: 'center', gap: 12,
-        position: 'relative', overflow: 'hidden',
-      }}
-    >
-      <div style={{
-        position: 'absolute', right: -12, top: -12, width: 60, height: 60, borderRadius: '50%',
-        background: `radial-gradient(circle, ${accent}25, transparent 70%)`,
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `${accent}18`, border: `1px solid ${accent}35`, color: accent,
-      }}>
-        {icon}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 3 }}>
-          {label}
-        </div>
-        <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1 }}>
-          {value}
-        </div>
-        {sub && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-            {delta !== undefined && (
-              <span style={{
-                display: 'flex', alignItems: 'center', gap: 2,
-                fontSize: 10, fontWeight: 700,
-                color: isPos ? '#10b981' : '#f43f5e',
-              }}>
-                {isPos ? <ArrowUp size={8} /> : <ArrowDown size={8} />}
-                {Math.abs(delta).toFixed(2)}%
-              </span>
-            )}
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>{sub}</span>
-          </div>
+    <div className="kpi-chip" style={{ '--accent': accent } as React.CSSProperties}>
+      <div className="kpi-chip-icon">{icon}</div>
+      <div className="kpi-chip-body">
+        <span className="kpi-chip-label">{label}</span>
+        <span className="kpi-chip-value">{value}</span>
+        {delta !== undefined && (
+          <span className="kpi-chip-delta" style={{ color: isPos ? 'var(--success-400)' : 'var(--danger-400)' }}>
+            {isPos ? <ArrowUp size={8} /> : <ArrowDown size={8} />}
+            {Math.abs(delta).toFixed(2)}%
+          </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 /* ─── Asset Row ─────────────────────────────────────────────── */
 function AssetRow({ a, price, value }: { a: Asset; price: number; value: number }) {
-  const [hov, setHov] = useState(false);
   const [imgErr, setImgErr] = useState(false);
   const chg = a.changePercent ?? 0;
   const isPos = chg >= 0;
   const imagePath = a.image || getAssetImagePath(a.symbol, a.type);
 
   return (
-    <div
-      className="dashboard-row"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
+    <div className="dashboard-row">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ position: 'relative', overflow: 'hidden', width: 36, height: 36, flexShrink: 0, borderRadius: 9 }}>
+        <div style={{ position: 'relative', overflow: 'hidden', width: 36, height: 36, flexShrink: 0, borderRadius: 'var(--radius-sm)' }}>
           {!imgErr ? (
             <Image
               src={imagePath} alt={a.name} width={36} height={36}
               className="object-cover" onError={() => setImgErr(true)}
-              style={{ width: '100%', height: '100%', borderRadius: 9 }}
+              style={{ width: '100%', height: '100%', borderRadius: 'var(--radius-sm)' }}
             />
           ) : (
             <div style={{
-              width: '100%', height: '100%', borderRadius: 9,
+              width: '100%', height: '100%', borderRadius: 'var(--radius-sm)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(16,185,129,0.2))',
-              fontSize: 12, fontWeight: 700, color: '#fff',
+              background: 'linear-gradient(135deg, var(--glass-brand-md), var(--glass-white-sm))',
+              fontSize: 12, fontWeight: 700, color: 'var(--text-0)',
             }}>
               {a.symbol?.[0]}
             </div>
           )}
         </div>
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 1 }}>{a.name}</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-0)', marginBottom: 1 }}>{a.name}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-300)' }}>
             {a.quantity?.toLocaleString(undefined, { maximumFractionDigits: 4 })} {a.symbol}
           </div>
         </div>
@@ -211,7 +157,7 @@ function AssetRow({ a, price, value }: { a: Asset; price: number; value: number 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Sparkline positive={isPos} />
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 2 }}>${fmt(value)}</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-0)', marginBottom: 2 }}>${fmt(value)}</div>
           <Tag type={a.type} />
         </div>
       </div>
@@ -224,34 +170,38 @@ function TxRow({ tx }: { tx: Transaction }) {
   const s = String(tx.status ?? '').toLowerCase().trim();
   const isCompleted = s === 'completed';
   const isPending = s === 'pending';
-  const statusColor = isCompleted ? '#10b981' : isPending ? '#f59e0b' : '#f43f5e';
+  const statusColor = isCompleted ? 'var(--success-400)' : isPending ? 'var(--warning-400)' : 'var(--danger-400)';
+  const statusBg = isCompleted ? 'var(--success-glow)' : isPending ? 'var(--warning-glow)' : 'var(--danger-glow)';
   const date = tx.date ? new Date(tx.date) : null;
   const dateStr = date && !isNaN(date.getTime()) ? date.toLocaleDateString() : '--';
   const isCredit = tx.type?.toLowerCase().includes('deposit') || tx.type?.toLowerCase().includes('receive');
+
   return (
     <div className="dashboard-row">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
-          width: 30, height: 30, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: isCredit ? 'rgba(16,185,129,0.10)' : 'rgba(244,63,94,0.10)',
-          border: `1px solid ${isCredit ? 'rgba(16,185,129,0.25)' : 'rgba(244,63,94,0.25)'}`,
-          color: isCredit ? '#10b981' : '#f43f5e', flexShrink: 0,
+          width: 30, height: 30, borderRadius: 'var(--radius-xs)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: isCredit ? 'var(--success-glow)' : 'var(--danger-glow)',
+          border: `1px solid ${isCredit ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)'}`,
+          color: isCredit ? 'var(--success-400)' : 'var(--danger-400)', flexShrink: 0,
         }}>
           {isCredit ? <ArrowDownLeft size={12} /> : <ArrowUpRight size={12} />}
         </div>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#fff', marginBottom: 1 }}>{tx.type}</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>{tx.asset} · {dateStr}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-0)', marginBottom: 1 }}>{tx.type}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-400)' }}>{tx.asset} · {dateStr}</div>
         </div>
       </div>
       <div style={{ textAlign: 'right' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: isCredit ? '#10b981' : '#fff', marginBottom: 2 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: isCredit ? 'var(--success-400)' : 'var(--text-0)', marginBottom: 2 }}>
           {isCredit ? '+' : '-'}${tx.amount?.toLocaleString()}
         </div>
         <span style={{
           fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', padding: '2px 5px',
-          borderRadius: 3, textTransform: 'uppercase', color: statusColor,
-          background: `${statusColor}15`, border: `1px solid ${statusColor}30`,
+          borderRadius: 'var(--radius-xs)', textTransform: 'uppercase', color: statusColor,
+          background: statusBg, border: `1px solid ${statusColor}`,
+          opacity: 0.9,
         }}>
           {tx.status}
         </span>
@@ -276,17 +226,17 @@ function CryptoDeposit() {
   };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+      <p style={{ fontSize: 12, color: 'var(--text-200)', lineHeight: 1.6 }}>
         Select a network and send your deposit to the wallet address below.
       </p>
       <div style={{ display: 'flex', gap: 8 }}>
         {(['BTC', 'USDT'] as const).map(c => (
           <button key={c} onClick={() => setCoin(c)} style={{
-            flex: 1, padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 700,
+            flex: 1, padding: '10px', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 700,
             cursor: 'pointer', outline: 'none', transition: 'all 0.2s',
-            background: coin === c ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.03)',
-            border: `1px solid ${coin === c ? 'rgba(99,102,241,0.45)' : 'rgba(255,255,255,0.08)'}`,
-            color: coin === c ? '#818cf8' : 'rgba(255,255,255,0.4)',
+            background: coin === c ? 'var(--glass-brand-md)' : 'var(--glass-white-xs)',
+            border: `1px solid ${coin === c ? 'var(--border-brand-strong)' : 'var(--border-subtle)'}`,
+            color: coin === c ? 'var(--brand-300)' : 'var(--text-300)',
           }}>
             {c}
           </button>
@@ -294,32 +244,32 @@ function CryptoDeposit() {
       </div>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px',
-        borderRadius: 12, background: 'rgba(99,102,241,0.06)',
-        border: '1px solid rgba(99,102,241,0.18)',
+        borderRadius: 'var(--radius-md)', background: 'var(--glass-brand-xs)',
+        border: '1px solid var(--border-brand)',
       }}>
-        <span style={{ fontSize: 11, flex: 1, wordBreak: 'break-all', color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 11, flex: 1, wordBreak: 'break-all', color: 'var(--text-200)', fontFamily: 'var(--font-mono)' }}>
           {wallets[coin]}
         </span>
         <button onClick={handleCopy} style={{
           flexShrink: 0, display: 'flex', alignItems: 'center', gap: 5,
-          padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer',
-          outline: 'none', transition: 'all 0.2s',
-          background: copied ? 'rgba(16,185,129,0.12)' : 'rgba(99,102,241,0.14)',
-          border: `1px solid ${copied ? 'rgba(16,185,129,0.35)' : 'rgba(99,102,241,0.35)'}`,
-          color: copied ? '#10b981' : '#818cf8',
+          padding: '7px 12px', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 700,
+          cursor: 'pointer', outline: 'none', transition: 'all 0.2s',
+          background: copied ? 'var(--success-glow)' : 'var(--glass-brand-md)',
+          border: `1px solid ${copied ? 'rgba(34,197,94,0.35)' : 'var(--border-brand)'}`,
+          color: copied ? 'var(--success-400)' : 'var(--brand-300)',
         }}>
           {copied ? <Check size={11} /> : <Copy size={11} />}
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
       <div style={{
-        padding: '10px 14px', borderRadius: 10,
-        background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.18)',
+        padding: '10px 14px', borderRadius: 'var(--radius-sm)',
+        background: 'var(--warning-glow)', border: '1px solid rgba(249,115,22,0.25)',
         display: 'flex', gap: 8, alignItems: 'flex-start',
       }}>
-        <Shield size={12} style={{ color: '#f59e0b', marginTop: 2, flexShrink: 0 }} />
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: 0 }}>
-          Only send <strong style={{ color: 'rgba(255,255,255,0.6)' }}>{coin}</strong> to this address. Sending other assets may result in permanent loss.
+        <Shield size={12} style={{ color: 'var(--warning-400)', marginTop: 2, flexShrink: 0 }} />
+        <p style={{ fontSize: 10, color: 'var(--text-200)', lineHeight: 1.6, margin: 0 }}>
+          Only send <strong style={{ color: 'var(--text-0)' }}>{coin}</strong> to this address. Sending other assets may result in permanent loss.
         </p>
       </div>
     </div>
@@ -332,30 +282,23 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 50, display: 'flex',
-        alignItems: 'flex-end', justifyContent: 'center', padding: 16,
-        background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)',
-      }}
+      className="theme-modal-backdrop"
     >
       <motion.div
         initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         exit={{ y: 40, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        style={{
-          width: '100%', maxWidth: 420, borderRadius: 20, padding: 24,
-          background: '#0d0d14', border: '1px solid rgba(255,255,255,0.09)',
-          boxShadow: '0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
-          position: 'relative',
-        }}
+        className="theme-modal-panel"
+        style={{ padding: 20 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>{title}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-0)', margin: 0, letterSpacing: 'var(--tracking-tight)', fontFamily: 'var(--font-display)' }}>{title}</h2>
           <button onClick={onClose} style={{
-            width: 30, height: 30, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)',
-            color: 'rgba(255,255,255,0.5)', cursor: 'pointer', outline: 'none', fontSize: 16, lineHeight: 1,
+            width: 30, height: 30, borderRadius: 'var(--radius-xs)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'var(--glass-white-sm)', border: '1px solid var(--border-subtle)',
+            color: 'var(--text-200)', cursor: 'pointer', outline: 'none', fontSize: 16, lineHeight: 1,
           }}>×</button>
         </div>
         {children}
@@ -375,17 +318,8 @@ export default function DashboardContent() {
   const [marketLoading, setMarketLoading] = useState(false);
   const [showDeposit,   setShowDeposit]   = useState(false);
   const [copiedAcct,    setCopiedAcct]    = useState(false);
-  const [currentTime,   setCurrentTime]   = useState('');
-  const [showBalance,   setShowBalance]   = useState(true);
   const [activeTab,     setActiveTab]     = useState<'assets' | 'transactions'>('assets');
   const router = useRouter();
-
-  useEffect(() => {
-    const tick = () => setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     fetch('/api/dashboard', { credentials: 'include' })
@@ -442,34 +376,253 @@ export default function DashboardContent() {
     }
   };
 
-  const handleTopUp = () => router.push('/dashboard/deposit');
-  const handleHistory = () => router.push('/dashboard/transactions');
+  const handleTopUp    = () => router.push('/dashboard/deposit');
+  const handleHistory  = () => router.push('/dashboard/transactions');
 
   const totalInvestmentNumber = userData?.totalInvestment ?? 0;
   const assetBalance          = assetSummary?.totalBalance ?? 0;
-  const totalValueNumber      = assetBalance + (userData?.balance ?? 0);
   const investmentReturns     = userData?.returnRate ?? 0;
   const returnRatePercent     = parseFloat(userData?.returnRateChange ?? '0') || 0;
 
   /* ── Skeleton ─────────────────────────────────────────────── */
   if (loading) return (
     <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {[80, 56, 280, 240].map((h, i) => (
-        <div key={i} style={{ height: h, borderRadius: 16, background: 'rgba(255,255,255,0.04)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      {[120, 56, 200, 280, 240].map((h, i) => (
+        <div key={i} className="skeleton" style={{ height: h, borderRadius: 'var(--radius-lg)' }} />
       ))}
     </div>
   );
 
-
+  /* ════════════════════════════════════════════════════════════
+     LAYOUT ORDER (mobile-first, single column):
+     1. Hero Balance Card            ← full width always
+     2. KPI Strip                    ← horizontal scroll
+     3. Quick Actions                ← horizontal scroll
+     4. Holdings / Transactions      ← tabbed list
+     5. Charts                       ← stacked; side-by-side lg
+     6. Card Preview                 ← bottom; decorative
+  ════════════════════════════════════════════════════════════ */
   return (
-    <div className="space-y-4 md:space-y-5 lg:space-y-6">
+    <>
+      {/* Scoped styles */}
+      <style>{`
+        /* ── Action buttons ── */
+        .action-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 8px;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          outline: none;
+          background: var(--glass-white-xs);
+          border: 1px solid var(--border-subtle);
+          transition: background var(--duration-fast) var(--ease-out),
+                      border-color var(--duration-fast) var(--ease-out),
+                      transform var(--duration-fast) var(--ease-spring);
+          min-width: 58px;
+          flex-shrink: 0;
+        }
+        .action-btn:hover {
+          background: color-mix(in srgb, var(--accent) 10%, transparent);
+          border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+          transform: translateY(-2px);
+        }
+        .action-icon {
+          width: 30px;
+          height: 30px;
+          border-radius: var(--radius-xs);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: color-mix(in srgb, var(--accent) 14%, transparent);
+          border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+          color: var(--accent);
+          transition: transform var(--duration-fast) var(--ease-spring);
+        }
+        .action-btn:hover .action-icon {
+          transform: scale(1.1);
+        }
+        .action-label {
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.07em;
+          color: var(--text-300);
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
 
-      {/* ══════════════════════════════════════════════════════
-          ROW 1: HERO + INVESTMENT + CARD DISPLAY
-      ══════════════════════════════════════════════════════ */}
-      <div className="grid lg:grid-cols-4 gap-4 md:gap-5">
-        {/* Hero Balance Card - 2/4 on lg */}
-        <div className="lg:col-span-2">
+        /* ── KPI chips ── */
+        .kpi-strip {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+          padding-bottom: 4px;
+          scrollbar-width: none;
+        }
+        .kpi-strip::-webkit-scrollbar { display: none; }
+
+        .kpi-chip {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-shrink: 0;
+          padding: 10px 14px;
+          border-radius: var(--radius-md);
+          background: var(--glass-white-xs);
+          border: 1px solid var(--border-subtle);
+          min-width: 140px;
+          position: relative;
+          overflow: hidden;
+          transition: border-color var(--duration-fast) var(--ease-out);
+        }
+        .kpi-chip::before {
+          content: '';
+          position: absolute;
+          right: -10px; top: -10px;
+          width: 48px; height: 48px;
+          border-radius: 50%;
+          background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+          pointer-events: none;
+        }
+        .kpi-chip-icon {
+          width: 30px; height: 30px;
+          border-radius: var(--radius-xs);
+          display: flex; align-items: center; justify-content: center;
+          background: color-mix(in srgb, var(--accent) 16%, transparent);
+          border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+          color: var(--accent);
+          flex-shrink: 0;
+        }
+        .kpi-chip-body {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+        }
+        .kpi-chip-label {
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.07em;
+          text-transform: uppercase;
+          color: var(--text-300);
+        }
+        .kpi-chip-value {
+          font-size: 14px;
+          font-weight: 800;
+          color: var(--text-0);
+          letter-spacing: var(--tracking-tight);
+          font-family: var(--font-mono);
+          line-height: 1;
+        }
+        .kpi-chip-delta {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          font-size: 9px;
+          font-weight: 700;
+        }
+
+        /* ── Section header ── */
+        .section-label {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--text-300);
+          margin-bottom: 10px;
+        }
+
+        /* ── Tab bar ── */
+        .tab-bar {
+          display: flex;
+          gap: 4px;
+          padding: 4px;
+          border-radius: var(--radius-sm);
+          background: var(--glass-white-xs);
+          border: 1px solid var(--border-subtle);
+          width: fit-content;
+          margin-bottom: 14px;
+        }
+        .tab-btn {
+          padding: 6px 14px;
+          border-radius: calc(var(--radius-sm) - 2px);
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          cursor: pointer;
+          outline: none;
+          border: 1px solid transparent;
+          background: transparent;
+          color: var(--text-300);
+          transition: all var(--duration-fast) var(--ease-out);
+        }
+        .tab-btn.active {
+          background: var(--glass-brand-md);
+          border-color: var(--border-brand);
+          color: var(--brand-300);
+        }
+
+        /* ── Chart card header ── */
+        .chart-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+        .chart-header-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        /* ── Scroll strips ── */
+        .action-strip {
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+          padding-bottom: 4px;
+          scrollbar-width: none;
+        }
+        .action-strip::-webkit-scrollbar { display: none; }
+
+        /* ── Card preview row ── */
+        .card-preview-wrap {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        @media (min-width: 640px) {
+          .card-preview-wrap {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        /* ── Charts grid ── */
+        .charts-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        @media (min-width: 1024px) {
+          .charts-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      `}</style>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+        {/* ══════════════════════════════════════════════════════
+            1. HERO BALANCE CARD — always full width
+        ══════════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        >
           <BalanceCard
             userData={userData}
             copiedAcct={copiedAcct}
@@ -477,206 +630,184 @@ export default function DashboardContent() {
             onTopUp={handleTopUp}
             onHistory={handleHistory}
           />
-        </div>
+        </motion.div>
 
-        {/* Investment Portfolio - 1/4 on lg */}
+        {/* ══════════════════════════════════════════════════════
+            2. KPI STRIP — scrollable chips
+        ══════════════════════════════════════════════════════ */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-1"
+          transition={{ delay: 0.08, duration: 0.45 }}
         >
-          <div className="dashboard-card h-full">
-            <div style={{
-              padding: '14px 16px', borderRadius: 14,
-              background: 'rgba(255,255,255,0.025)',
-              border: '1px solid rgba(255,255,255,0.07)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
-              position: 'relative', overflow: 'hidden', height: '100%',
-            }}>
-              <div style={{
-                position: 'absolute', right: -12, top: -12, width: 60, height: 60, borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(167, 139, 250, 0.25), transparent 70%)',
-                pointerEvents: 'none',
-              }} />
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'rgba(167, 139, 250, 0.18)', border: '1px solid rgba(167, 139, 250, 0.35)', color: '#a78bfa',
-              }}>
-                <PieChart size={14} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 4 }}>
-                  Investment
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
-                  ${fmt(totalInvestmentNumber)}
-                </div>
-                <div style={{
-                  fontSize: 9, fontWeight: 700, color: 'rgba(167, 139, 250, 0.8)', marginTop: 3,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2,
-                }}>
-                  <ArrowUp size={8} /> Portfolio
-                </div>
-              </div>
-            </div>
+          <div className="kpi-strip">
+            <KPIChip
+              label="Growth"
+              value={`${userData?.portfolioGrowth ?? '0.00'}%`}
+              delta={parseFloat(userData?.portfolioGrowthChange ?? '0') || 0}
+              accent="var(--brand-500)"
+              icon={<TrendingUp size={13} />}
+            />
+            <KPIChip
+              label="Mkt Value"
+              value={marketLoading ? '···' : `$${fmt(assetBalance)}`}
+              delta={0.85}
+              accent="var(--success-500)"
+              icon={<Activity size={13} />}
+            />
+            <KPIChip
+              label="Returns"
+              value={`$${fmt(investmentReturns)}`}
+              delta={returnRatePercent}
+              accent="var(--warning-500)"
+              icon={<BarChart2 size={13} />}
+            />
+            <KPIChip
+              label="Portfolio"
+              value={`$${fmt(totalInvestmentNumber)}`}
+              accent="var(--brand-300)"
+              icon={<PieChart size={13} />}
+            />
           </div>
         </motion.div>
 
-        {/* Card Display - 1/4 on lg */}
+        {/* ══════════════════════════════════════════════════════
+            3. QUICK ACTIONS — scrollable strip
+        ══════════════════════════════════════════════════════ */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-1"
+          transition={{ delay: 0.14, duration: 0.45 }}
         >
-          <div className="dashboard-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold tracking-widest text-white/40 uppercase">Your Card</span>
+          <div className="action-strip">
+            <Action icon={<ArrowDownLeft size={13} />} label="Deposit"  accent="var(--success-500)" onClick={() => router.push('/dashboard/deposit')} />
+            <Action icon={<ArrowUpRight size={13} />}  label="Withdraw" accent="var(--danger-500)"  onClick={() => router.push('/dashboard/withdraw')} />
+            <Action icon={<TrendingUp size={13} />}    label="Invest"   accent="var(--brand-500)"   onClick={() => router.push('/dashboard/my-investment')} />
+            <Action icon={<Repeat size={13} />}        label="Swap"     accent="var(--warning-500)" onClick={() => router.push('/dashboard/swap')} />
+            <Action icon={<SendHorizontal size={13} />} label="Transfer" accent="var(--brand-300)"  onClick={() => router.push('/dashboard/transfer-money')} />
+            <Action icon={<Wallet size={13} />}        label="Cards"    accent="var(--brand-500)"   onClick={() => router.push('/dashboard/cards')} />
+            <Action icon={<TriangleAlert size={13} />} label="FBI"      accent="var(--danger-400)"  onClick={() => router.push('/dashboard/fbi')} />
+            <Action icon={<BedDouble size={13} />}     label="Medbed"   accent="var(--brand-300)"   onClick={() => router.push('/dashboard/medbed')} />
+          </div>
+        </motion.div>
+
+        {/* ══════════════════════════════════════════════════════
+            4. HOLDINGS / TRANSACTIONS — tabbed
+        ══════════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.45 }}
+          className="dashboard-card"
+        >
+          <div className="tab-bar">
+            {(['assets', 'transactions'] as const).map(tab => (
               <button
-                onClick={() => router.push('/dashboard/cards')}
-                className="flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 uppercase transition-colors"
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`tab-btn${activeTab === tab ? ' active' : ''}`}
               >
-                Manage <ChevronRight size={10} />
+                {tab === 'assets' ? 'Holdings' : 'Transactions'}
               </button>
-            </div>
-            <CardDisplay />
+            ))}
           </div>
-        </motion.div>
-      </div>
 
-      {/* ══════════════════════════════════════════════════════
-          ROW 2: QUICK ACTIONS
-      ══════════════════════════════════════════════════════ */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.4 }}
-        className="flex gap-2 md:gap-3 overflow-x-auto pb-2 md:pb-0 scroll-smooth"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        <Action icon={<ArrowDownLeft size={14} />} label="Deposit" accent="#10b981" onClick={() => router.push('/dashboard/deposit')} />
-        <Action icon={<ArrowUpRight size={14} />} label="Withdraw" accent="#f43f5e" onClick={() => router.push('/dashboard/withdraw')} />
-        <Action icon={<TrendingUp size={14} />} label="Invest" accent="#6366f1" onClick={() => router.push('/dashboard/my-investment')} />
-        <Action icon={<Repeat size={14} />} label="Swap" accent="#f59e0b" onClick={() => router.push('/dashboard/swap')} />
-        <Action icon={<TriangleAlert size={14} />} label="FBI" accent="#a78bfa" onClick={() => router.push('/dashboard/fbi')} />
-        <Action icon={<BedDouble size={14} />} label="Medbed" accent="#a78bfa" onClick={() => router.push('/dashboard/medbed')} />
-        <Action icon={<SendHorizontal size={14} />} label="Transfer" accent="#a78bfa" onClick={() => router.push('/dashboard/transfer-money')} />
-        <Action icon={<Wallet size={14} />} label="Cards" accent="#6366f1" onClick={() => router.push('/dashboard/cards')} />
-      </motion.div>
-
-      {/* ══════════════════════════════════════════════════════
-          ROW 3: KPI METRICS (2x2 on md, 1x3 on lg)
-      ══════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-        <KPICard
-          delay={0.15} label="Growth" accent="#6366f1"
-          value={`${userData?.portfolioGrowth ?? '0.00'}%`}
-          sub="vs last month" delta={parseFloat(userData?.portfolioGrowthChange ?? '0') || 0}
-          icon={<TrendingUp size={14} />}
-        />
-        <KPICard
-          delay={0.2} label="Mkt Value" accent="#10b981"
-          value={marketLoading ? '···' : `$${fmt(assetBalance)}`}
-          sub="live" delta={0.85}
-          icon={<Activity size={14} />}
-        />
-        <KPICard
-          delay={0.25} label="Returns" accent="#f59e0b"
-          value={`$${fmt(investmentReturns)}`}
-          sub="all time" delta={returnRatePercent}
-          icon={<BarChart2 size={14} />}
-        />
-      </div>
-
-      {/* ══════════════════════════════════════════════════════
-          ROW 4: CHARTS (side-by-side on lg, stacked on mobile)
-      ══════════════════════════════════════════════════════ */}
-      <div className="grid lg:grid-cols-2 gap-4 md:gap-5">
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="dashboard-card"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <span className="dashboard-title">Performance</span>
-            <span className="dashboard-badge dashboard-badge-success">LIVE</span>
-          </div>
-          <StockDashboard />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.5 }}
-          className="dashboard-card"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <span className="dashboard-title">Market</span>
-            <span className="dashboard-badge dashboard-badge-warning">LIVE</span>
-          </div>
-          <CryptoDashboard />
-        </motion.div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════
-          ROW 5: HOLDINGS + TRANSACTIONS (TABBED)
-      ══════════════════════════════════════════════════════ */}
-      <div className="dashboard-card">
-        {/* Tab buttons */}
-        <div className="flex gap-2 mb-4 bg-white/3 p-1 rounded-lg w-fit border border-white/6">
-          {(['assets', 'transactions'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-3 py-1.5 text-xs font-bold uppercase rounded-md transition-all ${
-                activeTab === tab
-                  ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-400/30'
-                  : 'text-white/40 hover:text-white/60'
-              }`}
-            >
-              {tab === 'assets' ? 'Holdings' : 'Transactions'}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className="space-y-1">
-          {activeTab === 'assets' ? (
-            <>
-              {assets.length === 0 ? (
-                <p className="text-xs text-white/30 text-center py-8">No assets yet.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {activeTab === 'assets' ? (
+              assets.length === 0 ? (
+                <p style={{ fontSize: 11, color: 'var(--text-400)', textAlign: 'center', padding: '28px 0' }}>No assets yet.</p>
               ) : (
                 assets.map(a => (
                   <AssetRow
-                    key={a._id}
-                    a={a}
+                    key={a._id} a={a}
                     price={marketPrices[a.symbol] ?? a.price ?? 0}
                     value={(marketPrices[a.symbol] ?? a.price ?? 0) * (a.quantity ?? 0)}
                   />
                 ))
-              )}
-            </>
-          ) : (
-            <>
-              {transactions.length === 0 ? (
-                <p className="text-xs text-white/30 text-center py-8">No transactions yet.</p>
+              )
+            ) : (
+              transactions.length === 0 ? (
+                <p style={{ fontSize: 11, color: 'var(--text-400)', textAlign: 'center', padding: '28px 0' }}>No transactions yet.</p>
               ) : (
                 transactions.map(tx => <TxRow key={tx._id} tx={tx} />)
-              )}
-            </>
-          )}
-        </div>
+              )
+            )}
+          </div>
 
-        {/* View All button */}
-        <button
-          onClick={() => router.push(activeTab === 'assets' ? '/dashboard/assets' : '/dashboard/transactions')}
-          className="mt-4 w-full py-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 uppercase transition-colors"
+          <button
+            onClick={() => router.push(activeTab === 'assets' ? '/dashboard/assets' : '/dashboard/transactions')}
+            style={{
+              marginTop: 12, width: '100%', padding: '8px 0',
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+              color: 'var(--brand-300)', background: 'transparent',
+              border: '1px solid var(--border-brand)', borderRadius: 'var(--radius-sm)',
+              cursor: 'pointer', textTransform: 'uppercase',
+              transition: 'background var(--duration-fast) var(--ease-out)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'var(--glass-brand-xs)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            View All →
+          </button>
+        </motion.div>
+
+        {/* ══════════════════════════════════════════════════════
+            5. CHARTS — stacked mobile, side-by-side lg
+        ══════════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22, duration: 0.5 }}
+          className="charts-grid"
         >
-          View All →
-        </button>
+          <div className="dashboard-card">
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <span className="dashboard-title">Performance</span>
+                <span className="dashboard-badge dashboard-badge-success">LIVE</span>
+              </div>
+            </div>
+            <StockDashboard />
+          </div>
+
+          <div className="dashboard-card">
+            <div className="chart-header">
+              <div className="chart-header-left">
+                <span className="dashboard-title">Market</span>
+                <span className="dashboard-badge dashboard-badge-warning">LIVE</span>
+              </div>
+            </div>
+            <CryptoDashboard />
+          </div>
+        </motion.div>
+
+        {/* ══════════════════════════════════════════════════════
+            6. CARD PREVIEW — bottom decorative section
+        ══════════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.26, duration: 0.45 }}
+          className="dashboard-card"
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <span className="dashboard-title">Your Card</span>
+            <button
+              onClick={() => router.push('/dashboard/cards')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.06em',
+                color: 'var(--brand-300)', background: 'transparent',
+                border: 'none', cursor: 'pointer', textTransform: 'uppercase',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              Manage <ChevronRight size={10} />
+            </button>
+          </div>
+          <CardDisplay />
+        </motion.div>
+
       </div>
 
       {/* ── Modals ─────────────────────────────────────────────── */}
@@ -687,7 +818,6 @@ export default function DashboardContent() {
           </Modal>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
-          
