@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import StockDashboard from './components/StockDashboard';
 import CryptoDashboard from './components/CryptoDashboard';
+import BalanceCard from './components/BalanceCard';
 import { CardDisplay } from './components/CardDisplay';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -441,6 +442,9 @@ export default function DashboardContent() {
     }
   };
 
+  const handleTopUp = () => router.push('/dashboard/deposit');
+  const handleHistory = () => router.push('/dashboard/transactions');
+
   const totalInvestmentNumber = userData?.totalInvestment ?? 0;
   const assetBalance          = assetSummary?.totalBalance ?? 0;
   const totalValueNumber      = assetBalance + (userData?.balance ?? 0);
@@ -456,31 +460,6 @@ export default function DashboardContent() {
     </div>
   );
 
-  /* ════════════════════════════════════════════════════════════
-     LAYOUT ARCHITECTURE — Unified Responsive Grid
-     ─────────────────────────────────────────────────────────
-     DESKTOP (≥1024px):
-       Row 1:    [Hero (1.5fr) | CardDisplay (1fr)]
-       Row 2:    Quick Actions (full width)
-       Row 3:    [Charts (60%) | KPI Stack (40%)]
-       Row 4:    Holdings + Transactions (full width, tabbed)
-
-     TABLET (768–1023px):
-       Row 1:    Hero (full width)
-       Row 2:    CardDisplay (full width)
-       Row 3:    Quick Actions (full width)
-       Row 4:    KPI 2x2 grid
-       Row 5:    Charts (full width)
-       Row 6:    Holdings + Transactions (tabbed)
-
-     MOBILE (<768px):
-       Row 1:    Hero (full width, compact)
-       Row 2:    CardDisplay (full width)
-       Row 3:    Quick Actions (scrollable)
-       Row 4:    KPI 2-col grid
-       Row 5:    Charts (full width)
-       Row 6:    Holdings + Transactions (tabbed)
-  ════════════════════════════════════════════════════════════ */
 
   return (
     <div className="space-y-4 md:space-y-5 lg:space-y-6">
@@ -490,73 +469,15 @@ export default function DashboardContent() {
       ══════════════════════════════════════════════════════ */}
       <div className="grid lg:grid-cols-4 gap-4 md:gap-5">
         {/* Hero Balance Card - 2/4 on lg */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-2 dashboard-hero p-4 md:p-6"
-        >
-          {/* Ambient orbs */}
-          <div className="absolute top--40 right--40 w-44 h-44 rounded-full bg-gradient-radial from-indigo-500/20 via-transparent to-transparent blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-5 left-16 w-32 h-32 rounded-full bg-gradient-radial from-emerald-500/10 via-transparent to-transparent blur-2xl pointer-events-none" />
-
-          <div className="relative space-y-4 md:space-y-6">
-            {/* Top row: Balance + Daily change + Time */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div className="flex-1">
-                <div className="text-xs font-bold tracking-widest text-white/40 uppercase mb-2">Total Portfolio Value</div>
-                <div className="flex items-center gap-3">
-                  <div className="text-4xl md:text-5xl font-black tracking-tighter text-white">
-                    {showBalance ? `$${fmt(totalValueNumber)}` : '●●●●●●'}
-                  </div>
-                  <button
-                    onClick={() => setShowBalance(!showBalance)}
-                    className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-white/60 transition-colors"
-                  >
-                    {showBalance ? <Eye size={14} /> : <EyeOff size={14} />}
-                  </button>
-                </div>
-                <div className="mt-3 flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full border border-emerald-400/20 w-fit">
-                  <ArrowUp size={10} /> {userData?.totalValueChange || '+0.00%'} today
-                </div>
-              </div>
-
-              {/* Time + Account */}
-              <div className="flex flex-col gap-3 text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs text-white/40 tabular-nums">{currentTime}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/5 border border-white/8 px-2 py-1 rounded-lg text-xs text-white/40 font-mono">
-                  <span className="truncate max-w-[100px]">{userData?.accountNumber ?? '—'}</span>
-                  <button
-                    onClick={handleCopyAccount}
-                    className={`transition-colors ${copiedAcct ? 'text-emerald-400' : 'text-white/30 hover:text-white/50'}`}
-                  >
-                    {copiedAcct ? <Check size={11} /> : <Copy size={11} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-white/5" />
-
-            {/* Stats row */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-              {[
-                { label: 'Market Value', value: marketLoading ? '···' : `$${fmt(assetBalance)}` },
-                { label: 'Total Invested', value: `$${fmt(totalInvestmentNumber)}` },
-                { label: 'Returns', value: `$${fmt(investmentReturns)}` },
-              ].map(({ label, value }) => (
-                <div key={label}>
-                  <div className="text-xs font-bold tracking-wider text-white/35 uppercase mb-1">{label}</div>
-                  <div className="text-lg md:text-xl font-bold text-white/85 tabular-nums">{value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        <div className="lg:col-span-2">
+          <BalanceCard
+            userData={userData}
+            copiedAcct={copiedAcct}
+            onCopyAccount={handleCopyAccount}
+            onTopUp={handleTopUp}
+            onHistory={handleHistory}
+          />
+        </div>
 
         {/* Investment Portfolio - 1/4 on lg */}
         <motion.div

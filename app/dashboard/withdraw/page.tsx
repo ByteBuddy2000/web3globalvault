@@ -804,8 +804,6 @@ function WithdrawContent() {
                     disabled={!coin || !network}
                     required
                     style={{...sharedInput, opacity: (!coin || !network) ? 0.45 : 1, cursor: (!coin || !network) ? "not-allowed" : "text"}}
-                    onFocus={onFocus}
-                    onBlur={e => { setWalletTouched(true); onBlur(e); }}
                   />
                   {/* Inline validation message */}
                   {walletTouched && walletAddress && addrValidation && (
