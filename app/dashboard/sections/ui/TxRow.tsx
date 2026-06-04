@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
-
+interface Transaction {
+  _id?: string;
+  type: string;
+  asset: string;
+  amount: number;
+  status: string;
+  date: string | Date;
+}
 
 function TxRow({ tx }: { tx: Transaction }) {
   const s = String(tx.status ?? '').toLowerCase().trim();
