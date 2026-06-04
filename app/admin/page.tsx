@@ -614,8 +614,7 @@ export default function AdminPage() {
                 <option value="">Select a role...</option>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
-                <option value="moderator">Moderator</option>
-                <option value="support">Support</option>
+              
               </select>
             </div>
 

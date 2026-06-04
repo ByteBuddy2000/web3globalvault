@@ -11,7 +11,7 @@ import DashboardTabs from './sections/DashboardTabs';
 import StockDashboard from './components/StockDashboard';
 import CryptoDashboard from './components/CryptoDashboard';
 import CardsWidget from './sections/CardsWidget';
-import QuickActionsSection from './sections/QuickActions';
+import QuickActionsSection from './sections/QuickActionsSection';
 
 /* Types */
 type Asset = {
@@ -35,7 +35,6 @@ type Transaction = {
 export default function DashboardContent() {
   const router = useRouter();
 
-  /* ─── State ───────────────────────────── */
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'assets' | 'transactions'>('assets');
@@ -49,93 +48,40 @@ export default function DashboardContent() {
 
   const [cards, setCards] = useState<any>(null);
 
-  /* ─── Fetch user ─────────────────────── */
+  /* ─── Fetch user ─── */
   useEffect(() => {
     fetch('/api/dashboard', { credentials: 'include' })
-      .then((r) => r.json())
+      .then(r => r.json())
       .then(setUserData)
-      .catch(() => setUserData(null))
       .finally(() => setLoading(false));
   }, []);
 
-  /* ─── Fetch assets summary ───────────── */
   useEffect(() => {
     fetch('/api/assets?summary=1', { credentials: 'include' })
-      .then((r) => r.json())
-      .then(setAssetSummary)
-      .catch(() => {});
+      .then(r => r.json())
+      .then(setAssetSummary);
   }, []);
 
-  /* ─── Fetch assets ────────────────────── */
   useEffect(() => {
     fetch('/api/assets', { credentials: 'include' })
-      .then((r) => r.json())
-      .then((d) => setAssets(d.assets || []))
-      .catch(() => {});
+      .then(r => r.json())
+      .then(d => setAssets(d.assets || []));
   }, []);
 
-  /* ─── Fetch transactions ──────────────── */
   useEffect(() => {
     fetch('/api/transactions', { credentials: 'include' })
-      .then((r) => r.json())
-      .then((d) => setTransactions(d.transactions || []))
-      .catch(() => {});
+      .then(r => r.json())
+      .then(d => setTransactions(d.transactions || []));
   }, []);
 
-  /* ─── Fetch cards ──────────────────────── */
   useEffect(() => {
     fetch('/api/cards', { credentials: 'include' })
-      .then((r) => r.json())
-      .then((d) => setCards(d.cards?.[0] || null))
-      .catch(() => {});
+      .then(r => r.json())
+      .then(d => setCards(d.cards?.[0] || null));
   }, []);
 
-  /* ─── Market prices ───────────────────── */
-  useEffect(() => {
-    let mounted = true;
+  const assetBalance = assetSummary?.totalBalance ?? 0;
 
-    async function fetchPrices() {
-      setMarketLoading(true);
-
-      try {
-        const symbols = assets.length
-          ? Array.from(new Set(assets.map((a) => a.symbol))).slice(0, 20)
-          : ['AAPL', 'TSLA', 'AMZN'];
-
-        const res = await fetch(
-          `/api/stock-prices?symbols=${encodeURIComponent(symbols.join(','))}`
-        );
-
-        const data = await res.json();
-
-        const map: Record<string, number> = {};
-
-        if (Array.isArray(data?.result)) {
-          for (const item of data.result) {
-            if (item?.symbol && typeof item.price === 'number') {
-              map[item.symbol] = item.price;
-            }
-          }
-        }
-
-        if (mounted) setMarketPrices((p) => ({ ...p, ...map }));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        if (mounted) setMarketLoading(false);
-      }
-    }
-
-    fetchPrices();
-    const id = setInterval(fetchPrices, 60000);
-
-    return () => {
-      mounted = false;
-      clearInterval(id);
-    };
-  }, [assets]);
-
-  /* ─── Loading ────────────────────────── */
   if (loading) {
     return (
       <div className="space-y-4">
@@ -146,38 +92,40 @@ export default function DashboardContent() {
     );
   }
 
-  const assetBalance = assetSummary?.totalBalance ?? 0;
-
-  /* ─── UI ─────────────────────────────── */
   return (
     <div className="flex flex-col gap-6">
 
-      {/* ── ROW 1: HERO + CARDS ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+      {/* ───────── ROW 1: HERO + SIDEBAR ───────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <div className="lg:col-span-2">
+        {/* HERO (3 cols) */}
+        <div className="lg:col-span-3 flex flex-col gap-6">
+
           <HeroSection
             userData={userData}
             totalInvestment={assetBalance}
           />
+
+          {/* QUICK ACTIONS (now properly placed under hero) */}
+          <QuickActionsSection />
+
         </div>
 
-        <div className="lg:col-span-1">
-          <div className="dashboard-card h-full">
-            <div className="dashboard-title mb-4">
+        {/* RIGHT SIDEBAR (1 col) */}
+        <div className="lg:col-span-1 flex flex-col gap-6">
+
+          <div className="dashboard-card">
+            <div className="dashboard-title mb-3">
               Your Card
             </div>
-
             <CardsWidget card={cards} />
           </div>
+
         </div>
 
       </div>
 
-      {/* ── ROW 2: QUICK ACTIONS ── */}
-      <QuickActionsSection />
-
-      {/* ── ROW 3: KPI ── */}
+      {/* ───────── ROW 2: KPI ───────── */}
       <KPISection
         userData={userData}
         assetBalance={assetBalance}
@@ -186,26 +134,26 @@ export default function DashboardContent() {
         marketLoading={marketLoading}
       />
 
-      {/* ── ROW 4: CHARTS ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* ───────── ROW 3: MARKETS ───────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <div className="dashboard-card">
           <div className="dashboard-title mb-4">
-            Performance
+            Stocks
           </div>
           <StockDashboard />
         </div>
 
         <div className="dashboard-card">
           <div className="dashboard-title mb-4">
-            Market
+            Crypto Market
           </div>
           <CryptoDashboard />
         </div>
 
       </div>
 
-      {/* ── ROW 5: TABS ── */}
+      {/* ───────── ROW 4: TABS ───────── */}
       <DashboardTabs
         active={activeTab}
         setActive={setActiveTab}

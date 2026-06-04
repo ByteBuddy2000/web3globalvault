@@ -87,14 +87,14 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { tierLevel = "BASIC", cardType = "VIRTUAL" } = body;
+    const { tierLevel = "BASIC", cardType = "VIRTUAL", paymentMethod = "WALLET" } = body;
 
     // Tier-based limits
     const tierConfig: Record<string, any> = {
-      BASIC: { dailyLimit: 5000, monthlyLimit: 50000, balance: 1000 },
-      SILVER: { dailyLimit: 10000, monthlyLimit: 100000, balance: 5000 },
-      GOLD: { dailyLimit: 25000, monthlyLimit: 250000, balance: 10000 },
-      PLATINUM: { dailyLimit: 50000, monthlyLimit: 500000, balance: 25000 },
+      BASIC: { dailyLimit: 5000, monthlyLimit: 50000, balance: 1000, paymentFee: 0 },
+      SILVER: { dailyLimit: 10000, monthlyLimit: 100000, balance: 5000, paymentFee: 5 },
+      GOLD: { dailyLimit: 25000, monthlyLimit: 250000, balance: 10000, paymentFee: 15 },
+      PLATINUM: { dailyLimit: 50000, monthlyLimit: 500000, balance: 25000, paymentFee: 30 },
     };
 
     const config = tierConfig[tierLevel] || tierConfig.BASIC;
@@ -110,7 +110,10 @@ export async function POST(req: NextRequest) {
       balance: config.balance,
       dailyLimit: config.dailyLimit,
       monthlyLimit: config.monthlyLimit,
-      status: "ACTIVE",
+      status: "PENDING",
+      paymentVerificationStatus: "PENDING_APPROVAL",
+      paymentMethod,
+      paymentAmount: config.paymentFee,
       expiryDate: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000),
     });
 
