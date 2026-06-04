@@ -65,6 +65,9 @@ export default function AdminPage() {
   const [topUpAmount, setTopUpAmount] = useState(0);
   const [userAssets, setUserAssets] = useState<Asset[]>([]);
   const [loadingAssets, setLoadingAssets] = useState(false);
+  const [roleChangeUser, setRoleChangeUser] = useState<User | null>(null);
+  const [newRole, setNewRole] = useState<string>("");
+  const [processingRole, setProcessingRole] = useState(false);
 
   // Dashboard stats
   const [stats, setStats] = useState({ totalUsers: 0, pendingWithdrawals: 0, pendingKYC: 0 });
@@ -144,6 +147,28 @@ export default function AdminPage() {
       setTopUpUser(null); setTopUpAsset(null); setTopUpAmount(0); setUserAssets([]);
       fetchUsers(page, query);
     } catch (e: any) { toast.error(e.message || "Top-up failed"); }
+  }
+
+  async function changeUserRole() {
+    if (!roleChangeUser || !newRole) return;
+    setProcessingRole(true);
+    try {
+      const res = await fetch(`/api/admin/users/${roleChangeUser._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.message);
+      toast.success("User role updated successfully");
+      setRoleChangeUser(null);
+      setNewRole("");
+      fetchUsers(page, query);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update role");
+    } finally {
+      setProcessingRole(false);
+    }
   }
 
   const statusBadge = (s?: string) => ({
@@ -395,6 +420,7 @@ export default function AdminPage() {
                             <td className="px-4 py-3">
                               <div className="flex gap-1.5">
                                 <button onClick={() => setDrawerUserId(u._id)} className="px-2.5 py-1 text-xs rounded-lg bg-white/10 border border-border-default hover:bg-white/20 transition">View</button>
+                                <button onClick={() => { setRoleChangeUser(u); setNewRole(u.role || ""); }} className="px-2.5 py-1 text-xs rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 hover:bg-blue-500/25 transition">Role</button>
                                 <button onClick={() => openTopUpModal(u)} className="px-2.5 py-1 text-xs rounded-lg bg-primary/15 border border-primary/30 text-primary hover:bg-primary/25 transition">Top-up</button>
                                 <button onClick={() => setDeleteUser(u)} className="px-2.5 py-1 text-xs rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition">Delete</button>
                               </div>
@@ -553,6 +579,61 @@ export default function AdminPage() {
             <div className="flex gap-2 justify-end pt-2">
               <button onClick={() => { setTopUpUser(null); setUserAssets([]); setTopUpAsset(null); setTopUpAmount(0); }} className="px-4 py-2 rounded-lg border border-border-default text-sm hover:bg-white/5 transition">Cancel</button>
               <button onClick={doTopUp} disabled={!topUpAsset || topUpAmount <= 0} className="px-4 py-2 rounded-lg bg-primary/20 border border-primary/30 text-primary text-sm hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition">Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Role Modal */}
+      {roleChangeUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="card w-full max-w-md p-6 space-y-4">
+            <div className="flex justify-between items-start">
+              <h2 className="text-lg font-bold">Change User Role</h2>
+              <button onClick={() => setRoleChangeUser(null)} className="p-1 rounded-lg hover:bg-white/10 transition"><X className="w-5 h-5" /></button>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm text-text-200">
+                Updating role for <strong className="text-foreground">{roleChangeUser.fullName || roleChangeUser.email}</strong>
+              </p>
+              <div className="p-3 bg-white/5 border border-border-default rounded-lg">
+                <p className="text-xs text-text-300 mb-1">Current Role</p>
+                <p className="text-sm font-semibold">{roleChangeUser.role || "Not assigned"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">New Role</label>
+              <select
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+                disabled={processingRole}
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-border-default focus:border-primary outline-none text-sm transition"
+              >
+                <option value="">Select a role...</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="moderator">Moderator</option>
+                <option value="support">Support</option>
+              </select>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <button
+                onClick={() => setRoleChangeUser(null)}
+                disabled={processingRole}
+                className="px-4 py-2 rounded-lg border border-border-default text-sm hover:bg-white/5 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={changeUserRole}
+                disabled={!newRole || processingRole || newRole === roleChangeUser.role}
+                className="px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-300 text-sm hover:bg-blue-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {processingRole ? "Updating..." : "Update Role"}
+              </button>
             </div>
           </div>
         </div>

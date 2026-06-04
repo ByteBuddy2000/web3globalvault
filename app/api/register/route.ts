@@ -79,7 +79,12 @@ export async function POST(req: Request) {
     const defaultCrypto = [
       { symbol: "BTC", name: "Bitcoin", sector: "Cryptocurrency", market: "Crypto" },
       { symbol: "ETH", name: "Ethereum", sector: "Cryptocurrency", market: "Crypto" },
-      { symbol: "USDT", name: "Tether", sector: "Cryptocurrency", market: "Crypto" }
+      { symbol: "USDT", name: "Tether", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "SOL", name: "Solana", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "ADA", name: "Cardano", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "XRP", name: "Ripple", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "DOGE", name: "Dogecoin", sector: "Cryptocurrency", market: "Crypto" }
+
     ];
 
     // Build asset docs

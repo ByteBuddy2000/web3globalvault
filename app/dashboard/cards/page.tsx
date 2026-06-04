@@ -195,8 +195,8 @@ function Modal({ onClose, children }: { onClose: () => void; children: React.Rea
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       onClick={onClose}
       style={{
-        position: "fixed", inset: 0, zIndex: 50,
-        display: "flex", alignItems: "center", justifyContent: "center", padding: 24,
+        position: "fixed", inset: 0, zIndex: 9999,
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
         background: "rgba(0,0,0,0.75)", backdropFilter: "blur(14px)",
       }}
     >
@@ -206,11 +206,13 @@ function Modal({ onClose, children }: { onClose: () => void; children: React.Rea
         transition={{ type: "spring", stiffness: 320, damping: 32 }}
         onClick={e => e.stopPropagation()}
         style={{
-          width: "100%", maxWidth: 460, borderRadius: 20, padding: 28,
+          width: "100%", maxWidth: "min(420px, 90vw)", borderRadius: 20, padding: "clamp(16px, 5vw, 28px)",
           background: "#0c0c14",
           border: "1px solid rgba(255,255,255,0.08)",
           boxShadow: "0 48px 96px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)",
           position: "relative",
+          maxHeight: "90vh",
+          overflowY: "auto",
         }}
       >
         {children}
@@ -254,6 +256,9 @@ export default function CardsPage() {
   const [selectedType, setSelectedType]     = useState<"VIRTUAL"|"PHYSICAL">("VIRTUAL");
   const [showPayment, setShowPayment]       = useState(false);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [deleteConfirm, setDeleteConfirm]   = useState<Card | null>(null);
+  const [blockConfirm, setBlockConfirm]     = useState<Card | null>(null);
+  const [processing, setProcessing]         = useState(false);
 
   useEffect(() => { fetchCards(); }, []);
 
@@ -290,6 +295,53 @@ export default function CardsPage() {
     if (type === "card") { setCopiedCard(true); setTimeout(() => setCopiedCard(false), 2000); }
     else { setCopiedCVV(true); setTimeout(() => setCopiedCVV(false), 2000); }
     toast.success("Copied!");
+  };
+
+  const handleDeleteCard = async (card: Card) => {
+    setProcessing(true);
+    try {
+      const res = await fetch(`/api/cards/${card._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.ok) {
+        setCards(cards.filter(c => c._id !== card._id));
+        toast.success("Card deleted successfully");
+        setDeleteConfirm(null);
+      } else {
+        toast.error("Failed to delete card");
+      }
+    } catch {
+      toast.error("Error deleting card");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleBlockCard = async (card: Card) => {
+    setProcessing(true);
+    try {
+      const newStatus = card.status === "BLOCKED" ? "ACTIVE" : "BLOCKED";
+      const res = await fetch(`/api/cards/${card._id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        const updatedCard = { ...card, status: newStatus as any };
+        setCards(cards.map(c => c._id === card._id ? updatedCard : c));
+        if (selectedCard?._id === card._id) setSelectedCard(updatedCard);
+        toast.success(newStatus === "BLOCKED" ? "Card blocked" : "Card unblocked");
+        setBlockConfirm(null);
+      } else {
+        toast.error("Failed to update card");
+      }
+    } catch {
+      toast.error("Error updating card");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   /* ── Loading ───────────────────────────────────────────────── */
@@ -799,6 +851,34 @@ export default function CardsPage() {
                 </div>
               </div>
 
+              {/* Action Buttons */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+                <button
+                  onClick={() => setBlockConfirm(selectedCard)}
+                  style={{
+                    padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                    background: selectedCard.status === "BLOCKED" ? "rgba(16, 185, 129, 0.12)" : "rgba(244, 63, 94, 0.12)",
+                    border: selectedCard.status === "BLOCKED" ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(244, 63, 94, 0.3)",
+                    color: selectedCard.status === "BLOCKED" ? "#10b981" : "#f43f5e",
+                    fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  }}
+                >
+                  <Lock size={12} /> {selectedCard.status === "BLOCKED" ? "Unblock" : "Block"}
+                </button>
+
+                <button
+                  onClick={() => setDeleteConfirm(selectedCard)}
+                  style={{
+                    padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                    background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)",
+                    color: "#f43f5e", fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  Delete Card
+                </button>
+              </div>
+
               <button
                 onClick={() => setShowDetails(false)}
                 style={{
@@ -812,6 +892,139 @@ export default function CardsPage() {
             </Modal>
           );
         })()}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════════════════
+          MODAL: DELETE CONFIRMATION
+      ══════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {deleteConfirm && (
+          <Modal onClose={() => !processing && setDeleteConfirm(null)}>
+            <ModalHeader title="Delete Card" sub="This action cannot be undone" onClose={() => !processing && setDeleteConfirm(null)} />
+            
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginBottom: 12 }}>
+                Are you sure you want to delete this {deleteConfirm.tierLevel} card?
+              </p>
+              <div style={{
+                padding: 12, borderRadius: 10,
+                background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.2)",
+              }}>
+                <p style={{ fontSize: 11, color: "#f87171", marginBottom: 4 }}>Card ending in {deleteConfirm.cardNumber.slice(-4)}</p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>This will permanently remove the card from your account</p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                disabled={processing}
+                style={{
+                  flex: 1, padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                  color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                  opacity: processing ? 0.5 : 1,
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => handleDeleteCard(deleteConfirm)}
+                disabled={processing}
+                style={{
+                  flex: 1, padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                  background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)",
+                  color: processing ? "rgba(244, 63, 94, 0.5)" : "#f43f5e", fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                  opacity: processing ? 0.5 : 1,
+                }}
+              >
+                {processing ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════════════════
+          MODAL: BLOCK/UNBLOCK CONFIRMATION
+      ══════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {blockConfirm && (
+          <Modal onClose={() => !processing && setBlockConfirm(null)}>
+            <ModalHeader
+              title={blockConfirm.status === "BLOCKED" ? "Unblock Card" : "Block Card"}
+              sub={blockConfirm.status === "BLOCKED" ? "Card will be reactivated" : "Card will be temporarily disabled"}
+              onClose={() => !processing && setBlockConfirm(null)}
+            />
+            
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginBottom: 12 }}>
+                {blockConfirm.status === "BLOCKED"
+                  ? "Unblock this card to resume using it for transactions."
+                  : "Blocking this card will prevent it from being used for transactions."}
+              </p>
+              <div style={{
+                padding: 12, borderRadius: 10,
+                background: blockConfirm.status === "BLOCKED"
+                  ? "rgba(16, 185, 129, 0.08)"
+                  : "rgba(251, 146, 60, 0.08)",
+                border: blockConfirm.status === "BLOCKED"
+                  ? "1px solid rgba(16, 185, 129, 0.2)"
+                  : "1px solid rgba(251, 146, 60, 0.2)",
+              }}>
+                <p style={{ fontSize: 11, color: blockConfirm.status === "BLOCKED" ? "#86efac" : "#fed7aa", marginBottom: 4 }}>
+                  Card ending in {blockConfirm.cardNumber.slice(-4)}
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+                  Status: <strong>{blockConfirm.status}</strong>
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setBlockConfirm(null)}
+                disabled={processing}
+                style={{
+                  flex: 1, padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                  color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                  opacity: processing ? 0.5 : 1,
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => handleBlockCard(blockConfirm)}
+                disabled={processing}
+                style={{
+                  flex: 1, padding: "11px", borderRadius: 10, cursor: "pointer", outline: "none",
+                  background: blockConfirm.status === "BLOCKED"
+                    ? "rgba(16, 185, 129, 0.12)"
+                    : "rgba(251, 146, 60, 0.12)",
+                  border: blockConfirm.status === "BLOCKED"
+                    ? "1px solid rgba(16, 185, 129, 0.3)"
+                    : "1px solid rgba(251, 146, 60, 0.3)",
+                  color: processing
+                    ? blockConfirm.status === "BLOCKED"
+                      ? "rgba(16, 185, 129, 0.5)"
+                      : "rgba(251, 146, 60, 0.5)"
+                    : blockConfirm.status === "BLOCKED"
+                    ? "#10b981"
+                    : "#fb923c",
+                  fontSize: 12, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                  opacity: processing ? 0.5 : 1,
+                }}
+              >
+                {processing
+                  ? (blockConfirm.status === "BLOCKED" ? "Unblocking..." : "Blocking...")
+                  : (blockConfirm.status === "BLOCKED" ? "Unblock" : "Block")}
+              </button>
+            </div>
+          </Modal>
+        )}
       </AnimatePresence>
     </div>
   );
