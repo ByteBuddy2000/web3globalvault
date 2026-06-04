@@ -7,9 +7,10 @@ import User from "@/models/User";
 // DELETE - Delete a card
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     await connectDB();
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -28,7 +29,7 @@ export async function DELETE(
       );
     }
 
-    const card = await Card.findById(params.id);
+    const card = await Card.findById(id);
     if (!card) {
       return NextResponse.json(
         { message: "Card not found" },
@@ -45,16 +46,16 @@ export async function DELETE(
     }
 
     // Delete the card
-    await Card.findByIdAndDelete(params.id);
+    await Card.findByIdAndDelete(id);
 
     // Remove card from user's cards array
-    user.cards = user.cards.filter((c: any) => c.toString() !== params.id);
+    user.cards = user.cards.filter((c: any) => c.toString() !== id);
     await user.save();
 
     return NextResponse.json(
       {
         message: "Card deleted successfully",
-        cardId: params.id,
+        cardId: id,
       },
       { status: 200 }
     );
@@ -70,9 +71,10 @@ export async function DELETE(
 // PATCH - Update card status (block/unblock)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     await connectDB();
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -91,7 +93,7 @@ export async function PATCH(
       );
     }
 
-    const card = await Card.findById(params.id);
+    const card = await Card.findById(id);
     if (!card) {
       return NextResponse.json(
         { message: "Card not found" },
