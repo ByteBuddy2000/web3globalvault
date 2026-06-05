@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     }
 
     const admin = await User.findOne({ email: token.email });
-    if (!admin || admin.role !== "ADMIN") {
+    if (!admin || admin.role !== "admin") {
       return NextResponse.json(
         { message: "Unauthorized - Admin access required" },
         { status: 403 }

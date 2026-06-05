@@ -44,8 +44,6 @@ export default function DashboardContent() {
   const [assetSummary, setAssetSummary] = useState<{ totalBalance: number } | null>(null);
 
   const [marketPrices, setMarketPrices] = useState<Record<string, number>>({});
-  const [marketLoading, setMarketLoading] = useState(false);
-
   const [cards, setCards] = useState<any>(null);
 
   /* ─── Fetch user ─── */
@@ -98,7 +96,7 @@ export default function DashboardContent() {
       {/* ───────── ROW 1: HERO + SIDEBAR ───────── */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        {/* HERO (3 cols) */}
+        {/* HERO */}
         <div className="lg:col-span-3 flex flex-col gap-6">
 
           <HeroSection
@@ -106,12 +104,11 @@ export default function DashboardContent() {
             totalInvestment={assetBalance}
           />
 
-          {/* QUICK ACTIONS (now properly placed under hero) */}
           <QuickActionsSection />
 
         </div>
 
-        {/* RIGHT SIDEBAR (1 col) */}
+        {/* SIDEBAR */}
         <div className="lg:col-span-1 flex flex-col gap-6">
 
           <div className="dashboard-card">
@@ -131,7 +128,7 @@ export default function DashboardContent() {
         assetBalance={assetBalance}
         investmentReturns={0}
         returnRatePercent={0}
-        marketLoading={marketLoading}
+        marketLoading={false}
       />
 
       {/* ───────── ROW 3: MARKETS ───────── */}
@@ -148,7 +145,11 @@ export default function DashboardContent() {
           <div className="dashboard-title mb-4">
             Crypto Market
           </div>
-          <CryptoDashboard />
+
+          <div className="w-full overflow-hidden">
+            <CryptoDashboard />
+          </div>
+
         </div>
 
       </div>

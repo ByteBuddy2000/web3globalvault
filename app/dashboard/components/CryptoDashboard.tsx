@@ -43,8 +43,14 @@ function SparkBars({ id }: { id: string }) {
       {bars.map((b, i) => (
         <div
           key={i}
-          className={b.up ? 'bg-emerald-500/60' : 'bg-red-400/60'}
-          style={{ width: 3, height: b.h, borderRadius: 1 }}
+          style={{
+            width: 3,
+            height: b.h,
+            borderRadius: 1,
+            backgroundColor: b.up
+              ? 'rgba(34, 197, 94, 0.6)'
+              : 'rgba(239, 68, 68, 0.6)',
+          }}
         />
       ))}
     </div>
@@ -113,17 +119,17 @@ export default function CryptoDashboard() {
       {/* ── Header ── */}
       <div className="flex items-end justify-between mb-6">
         <div>
-          <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-1 font-sans">
+          <p style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.2em] uppercase mb-1 font-sans">
             Crypto Market
           </p>
-          <h1 className="text-3xl font-medium tracking-tight text-white leading-none font-sans">
+          <h1 style={{ color: 'var(--text-0)' }} className="text-3xl font-medium tracking-tight leading-none font-sans">
             Live Prices
           </h1>
         </div>
 
         <div className="flex items-center gap-3 pb-0.5">
           {lastUpdated && (
-            <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-white/30 font-sans">
+            <span style={{ color: 'var(--text-300)' }} className="hidden sm:flex items-center gap-1.5 text-[11px] font-sans">
               <RefreshCw className="w-3 h-3" />
               {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
@@ -131,7 +137,13 @@ export default function CryptoDashboard() {
           <button
             type="button"
             onClick={() => setSortAsc((s) => !s)}
-            className="flex items-center gap-1.5 text-[11px] tracking-wider uppercase text-white/40 hover:text-white/80 transition border border-white/10 hover:border-white/20 rounded px-3 py-1.5 font-sans"
+            style={{
+              color: 'var(--text-300)',
+              borderColor: 'var(--border-subtle)',
+            }}
+            className="flex items-center gap-1.5 text-[11px] tracking-wider uppercase hover:opacity-80 transition rounded px-3 py-1.5 font-sans border"
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-100)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-300)')}
           >
             <ArrowUpDown className="w-3 h-3" />
             {sortAsc ? 'Price ASC' : 'Price DESC'}
@@ -141,49 +153,54 @@ export default function CryptoDashboard() {
 
       {/* ── Stats strip ── */}
       {!loading && !error && cryptoData.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/8 border border-white/8 rounded-lg overflow-hidden mb-5">
+        <div style={{
+          backgroundColor: 'var(--glass-white-sm)',
+          borderColor: 'var(--border-subtle)',
+        }} className="grid grid-cols-2 sm:grid-cols-4 gap-px border rounded-lg overflow-hidden mb-5">
           {[
             {
               label: 'Advancing',
               value: gainers,
-              cls: 'text-emerald-400',
+              color: 'var(--success-400)',
             },
             {
               label: 'Declining',
               value: losers,
-              cls: 'text-red-400',
+              color: 'var(--danger-400)',
             },
             {
               label: 'Avg Move',
               value: avgMove !== null
                 ? `${avgMove >= 0 ? '+' : ''}${avgMove.toFixed(2)}%`
                 : '—',
-              cls: avgMove !== null && avgMove >= 0 ? 'text-emerald-400' : 'text-red-400',
+              color: avgMove !== null && avgMove >= 0 ? 'var(--success-400)' : 'var(--danger-400)',
             },
             {
               label: 'Top Gainer',
               value: topGainer?.symbol ?? '—',
-              cls: 'text-sky-400 text-xl tracking-wide',
+              color: 'var(--brand-400)',
             },
-          ].map(({ label, value, cls }) => (
-            <div key={label} className="bg-white/[0.03] px-5 py-4">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-2 font-sans">{label}</p>
-              <p className={`text-2xl font-medium ${cls}`}>{value}</p>
+          ].map(({ label, value, color }) => (
+            <div key={label} style={{ backgroundColor: 'var(--glass-white-xs)' }} className="px-5 py-4">
+              <p style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.2em] uppercase mb-2 font-sans">{label}</p>
+              <p style={{ color }} className="text-2xl font-medium">{value}</p>
             </div>
           ))}
         </div>
       )}
 
       {/* ── Table ── */}
-      <div className="border border-white/8 rounded-lg overflow-hidden">
+      <div style={{
+        borderColor: 'var(--border-subtle)',
+      }} className="border rounded-lg overflow-hidden">
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3 text-white/30">
-            <Loader2 className="w-5 h-5 animate-spin text-sky-400" />
+          <div style={{ color: 'var(--text-300)' }} className="flex flex-col items-center justify-center py-20 gap-3">
+            <Loader2 style={{ color: 'var(--brand-400)' }} className="w-5 h-5 animate-spin" />
             <span className="text-[10px] tracking-[0.2em] uppercase font-sans">Fetching prices</span>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3 text-red-400">
+          <div style={{ color: 'var(--danger-400)' }} className="flex flex-col items-center justify-center py-20 gap-3">
             <AlertCircle className="w-5 h-5" />
             <span className="text-[11px] tracking-widest uppercase font-sans">{error}</span>
           </div>
@@ -192,11 +209,15 @@ export default function CryptoDashboard() {
             {/* Desktop table */}
             <table className="w-full hidden sm:table">
               <thead>
-                <tr className="border-b border-white/6 bg-white/[0.025]">
+                <tr style={{
+                  borderBottomColor: 'var(--border-subtle)',
+                  backgroundColor: 'var(--glass-white-xs)',
+                }}  className="border-b">
                   {['#', 'Symbol', 'Name', 'Price (USD)', 'Change', '% Move'].map((h, i) => (
                     <th
                       key={h}
-                      className={`py-2.5 px-4 text-[10px] tracking-[0.2em] uppercase text-white/30 font-normal font-sans ${i >= 3 ? 'text-right' : 'text-left'} ${i === 0 ? 'w-10' : ''}`}
+                      style={{ color: 'var(--text-300)' }}
+                      className={`py-2.5 px-4 text-[10px] tracking-[0.2em] uppercase font-normal font-sans ${i >= 3 ? 'text-right' : 'text-left'} ${i === 0 ? 'w-10' : ''}`}
                     >
                       {h}
                     </th>
@@ -210,32 +231,35 @@ export default function CryptoDashboard() {
                   return (
                     <tr
                       key={c.symbol}
-                      className="border-t border-white/[0.05] hover:bg-white/[0.03] transition-colors"
+                      style={{
+                        borderTopColor: 'var(--border-subtle)',
+                      }}
+                      className="border-t hover:opacity-80 transition-opacity"
                     >
                       {/* # */}
-                      <td className="py-3.5 px-4 text-[11px] text-white/20">{i + 1}</td>
+                      <td style={{ color: 'var(--text-300)' }} className="py-3.5 px-4 text-[11px]">{i + 1}</td>
 
                       {/* Symbol */}
                       <td className="py-3.5 px-4">
-                        <span className="text-[14px] font-medium tracking-wider text-white">{c.symbol}</span>
+                        <span style={{ color: 'var(--text-0)' }} className="text-[14px] font-medium tracking-wider">{c.symbol}</span>
                       </td>
 
                       {/* Name + sparkbar */}
                       <td className="py-3.5 px-4">
-                        <span className="text-[12px] text-white/40 font-sans block">{c.name}</span>
+                        <span style={{ color: 'var(--text-300)' }} className="text-[12px] font-sans block">{c.name}</span>
                         <SparkBars id={c.id} />
                       </td>
 
                       {/* Price */}
                       <td className="py-3.5 px-4 text-right">
-                        <span className="text-[14px] font-medium text-white tabular-nums">
+                        <span style={{ color: 'var(--text-0)' }} className="text-[14px] font-medium tabular-nums">
                           {formatPrice(c.price)}
                         </span>
                       </td>
 
                       {/* Change $ */}
                       <td className="py-3.5 px-4 text-right">
-                        <span className={`text-[12px] tabular-nums ${up ? 'text-emerald-400' : 'text-red-400'}`}>
+                        <span style={{ color: up ? 'var(--success-400)' : 'var(--danger-400)' }} className="text-[12px] tabular-nums">
                           {sign}{c.change.toFixed(2)}
                         </span>
                       </td>
@@ -243,11 +267,11 @@ export default function CryptoDashboard() {
                       {/* % Move pill */}
                       <td className="py-3.5 px-4 text-right">
                         <span
-                          className={`inline-flex items-center justify-end gap-1 text-[11px] font-medium tabular-nums px-2 py-1 rounded ${
-                            up
-                              ? 'bg-emerald-500/10 text-emerald-400'
-                              : 'bg-red-500/10 text-red-400'
-                          }`}
+                          style={{
+                            color: up ? 'var(--success-400)' : 'var(--danger-400)',
+                            backgroundColor: up ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          }}
+                          className="inline-flex items-center justify-end gap-1 text-[11px] font-medium tabular-nums px-2 py-1 rounded"
                         >
                           {up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                           {sign}{c.changePercent.toFixed(2)}%
@@ -267,24 +291,27 @@ export default function CryptoDashboard() {
                 return (
                   <div
                     key={c.symbol}
-                    className="flex items-center justify-between px-4 py-3.5 border-t border-white/[0.05] first:border-t-0"
+                    style={{
+                      borderTopColor: 'var(--border-subtle)',
+                    }}
+                    className="flex items-center justify-between px-4 py-3.5 border-t first:border-t-0"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] text-white/20 w-4 shrink-0">{i + 1}</span>
+                      <span style={{ color: 'var(--text-300)' }} className="text-[10px] w-4 shrink-0">{i + 1}</span>
                       <div>
-                        <p className="text-[14px] font-medium text-white tracking-wider">{c.symbol}</p>
-                        <p className="text-[11px] text-white/30 font-sans">{c.name}</p>
+                        <p style={{ color: 'var(--text-0)' }} className="text-[14px] font-medium tracking-wider">{c.symbol}</p>
+                        <p style={{ color: 'var(--text-300)' }} className="text-[11px] font-sans">{c.name}</p>
                         <SparkBars id={c.id} />
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[14px] font-medium text-white tabular-nums">{formatPrice(c.price)}</p>
+                      <p style={{ color: 'var(--text-0)' }} className="text-[14px] font-medium tabular-nums">{formatPrice(c.price)}</p>
                       <span
-                        className={`inline-flex items-center justify-end gap-1 text-[11px] font-medium tabular-nums mt-1 px-2 py-0.5 rounded ${
-                          up
-                            ? 'bg-emerald-500/10 text-emerald-400'
-                            : 'bg-red-500/10 text-red-400'
-                        }`}
+                        style={{
+                          color: up ? 'var(--success-400)' : 'var(--danger-400)',
+                          backgroundColor: up ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        }}
+                        className="inline-flex items-center justify-end gap-1 text-[11px] font-medium tabular-nums mt-1 px-2 py-0.5 rounded"
                       >
                         {up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                         {sign}{c.changePercent.toFixed(2)}%
@@ -296,12 +323,15 @@ export default function CryptoDashboard() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-t border-white/6 bg-white/[0.02]">
-              <span className="text-[10px] tracking-[0.15em] uppercase text-white/25 font-sans">
+            <div style={{
+              borderTopColor: 'var(--border-subtle)',
+              backgroundColor: 'var(--glass-white-xs)',
+            }} className="flex items-center justify-between px-4 py-2.5 border-t">
+              <span style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.15em] uppercase font-sans">
                 {cryptoData.length} assets
               </span>
-              <span className="text-[10px] tracking-[0.15em] uppercase text-white/25 font-sans flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+              <span style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.15em] uppercase font-sans flex items-center gap-2">
+                <span style={{ backgroundColor: 'var(--success-500)' }} className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" />
                 Live · 60s interval
               </span>
             </div>
@@ -310,11 +340,11 @@ export default function CryptoDashboard() {
       </div>
 
       {/* ── Bottom rule ── */}
-      <div className="mt-5 pt-3.5 border-t border-white/6 flex items-center justify-between">
-        <span className="text-[10px] tracking-[0.2em] uppercase text-white/20 font-sans">
+      <div style={{ borderTopColor: 'var(--border-subtle)' }} className="mt-5 pt-3.5 border-t flex items-center justify-between">
+        <span style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.2em] uppercase font-sans">
           CoinGecko API
         </span>
-        <span className="text-[10px] tracking-[0.2em] uppercase text-white/20 font-sans">
+        <span style={{ color: 'var(--text-300)' }} className="text-[10px] tracking-[0.2em] uppercase font-sans">
           USD · Real-time market data
         </span>
       </div>
