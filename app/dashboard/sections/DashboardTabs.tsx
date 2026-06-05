@@ -33,11 +33,11 @@ type Props = {
 
 const PREVIEW_LIMIT = 5;
 
-const typeIconMap: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  buy:     { icon: <TrendingUp className="w-3.5 h-3.5" />, color: 'var(--success-400)', bg: 'var(--success-glow)' },
-  sell:    { icon: <ArrowUpRight className="w-3.5 h-3.5" />, color: 'var(--danger-400)', bg: 'var(--danger-glow)' },
-  deposit: { icon: <ArrowDownLeft className="w-3.5 h-3.5" />, color: 'var(--brand-400)', bg: 'var(--brand-glow-sm)' },
-  default: { icon: <Clock className="w-3.5 h-3.5" />, color: 'var(--text-300)', bg: 'rgba(255,255,255,0.05)' },
+const typeIconMap: Record<string, { icon: React.ComponentType<any>; color: string; bg: string }> = {
+  buy:     { icon: TrendingUp, color: 'var(--success-400)', bg: 'var(--success-glow)' },
+  sell:    { icon: ArrowUpRight, color: 'var(--danger-400)', bg: 'var(--danger-glow)' },
+  deposit: { icon: ArrowDownLeft, color: 'var(--brand-400)', bg: 'var(--brand-glow-sm)' },
+  default: { icon: Clock, color: 'var(--text-300)', bg: 'rgba(255,255,255,0.05)' },
 };
 
 function AssetIcon({ symbol }: { symbol: string }) {
