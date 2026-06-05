@@ -80,44 +80,58 @@ export default function DashboardContent() {
 
   const assetBalance = assetSummary?.totalBalance ?? 0;
 
+  /* ─── Skeleton ─── */
   if (loading) {
     return (
-      <div className="space-y-4">
-        {[120, 80, 200, 300].map((h, i) => (
-          <div key={i} className="skeleton rounded-xl" style={{ height: h }} />
-        ))}
+      <div className="flex flex-col gap-4 p-4 md:p-6">
+        {/* Hero + sidebar skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="lg:col-span-3 flex flex-col gap-4">
+            <div className="skeleton rounded-xl h-[180px] md:h-[200px]" />
+            <div className="skeleton rounded-xl h-[80px]" />
+          </div>
+          <div className="lg:col-span-1">
+            <div className="skeleton rounded-xl h-[220px]" />
+          </div>
+        </div>
+        {/* KPI skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="skeleton rounded-xl h-[100px]" />
+          ))}
+        </div>
+        {/* Markets skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="skeleton rounded-xl h-[300px]" />
+          <div className="skeleton rounded-xl h-[300px]" />
+        </div>
+        {/* Tabs skeleton */}
+        <div className="skeleton rounded-xl h-[200px]" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 md:gap-6">
 
       {/* ───────── ROW 1: HERO + SIDEBAR ───────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
 
-        {/* HERO */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
-
+        {/* HERO — full width on mobile/tablet, 3/4 on desktop */}
+        <div className="lg:col-span-3 flex flex-col gap-4 md:gap-6 min-w-0">
           <HeroSection
             userData={userData}
             totalInvestment={assetBalance}
           />
-
           <QuickActionsSection />
-
         </div>
 
-        {/* SIDEBAR */}
-        <div className="lg:col-span-1 flex flex-col gap-6">
-
-          <div className="dashboard-card">
-            <div className="dashboard-title mb-3">
-              Your Card
-            </div>
+        {/* SIDEBAR — full width on mobile/tablet, 1/4 on desktop */}
+        <div className="lg:col-span-1 min-w-0">
+          <div className="dashboard-card h-full">
+            <div className="dashboard-title mb-3">Your Card</div>
             <CardsWidget card={cards} />
           </div>
-
         </div>
 
       </div>
@@ -132,36 +146,35 @@ export default function DashboardContent() {
       />
 
       {/* ───────── ROW 3: MARKETS ───────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
-        <div className="dashboard-card">
-          <div className="dashboard-title mb-4">
-            Stocks
+        <div className="dashboard-card min-w-0 overflow-hidden">
+          <div className="dashboard-title mb-4">Stocks</div>
+          {/* Scroll container prevents table/chart overflow breaking layout */}
+          <div className="w-full overflow-x-auto">
+            <StockDashboard />
           </div>
-          <StockDashboard />
         </div>
 
-        <div className="dashboard-card">
-          <div className="dashboard-title mb-4">
-            Crypto Market
-          </div>
-
-          <div className="w-full overflow-hidden">
+        <div className="dashboard-card min-w-0 overflow-hidden">
+          <div className="dashboard-title mb-4">Crypto Market</div>
+          <div className="w-full overflow-x-auto">
             <CryptoDashboard />
           </div>
-
         </div>
 
       </div>
 
       {/* ───────── ROW 4: TABS ───────── */}
-      <DashboardTabs
-        active={activeTab}
-        setActive={setActiveTab}
-        assets={assets}
-        transactions={transactions}
-        marketPrices={marketPrices}
-      />
+      <div className="min-w-0 overflow-hidden">
+        <DashboardTabs
+          active={activeTab}
+          setActive={setActiveTab}
+          assets={assets}
+          transactions={transactions}
+          marketPrices={marketPrices}
+        />
+      </div>
 
     </div>
   );
