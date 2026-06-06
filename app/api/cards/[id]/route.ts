@@ -23,6 +23,9 @@ export async function DELETE(
     }
 
     const user = await User.findOne({ email: token.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
     const card = await Card.findById(id);
     if (!card) {
@@ -68,6 +71,9 @@ export async function PATCH(
     }
 
     const user = await User.findOne({ email: token.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
     const card = await Card.findById(id);
     if (!card) {
