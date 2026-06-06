@@ -70,7 +70,7 @@ export function UserDrawer({ userId, onClose, onUserUpdated }: UserDrawerProps) 
   useEffect(() => {
     if (!userId) return;
     setLoading(true);
-    fetch(`/api/admin/users/${userId}`)
+    fetch(`/api/admin/users/details/${userId}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.user) {
@@ -297,7 +297,7 @@ export function UserDrawer({ userId, onClose, onUserUpdated }: UserDrawerProps) 
                 <option value="">Select a role...</option>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
-                <option value="moderator">Moderator</option>
+              
               </select>
             </div>
 
