@@ -6,21 +6,25 @@ import User from "@/models/User";
 
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { params } = context;
+    const { id } = await params;
 
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
     if (!token?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await User.findOne({ email: token.email });
 
-    const card = await Card.findById(params.id);
+    const card = await Card.findById(id);
     if (!card) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
@@ -29,7 +33,7 @@ export async function DELETE(
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    await Card.findByIdAndDelete(params.id);
+    await Card.findByIdAndDelete(id);
 
     return NextResponse.json({
       message: "Card deleted successfully",
@@ -47,23 +51,25 @@ export async function DELETE(
  */
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { params } = context;
+    const { id } = await params;
+
     await connectDB();
 
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
     if (!token?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await User.findOne({ email: token.email });
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
 
-    const card = await Card.findById(params.id);
+    const card = await Card.findById(id);
     if (!card) {
       return NextResponse.json({ message: "Card not found" }, { status: 404 });
     }
@@ -74,17 +80,10 @@ export async function PATCH(
 
     const { status } = await req.json();
 
-    if (!status) {
-      return NextResponse.json(
-        { message: "Status field required" },
-        { status: 400 }
-      );
-    }
-
     const validStatuses = ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
-        { message: `Invalid status. Must be one of: ${validStatuses.join(", ")}` },
+        { message: `Invalid status` },
         { status: 400 }
       );
     }
@@ -94,15 +93,11 @@ export async function PATCH(
     await card.save();
 
     return NextResponse.json({
-      message: `Card status updated to ${status}`,
-      card: {
-        _id: card._id,
-        status: card.status,
-        updatedAt: card.updatedAt,
-      },
+      message: `Card updated`,
+      card,
     });
   } catch (error) {
-    console.error("PATCH card error:", error);
+    console.error(error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
