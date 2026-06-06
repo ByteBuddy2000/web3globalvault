@@ -20,11 +20,11 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
-    console.log("[Register] Database connected");
+    // console.log("[Register] Database connected");
 
     // Normalize email (lowercase)
     const normalizedEmail = email.toLowerCase().trim();
-    console.log("[Register] Attempting to register:", normalizedEmail);
+    // console.log("[Register] Attempting to register:", normalizedEmail);
 
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
               <p style="color: #94a3b8; margin: 5px 0 0 0;">Your Gateway to Wealth Management</p>
             </div>
 
-            <div style="background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); padding: 30px; border-radius: 8px; margin-bottom: 30px;">
+            <div style="background: rgba(7, 54, 120, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); padding: 30px; border-radius: 8px; margin-bottom: 30px;">
               <h2 style="color: #F5D78E; margin-top: 0;">Welcome, ${fullName}! 👋</h2>
               <p style="font-size: 16px; line-height: 1.6; color: #cbd5e1;">
                 Thank you for joining Web3GlobalVault. We're thrilled to have you as part of our community. Your account has been successfully created and is ready to use.

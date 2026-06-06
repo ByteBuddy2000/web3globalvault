@@ -13,13 +13,27 @@ const CardSchema = new mongoose.Schema({
   monthlyLimit: { type: Number, default: 50000 },
   dailySpent: { type: Number, default: 0 },
   monthlySpent: { type: Number, default: 0 },
-  status: { type: String, enum: ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"], default: "ACTIVE" },
+  status: { type: String, enum: ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"], default: "PENDING" },
+  
+  /* ─── Payment & Verification Flow ─── */
+  requestStatus: { type: String, enum: ["DRAFT", "PAYMENT_PENDING", "PAYMENT_RECEIVED", "ADMIN_APPROVED", "ADMIN_REJECTED"], default: "DRAFT" },
   paymentVerificationStatus: { type: String, enum: ["PENDING_APPROVAL", "APPROVED", "REJECTED"], default: "PENDING_APPROVAL" },
+  
+  /* ─── Payment Details ─── */
   paymentAmount: { type: Number, default: 0 },
-  paymentMethod: { type: String, default: "" },
+  paymentMethod: { type: String, default: "USDT" },
+  paymentCurrency: { type: String, default: "USDT", enum: ["USDT", "BNB", "ETH"] },
+  usdtAddress: { type: String, default: "" }, // USDT wallet address for payment
+  transactionHash: { type: String, default: "" }, // TX hash after payment
+  transactionHashVerified: { type: Boolean, default: false },
+  transactionVerifiedAt: { type: Date },
+  
+  /* ─── Admin Verification ─── */
   verificationNotes: { type: String, default: "" },
+  rejectionReason: { type: String, default: "" },
   verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   verificationDate: { type: Date },
+  
   active: { type: Boolean, default: true },
   issueDate: { type: Date, default: Date.now },
   expiryDate: { type: Date },

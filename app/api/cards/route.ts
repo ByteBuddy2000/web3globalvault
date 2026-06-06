@@ -87,9 +87,47 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { tierLevel = "BASIC", cardType = "VIRTUAL", paymentMethod = "WALLET" } = body;
+    const { tierLevel = "BASIC", cardType = "VIRTUAL" } = body;
 
-    // Tier-based limits
+    // ══════════════════════════════════════════════════════════
+    // VALIDATION: User can only have ONE active/pending card
+    // Exception: Previous card must be BLOCKED or FROZEN
+    // ══════════════════════════════════════════════════════════
+    const existingCards = await Card.find({ user: user._id });
+    
+    for (const card of existingCards) {
+      // Allow only if card is BLOCKED or INACTIVE
+      if (card.status === "ACTIVE" || card.status === "PENDING") {
+        return NextResponse.json(
+          {
+            message: "You already have an active or pending card. Please block or delete it first.",
+            existingCard: {
+              _id: card._id,
+              tierLevel: card.tierLevel,
+              status: card.status,
+              requestStatus: card.requestStatus,
+            },
+          },
+          { status: 409 }
+        );
+      }
+      
+      // Check if there's a pending payment
+      if (["DRAFT", "PAYMENT_PENDING"].includes(card.requestStatus)) {
+        return NextResponse.json(
+          {
+            message: "You have a pending card application. Complete or cancel it first.",
+            pendingCard: {
+              _id: card._id,
+              requestStatus: card.requestStatus,
+            },
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Tier-based limits and fees
     const tierConfig: Record<string, any> = {
       BASIC: { dailyLimit: 5000, monthlyLimit: 50000, balance: 1000, paymentFee: 0 },
       SILVER: { dailyLimit: 10000, monthlyLimit: 100000, balance: 5000, paymentFee: 5 },
@@ -99,6 +137,7 @@ export async function POST(req: NextRequest) {
 
     const config = tierConfig[tierLevel] || tierConfig.BASIC;
 
+    // Create card in DRAFT status (not yet submitted)
     const newCard = new Card({
       user: user._id,
       cardNumber: generateCardNumber(),
@@ -111,9 +150,11 @@ export async function POST(req: NextRequest) {
       dailyLimit: config.dailyLimit,
       monthlyLimit: config.monthlyLimit,
       status: "PENDING",
+      requestStatus: "DRAFT", // Start in DRAFT, not submitted yet
       paymentVerificationStatus: "PENDING_APPROVAL",
-      paymentMethod,
+      paymentMethod: "USDT",
       paymentAmount: config.paymentFee,
+      paymentCurrency: "USDT",
       expiryDate: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000),
     });
 
@@ -127,8 +168,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "Card created successfully",
-        card: newCard,
+        message: "Card draft created. Proceed to payment request.",
+        card: {
+          _id: newCard._id,
+          cardNumber: newCard.cardNumber,
+          tierLevel: newCard.tierLevel,
+          cardType: newCard.cardType,
+          status: newCard.status,
+          requestStatus: newCard.requestStatus,
+          paymentAmount: newCard.paymentAmount,
+        },
       },
       { status: 201 }
     );
