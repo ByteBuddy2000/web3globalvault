@@ -40,6 +40,7 @@ interface UserDetail {
 interface UserDrawerProps {
   userId: string | null;
   onClose: () => void;
+  onUserUpdated?: () => void;
 }
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
@@ -57,11 +58,14 @@ const statusIcon = (s: string) => ({
   Failed: <XCircle className="w-3.5 h-3.5 text-red-400" />,
 }[s] ?? <AlertCircle className="w-3.5 h-3.5 text-text-300" />);
 
-export function UserDrawer({ userId, onClose }: UserDrawerProps) {
+export function UserDrawer({ userId, onClose, onUserUpdated }: UserDrawerProps) {
   const [user, setUser] = useState<UserDetail | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [txFilter, setTxFilter] = useState<string>("all");
+  const [showRoleChange, setShowRoleChange] = useState(false);
+  const [newRole, setNewRole] = useState<string>("");
+  const [roleLoading, setRoleLoading] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -85,6 +89,35 @@ export function UserDrawer({ userId, onClose }: UserDrawerProps) {
     : transactions.filter((t) => t.type === txFilter || t.status === txFilter);
 
   const txTypes = [...new Set(transactions.map((t) => t.type))];
+
+  const handleRoleChange = async () => {
+    if (!user || !newRole || roleLoading) return;
+    
+    try {
+      setRoleLoading(true);
+      const res = await fetch(`/api/admin/users/${user._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("User role updated successfully");
+        setUser({ ...user, role: newRole });
+        setShowRoleChange(false);
+        setNewRole("");
+        onUserUpdated?.();
+      } else {
+        toast.error(data.message || "Failed to update role");
+      }
+    } catch (error) {
+      toast.error("Error updating user role");
+      console.error(error);
+    } finally {
+      setRoleLoading(false);
+    }
+  };
 
   if (!userId) return null;
 
@@ -123,30 +156,41 @@ export function UserDrawer({ userId, onClose }: UserDrawerProps) {
 
               {/* Profile Section */}
               <div className="p-5 space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xl font-bold shrink-0">
-                    {user.fullName?.charAt(0) ?? "U"}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold truncate">{user.fullName}</p>
-                    <p className="text-sm text-text-300 truncate">{user.email}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${
-                        user.accountStatus === "Active"
-                          ? "bg-green-500/15 text-green-400 border-green-500/30"
-                          : user.accountStatus === "Suspended"
-                          ? "bg-red-500/15 text-red-400 border-red-500/30"
-                          : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
-                      }`}>
-                        {user.accountStatus}
-                      </span>
-                      {user.kycVerified && (
-                        <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-500/15 text-blue-400 border-blue-500/30 flex items-center gap-1">
-                          <Shield className="w-3 h-3" /> KYC Verified
+                <div className="flex items-center gap-4 justify-between">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xl font-bold shrink-0">
+                      {user.fullName?.charAt(0) ?? "U"}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-lg font-bold truncate">{user.fullName}</p>
+                      <p className="text-sm text-text-300 truncate">{user.email}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${
+                          user.accountStatus === "Active"
+                            ? "bg-green-500/15 text-green-400 border-green-500/30"
+                            : user.accountStatus === "Suspended"
+                            ? "bg-red-500/15 text-red-400 border-red-500/30"
+                            : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
+                        }`}>
+                          {user.accountStatus}
                         </span>
-                      )}
+                        {user.kycVerified && (
+                          <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-500/15 text-blue-400 border-blue-500/30 flex items-center gap-1">
+                            <Shield className="w-3 h-3" /> KYC Verified
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  <button
+                    onClick={() => {
+                      setNewRole(user.role);
+                      setShowRoleChange(true);
+                    }}
+                    className="px-3 py-1.5 text-xs rounded-lg bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 font-medium transition whitespace-nowrap"
+                  >
+                    Change Role
+                  </button>
                 </div>
               </div>
 
@@ -227,6 +271,58 @@ export function UserDrawer({ userId, onClose }: UserDrawerProps) {
           )}
         </div>
       </div>
+
+      {/* Role Change Modal */}
+      {showRoleChange && user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-background border border-border-default rounded-lg p-6 w-full max-w-sm space-y-4">
+            <h3 className="text-lg font-bold">Change User Role</h3>
+            
+            <div className="space-y-2">
+              <p className="text-sm text-text-300">
+                Updating role for <span className="font-semibold text-foreground">{user.fullName}</span>
+              </p>
+              <div className="p-2 bg-white/5 border border-border-default rounded text-sm">
+                Current role: <span className="font-semibold capitalize">{user.role}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">New Role</label>
+              <select
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-border-default focus:border-primary outline-none text-sm transition"
+              >
+                <option value="">Select a role...</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="moderator">Moderator</option>
+              </select>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <button
+                onClick={() => {
+                  setShowRoleChange(false);
+                  setNewRole("");
+                }}
+                disabled={roleLoading}
+                className="px-4 py-2 rounded-lg border border-border-default text-sm hover:bg-white/5 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRoleChange}
+                disabled={!newRole || roleLoading || newRole === user.role}
+                className="px-4 py-2 rounded-lg bg-primary/20 border border-primary/30 text-primary text-sm hover:bg-primary/30 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              >
+                {roleLoading ? "Updating..." : "Update Role"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

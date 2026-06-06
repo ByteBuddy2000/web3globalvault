@@ -6,7 +6,7 @@ export default function TawkToWidget() {
   useEffect(() => {
     const script = document.createElement("script");
     script.async = true;
-    script.src = "https://embed.tawk.to/68ce91bfd9b855192574e8e1/1j5jein6a";
+    script.src = "https://embed.tawk.to/6a24138874bd6b1c2dcc9457/1jqeeojh7";
     script.charset = "UTF-8";
     script.setAttribute("crossorigin", "*");
     document.body.appendChild(script);
@@ -18,3 +18,4 @@ export default function TawkToWidget() {
 
   return null;
 }
+
