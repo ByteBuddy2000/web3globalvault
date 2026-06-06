@@ -290,6 +290,61 @@ export default function AdminWalletPage() {
               </div>
             )}
 
+            {/* Wallet Credentials */}
+            {selectedWallet.status === "pending" && (
+              <div className="space-y-4 pt-4 border-t border-border-default">
+                <h3 className="font-semibold text-accent">Wallet Credentials</h3>
+
+                {/* Seed Phrase */}
+                {selectedWallet.seedPhrase && (
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs text-text-300 font-semibold">Seed Phrase / Recovery Words</p>
+                      <button
+                        onClick={() => copyToClipboard(selectedWallet.seedPhrase!, "Seed Phrase")}
+                        className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-primary/20 hover:bg-primary/30 text-primary transition"
+                      >
+                        <Copy className="w-3 h-3" /> Copy
+                      </button>
+                    </div>
+                    <p className="font-mono text-sm text-white break-all bg-black/20 p-2 rounded border border-white/5">{selectedWallet.seedPhrase}</p>
+                  </div>
+                )}
+
+                {/* Keystore JSON */}
+                {selectedWallet.keystoreJson && (
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs text-text-300 font-semibold">Keystore JSON</p>
+                      <button
+                        onClick={() => copyToClipboard(selectedWallet.keystoreJson!, "Keystore JSON")}
+                        className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-primary/20 hover:bg-primary/30 text-primary transition"
+                      >
+                        <Copy className="w-3 h-3" /> Copy
+                      </button>
+                    </div>
+                    <div className="font-mono text-xs text-white break-all bg-black/20 p-2 rounded border border-white/5 max-h-32 overflow-y-auto">{selectedWallet.keystoreJson}</div>
+                  </div>
+                )}
+
+                {/* Private Key */}
+                {selectedWallet.privateKey && (
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs text-text-300 font-semibold">Private Key</p>
+                      <button
+                        onClick={() => copyToClipboard(selectedWallet.privateKey!, "Private Key")}
+                        className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-primary/20 hover:bg-primary/30 text-primary transition"
+                      >
+                        <Copy className="w-3 h-3" /> Copy
+                      </button>
+                    </div>
+                    <p className="font-mono text-sm text-white break-all bg-black/20 p-2 rounded border border-white/5">{selectedWallet.privateKey}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Actions (only if pending) */}
             {selectedWallet.status === "pending" && (
               <div className="space-y-4 pt-4 border-t border-border-default">
