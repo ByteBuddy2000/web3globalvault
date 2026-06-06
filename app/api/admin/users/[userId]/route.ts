@@ -7,7 +7,10 @@ interface Params {
   userId: string;
 }
 
-export async function GET(req: NextRequest, { params }: { params: Params }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -15,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
@@ -34,7 +37,10 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: Params }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -42,7 +48,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
     const body = await req.json();
     const { role } = body;
 
@@ -81,7 +87,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Params }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -89,7 +98,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Params }) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     // Prevent self-deletion
     if (token.sub === userId) {
