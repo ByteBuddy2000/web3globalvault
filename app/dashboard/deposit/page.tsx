@@ -51,6 +51,7 @@ function DepositContent() {
       ERC20: "0xfE09a5D6Cd24f4E6172627011b85866DE3fBf447",
       TRC20: "TRr2kB36MdKnXanodWFyp5D9zub1tLxpCm",
     },
+   
   };
 
   const selectedAddress = cryptoAddresses[crypto][network];
@@ -141,11 +142,11 @@ function DepositContent() {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 w-full">
       {/* Header */}
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h2 className="text-3xl font-bold text-accent mb-2">Deposit Funds</h2>
-        <p className="text-muted">Select your preferred method to deposit into your account.</p>
+        <p className="text-text-200">Select your preferred method to deposit into your account.</p>
       </div>
 
       {/* Method Selector */}
@@ -158,11 +159,10 @@ function DepositContent() {
           <button
             key={method}
             onClick={() => setDepositMethod(method)}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-lg shadow text-sm transition-all duration-300
-              ${
+            className={`flex items-center gap-2 px-4 py-2 border rounded-lg shadow text-sm transition-all duration-300 ${
                 depositMethod === method
-                  ? "btn-accent"
-                  : "bg-black/20 text-white/80 hover:bg-black/30 border border-white/6"
+                  ? "btn-primary"
+                  : "bg-surface-300 text-text-200 hover:bg-surface-400 border border-white/10"
               }`}
           >
             {icon}
@@ -172,28 +172,28 @@ function DepositContent() {
       </div>
 
       {/* Deposit Forms */}
-      <div className="max-w-3xl mx-auto card p-6 rounded-2xl shadow-xl">
+      <div className="max-w-3xl mx-auto bg-surface-200 p-6 rounded-xl border border-white/10 shadow-xl">
         {/* Bank Deposit */}
         {depositMethod === "bank" && (
           <>
             <h3 className="text-xl font-bold text-accent mb-6">Bank Deposit</h3>
             <form className="space-y-6" onSubmit={handleBankSubmit}>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Amount (USD)</label>
-                <input type="number" value={bankAmount} onChange={e => setBankAmount(e.target.value)} className="w-full p-3 bg-black/20 text-white border border-white/6 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter amount" />
+                <label className="block text-sm font-semibold text-text-100 mb-2">Amount (USD)</label>
+                <input type="number" value={bankAmount} onChange={e => setBankAmount(e.target.value)} className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter amount" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Bank Name</label>
-                <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="w-full p-3 bg-black/20 text-white border border-white/6 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter bank name" />
+                <label className="block text-sm font-semibold text-text-100 mb-2">Bank Name</label>
+                <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter bank name" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Account Number</label>
-                <input type="text" value={bankAcct} onChange={e => setBankAcct(e.target.value)} className="w-full p-3 bg-black/20 text-white border border-white/6 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter account number" />
+                <label className="block text-sm font-semibold text-text-100 mb-2">Account Number</label>
+                <input type="text" value={bankAcct} onChange={e => setBankAcct(e.target.value)} className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Enter account number" />
               </div>
               {bankError && (
-                <div className="text-red-400 text-sm mb-2">{bankError}</div>
+                <div className="text-danger-400 text-sm mb-2">{bankError}</div>
               )}
-              <button className="w-full btn-accent text-black py-3 rounded-lg font-semibold text-lg shadow-md transition">
+              <button className="w-full btn-primary py-3 rounded-lg font-semibold text-lg shadow-md transition">
                 Proceed
               </button>
             </form>
@@ -203,59 +203,59 @@ function DepositContent() {
         {/* CARD */}
         {depositMethod === "card" && (
           <>
-            <h3 className="text-xl font-bold text-yellow-500 mb-6">Card Payment</h3>
+            <h3 className="text-xl font-bold text-accent mb-6">Card Payment</h3>
             <form className="space-y-6" onSubmit={handleCardSubmit}>
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Amount (USD)</label>
+                <label className="block text-sm font-semibold text-text-100 mb-2">Amount (USD)</label>
                 <input
                   type="number"
                   value={cardAmount}
                   onChange={e => setCardAmount(e.target.value)}
-                  className="w-full p-3 bg-black/40 text-white border border-yellow-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Enter amount"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Card Number</label>
+                <label className="block text-sm font-semibold text-text-100 mb-2">Card Number</label>
                 <input
                   type="text"
                   value={cardNumber}
                   onChange={e => setCardNumber(e.target.value)}
-                  className="w-full p-3 bg-black/40 text-white border border-yellow-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="**** **** **** ****"
                 />
                 {cardNumber && (
-                  <div className="text-xs text-yellow-400 mt-1">
+                  <div className="text-xs text-accent mt-1">
                     Card Type: {getCardType(cardNumber)}
                   </div>
                 )}
               </div>
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Expiry Date</label>
+                  <label className="block text-sm font-semibold text-text-100 mb-2">Expiry Date</label>
                   <input
                     type="text"
                     value={cardExpiry}
                     onChange={e => setCardExpiry(e.target.value)}
-                    className="w-full p-3 bg-black/40 text-white border border-yellow-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="MM/YY"
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">CVV</label>
+                  <label className="block text-sm font-semibold text-text-100 mb-2">CVV</label>
                   <input
                     type="text"
                     value={cardCVV}
                     onChange={e => setCardCVV(e.target.value)}
-                    className="w-full p-3 bg-black/40 text-white border border-yellow-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="123"
                   />
                 </div>
               </div>
               {cardError && (
-                <div className="text-red-400 text-sm mb-2">{cardError}</div>
+                <div className="text-danger-400 text-sm mb-2">{cardError}</div>
               )}
-              <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold text-lg shadow-md transition">
+              <button className="w-full btn-primary py-3 rounded-lg font-semibold text-lg shadow-md transition">
                 Proceed
               </button>
             </form>
@@ -265,7 +265,7 @@ function DepositContent() {
         {/* CRYPTO */}
         {depositMethod === "crypto" && (
           <>
-            <h3 className="text-xl font-bold text-yellow-500 mb-6">Crypto Deposit</h3>
+            <h3 className="text-xl font-bold text-accent mb-6">Crypto Deposit</h3>
 
             {/* Select Crypto */}
             <div className="flex gap-4 mb-6">
@@ -278,8 +278,8 @@ function DepositContent() {
                   }}
                   className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                     crypto === c
-                      ? "bg-yellow-500 text-white"
-                      : "bg-black/40 text-gray-300 hover:bg-yellow-500/20"
+                      ? "btn-primary"
+                      : "bg-surface-300 text-text-200 hover:bg-surface-400"
                   }`}
                 >
                   {c}
@@ -289,11 +289,11 @@ function DepositContent() {
 
             {/* Select Network */}
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-300 mb-2">Select Network</label>
+              <label className="block text-sm font-semibold text-text-100 mb-2">Select Network</label>
               <select
                 value={network}
                 onChange={(e) => setNetwork(e.target.value)}
-                className="w-full p-3 bg-black/40 text-white border border-yellow-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="w-full p-3 bg-surface-300 text-white border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
               >
                 {Object.keys(cryptoAddresses[crypto]).map((net) => (
                   <option key={net} value={net}>
@@ -304,13 +304,13 @@ function DepositContent() {
             </div>
 
             {/* Wallet Address */}
-            <div className="bg-black/60 px-4 py-4 rounded-lg flex justify-between items-center mb-6 shadow-sm border border-yellow-500">
-              <span className="font-mono text-base font-semibold text-yellow-300 break-all">
+            <div className="bg-surface-300 px-4 py-4 rounded-lg flex justify-between items-center mb-6 border border-white/10">
+              <span className="font-mono text-base font-semibold text-accent break-all">
                 {selectedAddress}
               </span>
               <button
                 onClick={() => navigator.clipboard.writeText(selectedAddress)}
-                className="flex items-center gap-1 text-xs bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                className="flex items-center gap-1 text-xs btn-primary px-3 py-1 rounded transition"
               >
                 <Copy className="w-4 h-4" /> Copy
               </button>
@@ -321,12 +321,12 @@ function DepositContent() {
               <img
                 src={qrCode ?? `/${crypto.toLowerCase()}-qr.png`}
                 alt={`${crypto} QR Code`}
-                className="mx-auto w-44 h-44 mb-4 rounded border border-yellow-300 shadow"
+                className="mx-auto w-44 h-44 mb-4 rounded border border-white/10 shadow"
               />
-              <p className="text-gray-400 text-sm">Scan the QR code to deposit {crypto} directly via {network}.</p>
+              <p className="text-text-200 text-sm">Scan the QR code to deposit {crypto} directly via {network}.</p>
             </div>
             {cryptoError && (
-              <div className="text-red-400 text-sm mt-2">{cryptoError}</div>
+              <div className="text-danger-400 text-sm mt-2">{cryptoError}</div>
             )}
           </>
         )}
@@ -337,8 +337,12 @@ function DepositContent() {
 
 export default function DepositPage() {
   return (
-    <KYCGuard requiredFor="make deposits">
-      <DepositContent />
-    </KYCGuard>
+    <div className="flex min-h-screen text-white">
+      <KYCGuard requiredFor="make deposits">
+        <div className="flex-1">
+          <DepositContent />
+        </div>
+      </KYCGuard>
+    </div>
   );
 }
