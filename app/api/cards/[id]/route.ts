@@ -6,10 +6,12 @@ import User from "@/models/User";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     await connectDB();
+
+    const { params } = context;
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     if (!token?.email) {
@@ -45,9 +47,10 @@ export async function DELETE(
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
+    const { params } = context;
     await connectDB();
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
