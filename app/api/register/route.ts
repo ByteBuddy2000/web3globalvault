@@ -83,7 +83,10 @@ export async function POST(req: Request) {
       { symbol: "SOL", name: "Solana", sector: "Cryptocurrency", market: "Crypto" },
       { symbol: "ADA", name: "Cardano", sector: "Cryptocurrency", market: "Crypto" },
       { symbol: "XRP", name: "Ripple", sector: "Cryptocurrency", market: "Crypto" },
-      { symbol: "DOGE", name: "Dogecoin", sector: "Cryptocurrency", market: "Crypto" }
+      { symbol: "DOGE", name: "Dogecoin", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "SHIB", name: "Shiba Inu", sector: "Cryptocurrency", market: "Crypto" },
+      { symbol: "AVAX", name: "Avalanche", sector: "Cryptocurrency", market: "Crypto" },
+
 
     ];
 
