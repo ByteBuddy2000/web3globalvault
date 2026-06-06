@@ -59,7 +59,13 @@ export default function AdminWalletPage() {
       const res = await fetch(`/api/admin/wallet?${params}`);
       const data = await res.json();
       if (data.success) {
-        setWallets(data.data || []);
+        // Map API response to match component interface
+        const mappedWallets = (data.data || []).map((wallet: any) => ({
+          ...wallet,
+          userName: wallet.userId?.fullName || "N/A",
+          userEmail: wallet.userId?.email || "N/A",
+        }));
+        setWallets(mappedWallets);
       } else {
         toast.error("Failed to fetch wallets");
       }

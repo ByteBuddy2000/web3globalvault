@@ -142,7 +142,7 @@ function DepositContent() {
   }
 
   return (
-    <div className="min-h-screen p-6 w-full">
+    <div className="min-h-screen p-6 w-full max-w-4xl mx-auto flex flex-col justify-center">
       {/* Header */}
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h2 className="text-3xl font-bold text-accent mb-2">Deposit Funds</h2>
@@ -337,9 +337,9 @@ function DepositContent() {
 
 export default function DepositPage() {
   return (
-    <div className="flex min-h-screen text-white">
+    <div className="flex min-h-screen text-white justify-center items-center">
       <KYCGuard requiredFor="make deposits">
-        <div className="flex-1">
+        <div className="w-full">
           <DepositContent />
         </div>
       </KYCGuard>
