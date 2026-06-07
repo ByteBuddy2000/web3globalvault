@@ -31,8 +31,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       pendingCards: pendingCards.map(card => ({
         _id: card._id,
-        userEmail: card.user.email,
-        userName: card.user.fullName,
+        user: {
+          fullName: card.user?.fullName || "Unknown",
+          email: card.user?.email || "Unknown",
+        },
         tierLevel: card.tierLevel,
         paymentAmount: card.paymentAmount,
         transactionHash: card.transactionHash,

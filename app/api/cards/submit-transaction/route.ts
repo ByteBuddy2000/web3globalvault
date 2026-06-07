@@ -4,11 +4,7 @@ import connectDB from "@/lib/mongodb";
 import Card from "@/models/Card";
 import User from "@/models/User";
 
-/**
- * POST /api/cards/submit-transaction
- * User submits transaction hash for payment verification
- * Body: { cardId, transactionHash }
- */
+
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
@@ -26,33 +22,51 @@ export async function POST(req: NextRequest) {
     const { cardId, transactionHash } = await req.json();
 
     if (!cardId || !transactionHash) {
+      console.warn("Missing required fields:", { cardId: !!cardId, transactionHash: !!transactionHash });
       return NextResponse.json(
         { message: "Card ID and transaction hash required" },
         { status: 400 }
       );
     }
 
-    // Validate transaction hash format (basic check)
+    // Validate and normalize transaction hash format
+    let cleanHash = transactionHash.trim();
+    console.log("Original hash:", transactionHash.substring(0, 10) + "...");
+    
+    // Add 0x prefix if missing
+    if (!cleanHash.startsWith('0x')) {
+      cleanHash = '0x' + cleanHash;
+    }
+    
+    // Validate transaction hash format
     const txHashRegex = /^0x[a-fA-F0-9]{64}$/;
-    if (!txHashRegex.test(transactionHash)) {
+    if (!txHashRegex.test(cleanHash)) {
+      console.warn("Invalid hash format:", { 
+        input: cleanHash.substring(0, 20) + "...",
+        length: cleanHash.length,
+        startsWithOx: cleanHash.startsWith('0x')
+      });
       return NextResponse.json(
-        { message: "Invalid transaction hash format" },
+        { message: "Invalid transaction hash format. Expected 0x followed by 64 hex characters" },
         { status: 400 }
       );
     }
 
     const card = await Card.findById(cardId);
     if (!card) {
+      console.warn("Card not found:", cardId);
       return NextResponse.json({ message: "Card not found" }, { status: 404 });
     }
 
     // Verify card belongs to user
     if (card.user.toString() !== user._id.toString()) {
+      console.warn("Card does not belong to user");
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
     // Check card is awaiting payment
     if (card.requestStatus !== "PAYMENT_PENDING") {
+      console.warn("Invalid card status:", card.requestStatus);
       return NextResponse.json(
         {
           message: `Invalid card status. Expected PAYMENT_PENDING but got ${card.requestStatus}`,
@@ -61,17 +75,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Store transaction hash
-    card.transactionHash = transactionHash;
+    // Store transaction hash - admin will verify on their end
+    card.transactionHash = cleanHash;
     card.requestStatus = "PAYMENT_RECEIVED";
     card.paymentVerificationStatus = "PENDING_APPROVAL"; // Admin approval pending
-    card.transactionHashVerified = true;
     card.transactionVerifiedAt = new Date();
     card.updatedAt = new Date();
     await card.save();
 
     return NextResponse.json({
-      message: "Transaction hash received. Awaiting admin verification",
+      message: "Transaction hash received. Admin will verify on their end",
       card: {
         _id: card._id,
         requestStatus: card.requestStatus,
@@ -81,7 +94,11 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Submit transaction error:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Unknown server error";
+    return NextResponse.json({ 
+      message: "Server error", 
+      error: errorMessage 
+    }, { status: 500 });
   }
 }
 

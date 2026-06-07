@@ -181,6 +181,7 @@ export default function CardsPage() {
   const [processing, setProcessing] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [submittingTx, setSubmittingTx] = useState(false);
+  const [txHashError, setTxHashError] = useState("");
 
   useEffect(() => {
     fetchCards();
@@ -261,9 +262,44 @@ export default function CardsPage() {
   };
 
   /* ─── Step 3: Submit Transaction Hash ───────────────────────────── */
+  const validateTxHash = (hash: string) => {
+    const cleanHash = hash.trim();
+    if (!cleanHash) {
+      setTxHashError("");
+      return false;
+    }
+    
+    let hashToValidate = cleanHash;
+    if (!hashToValidate.startsWith('0x')) {
+      hashToValidate = '0x' + hashToValidate;
+    }
+    
+    const txHashRegex = /^0x[a-fA-F0-9]{64}$/;
+    if (!txHashRegex.test(hashToValidate)) {
+      const length = hashToValidate.length;
+      if (length < 66) {
+        setTxHashError(`Hash too short (${length - 2}/64 hex characters)`);
+      } else if (length > 66) {
+        setTxHashError(`Hash too long (${length - 2}/64 hex characters)`);
+      } else {
+        setTxHashError("Invalid characters in hash (only 0-9 and a-f allowed)");
+      }
+      return false;
+    }
+    
+    setTxHashError("");
+    return true;
+  };
+
   const handleSubmitTransaction = async (card: Card) => {
-    if (!txHash.trim()) {
+    const cleanHash = txHash.trim();
+    if (!cleanHash) {
       toast.error("Please enter transaction hash");
+      return;
+    }
+
+    if (!validateTxHash(cleanHash)) {
+      toast.error(txHashError || "Invalid transaction hash format");
       return;
     }
 
@@ -273,7 +309,7 @@ export default function CardsPage() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cardId: card._id, transactionHash: txHash }),
+        body: JSON.stringify({ cardId: card._id, transactionHash: cleanHash }),
       });
 
       if (res.ok) {
@@ -282,14 +318,19 @@ export default function CardsPage() {
         setSelectedCard(updated);
         setCards(cards.map(c => c._id === card._id ? updated : c));
         setTxHash("");
-        toast.success("Transaction submitted! Awaiting admin verification.");
+        setTxHashError("");
+        toast.success("Transaction submitted! Awaiting Confirmation.");
         setShowPaymentFlow(false);
       } else {
         const err = await res.json();
-        toast.error(err.message || "Failed to submit transaction");
+        const errorMsg = err.message || "Failed to submit transaction";
+        setTxHashError(errorMsg);
+        toast.error(errorMsg);
       }
-    } catch {
-      toast.error("Error submitting transaction");
+    } catch (error) {
+      const errorMsg = "Error submitting transaction";
+      setTxHashError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSubmittingTx(false);
     }
@@ -553,22 +594,29 @@ export default function CardsPage() {
                     type="text"
                     placeholder="0x..."
                     value={txHash}
-                    onChange={(e) => setTxHash(e.target.value)}
+                    onChange={(e) => {
+                      setTxHash(e.target.value);
+                      validateTxHash(e.target.value);
+                    }}
                     style={{
-                      width: "100%", padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
-                      background: "rgba(255,255,255,0.03)", color: "#fff", fontSize: 13, fontFamily: "monospace",
+                      width: "100%", padding: "12px 16px", borderRadius: 10, 
+                      border: txHashError ? "1.5px solid #ef4444" : "1px solid rgba(255,255,255,0.1)",
+                      background: txHashError ? "rgba(239,68,68,0.08)" : "rgba(255,255,255,0.03)", 
+                      color: "#fff", fontSize: 13, fontFamily: "monospace",
                     }}
                   />
-                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>Paste your blockchain transaction hash</p>
+                  <p style={{ fontSize: 11, color: txHashError ? "#ef4444" : "rgba(255,255,255,0.4)", marginTop: 6 }}>
+                    {txHashError || "Paste your blockchain transaction hash"}
+                  </p>
                 </div>
 
                 <button
                   onClick={() => handleSubmitTransaction(selectedCard)}
-                  disabled={submittingTx || !txHash.trim()}
+                  disabled={submittingTx || !txHash.trim() || txHashError !== ""}
                   style={{
                     width: "100%", padding: "12px 20px", borderRadius: 10, border: "none",
-                    background: "#10b981", color: "#fff", fontWeight: 600, cursor: "pointer",
-                    opacity: submittingTx || !txHash.trim() ? 0.5 : 1,
+                    background: "#10b981", color: "#fff", fontWeight: 600, cursor: submittingTx || !txHash.trim() || txHashError !== "" ? "not-allowed" : "pointer",
+                    opacity: submittingTx || !txHash.trim() || txHashError !== "" ? 0.5 : 1,
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   }}
                 >
