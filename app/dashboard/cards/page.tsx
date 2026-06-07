@@ -609,7 +609,7 @@ export default function CardsPage() {
               <button
                 onClick={() => setShowDetails(false)}
                 style={{
-                  width: 28, height: 28, borderRadius: 7, border: "1px solid rgba(255,255,255,0.08)",
+                  width: 28, height: 28, borderRadius: 7,
                   background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)",
                   cursor: "pointer", fontSize: 20, border: "none",
                 }}
