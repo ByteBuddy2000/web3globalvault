@@ -3,7 +3,7 @@ import connectDB from "@/lib/mongodb";
 import { sendEmail } from "@/lib/mailer";
 import MedbedRegistration from "@/models/MedbedRegistration";
 
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@GlobalVaultbank.com";
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@web3globalvaultbank.com";
 const RECEIVER_ADDRESS =
   process.env.NEXT_PUBLIC_XRP_RECEIVER_ADDRESS ||
   "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt";

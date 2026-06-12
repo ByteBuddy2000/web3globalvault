@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     await card.save();
 
     return NextResponse.json({
-      message: "Transaction hash received. Admin will verify on their end",
+      message: "Transaction hash received. Commencing verification",
       card: {
         _id: card._id,
         requestStatus: card.requestStatus,
