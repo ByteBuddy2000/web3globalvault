@@ -43,9 +43,9 @@ interface FeeTierBadgesProps { currentAmount: string; }
 
 // ── Fee tiers ─────────────────────────────────────────────────────────────────
 const FEE_TIERS: FeeTier[] = [
-  { upTo: 1_000,    rate: 0.10, label: "2%"  },
-  { upTo: 10_000,   rate: 0.16, label: "3%"  },
-  { upTo: Infinity, rate: 0.24, label: "4%"  },
+  { upTo: 1_000,    rate: 0.10, label: "0.2%"  },
+  { upTo: 10_000,   rate: 0.16, label: "0.34%"  },
+  { upTo: Infinity, rate: 0.24, label: "0.46%"  },
 ];
 
 function gCryptoeeInfo(amount: string): FeeInfo {
