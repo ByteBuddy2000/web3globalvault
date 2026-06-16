@@ -1,6 +1,6 @@
 'use client';
 
-import { Wallet, TrendingUp } from 'lucide-react';
+import { Wallet, TrendingUp, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 type Props = {
@@ -12,6 +12,8 @@ export default function HeroSection({
   userData,
   totalInvestment,
 }: Props) {
+  const isVerified = userData?.kycStatus === 'approved' || userData?.isVerified;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -27,6 +29,35 @@ export default function HeroSection({
           <h1 className="dashboard-balance-text font-display text-2xl md:text-4xl font-bold leading-none">
             ${(totalInvestment ?? 0).toLocaleString()}
           </h1>
+
+          {/* KYC STATUS BADGE */}
+          {isVerified ? (
+            <div
+              className="
+                mt-3 inline-flex items-center gap-1.5
+                rounded-lg border border-emerald-500/20
+                bg-emerald-500/10
+                px-3 py-1
+                text-xs font-semibold text-emerald-400
+              "
+            >
+              <BadgeCheck size={14} />
+              Identity Verified
+            </div>
+          ) : (
+            <div
+              className="
+                mt-3 inline-flex items-center gap-1.5
+                rounded-lg border border-amber-500/20
+                bg-amber-500/10
+                px-3 py-1
+                text-xs font-semibold text-amber-400
+              "
+            >
+              <span className="h-2 w-2 rounded-full bg-amber-400" />
+              KYC Pending
+            </div>
+          )}
 
           {userData?.username && (
             <p className="mt-2 text-sm text-muted">
