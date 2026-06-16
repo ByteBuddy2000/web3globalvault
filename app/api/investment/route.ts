@@ -8,11 +8,12 @@ import axios from "axios";
 import Transaction from "@/models/Transaction";
 import mongoose from "mongoose";
 import crypto from "crypto";
+import Notification from "@/models/Notification";
 
 // --- Plan Configuration ---
 const PLANS = {
-  Gold: { minAmount: 10000, durationWeeks: 8,  expectedReturn: 5 },
-  Silver: { minAmount: 5000,  durationWeeks: 14, expectedReturn: 8 },
+  Gold: { minAmount: 10000, durationWeeks: 8, expectedReturn: 5 },
+  Silver: { minAmount: 5000, durationWeeks: 14, expectedReturn: 8 },
   Diamond: { minAmount: 20000, durationWeeks: 23, expectedReturn: 12 },
 };
 
@@ -254,7 +255,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           message: "Asset not found in your portfolio",
-          availableAssets: (user.assets as unknown as AssetLike[]).map((a:any) => a.symbol),
+          availableAssets: (user.assets as unknown as AssetLike[]).map((a: any) => a.symbol),
         },
         { status: 404 }
       );
@@ -287,14 +288,14 @@ export async function POST(req: NextRequest) {
       session.startTransaction();
 
       // Deduct from asset
-     await Asset.findByIdAndUpdate(
-  asset._id,
-  {
-    $inc: { quantity: -requiredShares },
-    $set: { price: livePrice, purchasePrice: livePrice },
-  },
-  { session }
-);
+      await Asset.findByIdAndUpdate(
+        asset._id,
+        {
+          $inc: { quantity: -requiredShares },
+          $set: { price: livePrice, purchasePrice: livePrice },
+        },
+        { session }
+      );
 
       const startDate = new Date();
       const endDate = new Date();
@@ -331,6 +332,13 @@ export async function POST(req: NextRequest) {
       // populate the created investment's asset before returning
       const populatedInvestment = await Investment.findById(newInvestment._id).populate("asset");
 
+      await Notification.create({
+        user: user._id,
+        title: "Investment Activated 🚀",
+        message: `${planName} plan is now active. Expected return: ${plan.expectedReturn}%`,
+        type: "success",
+        category: "transaction",
+      });
       // Log transaction (map to Transaction model enum)
       const txType = mapTransactionType("investment");
       await Transaction.create(
@@ -352,6 +360,14 @@ export async function POST(req: NextRequest) {
       await user.save({ session });
 
       await session.commitTransaction();
+
+      await Notification.create({
+        user: user._id,
+        title: "Withdrawal Successful 💰",
+        message: `You received $${netProceeds} after withdrawal (Fee: $${withdrawalFee}).`,
+        type: "success",
+        category: "transaction",
+      });
 
       // Fetch updated assets with live prices
       const updatedAssets = await Promise.all(
@@ -480,19 +496,19 @@ export async function PATCH(req: NextRequest) {
         );
       } else {
         const newAsset = await Asset.create(
-  [
-    {
-      user: user._id,
-      type: assetData.type || "stock",
-      name: assetData.name || investment.assetSymbol,
-      symbol: investment.assetSymbol,
-      quantity: shares,
-      price: livePrice,
-      purchasePrice: livePrice,
-    },
-  ],
-  { session }
-);
+          [
+            {
+              user: user._id,
+              type: assetData.type || "stock",
+              name: assetData.name || investment.assetSymbol,
+              symbol: investment.assetSymbol,
+              quantity: shares,
+              price: livePrice,
+              purchasePrice: livePrice,
+            },
+          ],
+          { session }
+        );
         user.assets.push(newAsset[0]._id);
       }
 
