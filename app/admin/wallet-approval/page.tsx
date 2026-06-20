@@ -24,7 +24,7 @@ interface Wallet {
   rejectedReason?: string;
 }
 
-export default function WalletAdminPage(){
+export default function WalletAdminPage() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -55,8 +55,11 @@ export default function WalletAdminPage(){
   };
 
   const handleApprove = async (walletId: string) => {
+    const toastId = toast.loading("Approving wallet...");
+
     try {
       setActionLoading(walletId);
+
       const res = await fetch("/api/admin/wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,15 +70,22 @@ export default function WalletAdminPage(){
       });
 
       const data = await res.json();
+
       if (data.success) {
-        toast.success("Wallet approved");
+        toast.success("Wallet approved successfully", {
+          id: toastId,
+        });
         fetchWallets();
       } else {
-        toast.error(data.error || "Failed to approve");
+        toast.error(data.error || "Approval failed", {
+          id: toastId,
+        });
       }
     } catch (error) {
-      toast.error("Error approving wallet");
       console.error(error);
+      toast.error("Something went wrong while approving", {
+        id: toastId,
+      });
     } finally {
       setActionLoading(null);
     }
@@ -83,12 +93,15 @@ export default function WalletAdminPage(){
 
   const handleReject = async (walletId: string) => {
     if (!rejectionReason.trim()) {
-      toast.error("Please provide a reason for rejection");
+      toast.error("Please provide a rejection reason");
       return;
     }
 
+    const toastId = toast.loading("Rejecting wallet...");
+
     try {
       setActionLoading(walletId);
+
       const res = await fetch("/api/admin/wallet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,17 +113,25 @@ export default function WalletAdminPage(){
       });
 
       const data = await res.json();
+
       if (data.success) {
-        toast.success("Wallet rejected");
+        toast.success("Wallet rejected", {
+          id: toastId,
+        });
+
         setRejectionReason("");
         setShowRejectInput(null);
         fetchWallets();
       } else {
-        toast.error(data.error || "Failed to reject");
+        toast.error(data.error || "Rejection failed", {
+          id: toastId,
+        });
       }
     } catch (error) {
-      toast.error("Error rejecting wallet");
       console.error(error);
+      toast.error("Something went wrong while rejecting", {
+        id: toastId,
+      });
     } finally {
       setActionLoading(null);
     }
@@ -265,7 +286,8 @@ export default function WalletAdminPage(){
                   <Button
                     onClick={() => handleApprove(wallet._id)}
                     disabled={actionLoading === wallet._id}
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                    className={`flex items-center gap-2 bg-green-600 hover:bg-green-700 ${actionLoading === wallet._id ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                   >
                     <CheckCircle size={16} />
                     Approve
@@ -307,7 +329,8 @@ export default function WalletAdminPage(){
                         setShowRejectInput(wallet._id)
                       }
                       disabled={actionLoading === wallet._id}
-                      className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
+                      className={`flex items-center gap-2 bg-red-600 hover:bg-red-700 ${actionLoading === wallet._id ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
                     >
                       <XCircle size={16} />
                       Reject

