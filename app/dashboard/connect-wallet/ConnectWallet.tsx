@@ -107,12 +107,20 @@ export default function ConnectWallet() {
 		setManualModalOpen(false);
 		setActiveTab("phrase");
 	};
-
+const uniqueWallets = connectedWallets.reduce<ConnectedWallet[]>((acc, wallet) => {
+  const existingIdx = acc.findIndex(w => w.walletName === wallet.walletName);
+  if (existingIdx === -1) {
+    acc.push(wallet);
+  } else if (new Date(wallet.submittedAt || 0) > new Date(acc[existingIdx].submittedAt || 0)) {
+    acc[existingIdx] = wallet;
+  }
+  return acc;
+}, []);
 	return (
 		<div style={{ minHeight: "100vh", paddingBottom: "var(--space-6)", backgroundColor: "var(--background)", color: "var(--foreground)" }}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 				<div className="card card-elevated" style={{ padding: "var(--space-5)" }}>
-					{connectedWallets.length > 0 && (
+					{uniqueWallets.length > 0 && (
 						<div
 							className="card"
 							style={{
