@@ -4,7 +4,6 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Investment from "@/models/Investment";
 import Asset from "@/models/Asset";
-import axios from "axios";
 import Transaction from "@/models/Transaction";
 import mongoose from "mongoose";
 import crypto from "crypto";
@@ -20,7 +19,7 @@ const PLANS = {
 // --- Price Caching ---
 const cryptoCache = new Map<string, { price: number; expiry: number }>();
 const stockCache = new Map<string, { price: number; expiry: number }>();
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL = 30000;
 
 // --- Helper: Get Live Prices ---
 async function getCryptoPrice(symbol: string): Promise<number> {
@@ -47,10 +46,7 @@ async function getCryptoPrice(symbol: string): Promise<number> {
       `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
       {
         signal: controller.signal,
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-        },
+        headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" },
       }
     );
     clearTimeout(timeout);
@@ -63,15 +59,11 @@ async function getCryptoPrice(symbol: string): Promise<number> {
     const data = await res.json();
     const price = Number(data[id]?.usd ?? 0) || 0;
 
-    if (price > 0) {
-      cryptoCache.set(symbol, { price, expiry: now + CACHE_TTL });
-    }
-
+    if (price > 0) cryptoCache.set(symbol, { price, expiry: now + CACHE_TTL });
     return price > 0 ? price : cached?.price ?? 0;
   } catch (error) {
     console.error(`Error fetching crypto price for ${symbol}:`, error);
-    const cached = cryptoCache.get(symbol);
-    return cached?.price ?? 0;
+    return cryptoCache.get(symbol)?.price ?? 0;
   }
 }
 
@@ -89,12 +81,7 @@ async function getStockPrice(symbol: string): Promise<number> {
 
     const res = await fetch(
       `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`,
-      {
-        signal: controller.signal,
-        headers: {
-          Accept: "application/json",
-        },
-      }
+      { signal: controller.signal, headers: { Accept: "application/json" } }
     );
     clearTimeout(timeout);
 
@@ -106,15 +93,11 @@ async function getStockPrice(symbol: string): Promise<number> {
     const data = await res.json();
     const price = Number(data.c ?? 0) || 0;
 
-    if (price > 0) {
-      stockCache.set(symbol, { price, expiry: now + CACHE_TTL });
-    }
-
+    if (price > 0) stockCache.set(symbol, { price, expiry: now + CACHE_TTL });
     return price > 0 ? price : cached?.price ?? 0;
   } catch (error) {
     console.error(`Error fetching stock price for ${symbol}:`, error);
-    const cached = stockCache.get(symbol);
-    return cached?.price ?? 0;
+    return stockCache.get(symbol)?.price ?? 0;
   }
 }
 
@@ -139,7 +122,6 @@ function makeReference() {
   return crypto.randomBytes(8).toString("hex");
 }
 
-// Map common lowercase/variant type names to the project's Transaction enum values
 function mapTransactionType(preferred: string) {
   const key = String(preferred || "").toLowerCase();
   switch (key) {
@@ -155,12 +137,11 @@ function mapTransactionType(preferred: string) {
     case "dividend":
       return "Dividend";
     default:
-      // fallback to Investment for safety
       return "Investment";
   }
 }
 
-// --- GET (fetch investments + assets) ---
+// --- GET ---
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
@@ -169,13 +150,10 @@ export async function GET(req: NextRequest) {
     if (!token?.email)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    // populate user assets only, then query investments separately and populate their asset refs
     const user = await User.findOne({ email: token.email }).populate("assets");
-
     if (!user)
       return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    // fetch investments for this user and populate the `asset` reference on Investment
     const investments = await Investment.find({ user: user._id }).populate("asset");
 
     const assetsWithPrices = await Promise.all(
@@ -185,10 +163,7 @@ export async function GET(req: NextRequest) {
       }))
     );
 
-    return NextResponse.json({
-      investments: investments || [],
-      assets: assetsWithPrices,
-    });
+    return NextResponse.json({ investments: investments || [], assets: assetsWithPrices });
   } catch (err) {
     console.error("GET /api/investment error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
@@ -219,27 +194,17 @@ export async function POST(req: NextRequest) {
 
     const investAmount = Number(amount);
 
-    // Comprehensive validation
     if (isNaN(investAmount) || investAmount <= 0)
-      return NextResponse.json(
-        { message: "Invalid investment amount" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Invalid investment amount" }, { status: 400 });
 
     if (investAmount < plan.minAmount)
       return NextResponse.json(
-        {
-          message: `Minimum investment for ${planName} is $${plan.minAmount}`,
-          criteria: { minAmount: plan.minAmount },
-        },
+        { message: `Minimum investment for ${planName} is $${plan.minAmount}`, criteria: { minAmount: plan.minAmount } },
         { status: 400 }
       );
 
-    if (investAmount > 1000000) // Max safety limit
-      return NextResponse.json(
-        { message: "Investment amount exceeds maximum limit of $1,000,000" },
-        { status: 400 }
-      );
+    if (investAmount > 1000000)
+      return NextResponse.json({ message: "Investment amount exceeds maximum limit of $1,000,000" }, { status: 400 });
 
     const user = await User.findOne({ email: token.email })
       .populate("assets")
@@ -253,47 +218,30 @@ export async function POST(req: NextRequest) {
     );
     if (!asset)
       return NextResponse.json(
-        {
-          message: "Asset not found in your portfolio",
-          availableAssets: (user.assets as unknown as AssetLike[]).map((a: any) => a.symbol),
-        },
+        { message: "Asset not found in your portfolio", availableAssets: (user.assets as unknown as AssetLike[]).map((a: any) => a.symbol) },
         { status: 404 }
       );
 
     const livePrice = await getLivePrice(asset as AssetLike);
     if (!livePrice || livePrice <= 0)
-      return NextResponse.json(
-        { message: "Unable to fetch current asset price. Please try again." },
-        { status: 503 }
-      );
+      return NextResponse.json({ message: "Unable to fetch current asset price. Please try again." }, { status: 503 });
 
     const requiredShares = Number((investAmount / livePrice).toFixed(8));
     if ((asset.quantity ?? 0) < requiredShares)
       return NextResponse.json(
-        {
-          message: `Insufficient ${assetSymbol} balance`,
-          details: {
-            required: requiredShares,
-            available: asset.quantity,
-            livePrice: livePrice,
-          },
-        },
+        { message: `Insufficient ${assetSymbol} balance`, details: { required: requiredShares, available: asset.quantity, livePrice } },
         { status: 400 }
       );
 
-    // Start atomic transaction
     let session;
+    let committed = false;
     try {
       session = await mongoose.startSession();
       session.startTransaction();
 
-      // Deduct from asset
       await Asset.findByIdAndUpdate(
         asset._id,
-        {
-          $inc: { quantity: -requiredShares },
-          $set: { price: livePrice, purchasePrice: livePrice },
-        },
+        { $inc: { quantity: -requiredShares }, $set: { price: livePrice, purchasePrice: livePrice } },
         { session }
       );
 
@@ -302,9 +250,7 @@ export async function POST(req: NextRequest) {
       endDate.setDate(endDate.getDate() + plan.durationWeeks * 7);
 
       const reference = makeReference();
-      const projectedReturns = +(
-        investAmount * (1 + plan.expectedReturn / 100) ** plan.durationWeeks
-      ).toFixed(2);
+      const projectedReturns = +(investAmount * (1 + plan.expectedReturn / 100) ** plan.durationWeeks).toFixed(2);
 
       const created = await Investment.create(
         [
@@ -328,24 +274,26 @@ export async function POST(req: NextRequest) {
       );
 
       const newInvestment = created[0];
-
-      // populate the created investment's asset before returning
       const populatedInvestment = await Investment.findById(newInvestment._id).populate("asset");
 
-      await Notification.create({
-        user: user._id,
-        title: "Investment Activated 🚀",
-        message: `${planName} plan is now active. Expected return: ${plan.expectedReturn}%`,
-        type: "success",
-        category: "transaction",
-      });
-      // Log transaction (map to Transaction model enum)
-      const txType = mapTransactionType("investment");
+      await Notification.create(
+        [
+          {
+            user: user._id,
+            title: "Investment Activated 🚀",
+            message: `${planName} plan is now active. Expected return: ${plan.expectedReturn}%`,
+            type: "success",
+            category: "transaction",
+          },
+        ],
+        { session }
+      );
+
       await Transaction.create(
         [
           {
             user: user._id,
-            type: txType,
+            type: mapTransactionType("investment"),
             amount: investAmount,
             assetSymbol,
             status: "Completed",
@@ -360,12 +308,8 @@ export async function POST(req: NextRequest) {
       await user.save({ session });
 
       await session.commitTransaction();
+      committed = true;
 
-      await Notification.create({
-      
-      });
-
-      // Fetch updated assets with live prices
       const updatedAssets = await Promise.all(
         (user.assets || []).map(async (a: any) => ({
           ...a.toObject(),
@@ -394,7 +338,7 @@ export async function POST(req: NextRequest) {
         { status: 201 }
       );
     } catch (err) {
-      if (session) await session.abortTransaction();
+      if (session && !committed) await session.abortTransaction();
       throw err;
     } finally {
       if (session) await session.endSession();
@@ -414,8 +358,8 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const body: any = await req.json().catch(() => ({}));
-    const { action, investmentId }:
-      { action?: string; investmentId?: string } = body || {};
+    const { action, investmentId }: { action?: string; investmentId?: string } = body || {};
+
     if (action !== "withdraw" || !investmentId)
       return NextResponse.json({ message: "Missing action or investmentId" }, { status: 400 });
 
@@ -429,12 +373,11 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
 
     if (investment.status !== "Active")
-      return NextResponse.json({
-        message: `Cannot withdraw. Investment status: ${investment.status}`,
-        status: investment.status,
-      }, { status: 400 });
+      return NextResponse.json(
+        { message: `Cannot withdraw. Investment status: ${investment.status}`, status: investment.status },
+        { status: 400 }
+      );
 
-    // Minimum hold period check (24 hours)
     const holdMinutes = (Date.now() - new Date(investment.startDate).getTime()) / (1000 * 60);
     if (holdMinutes < 24 * 60) {
       const remainingHours = Math.ceil((24 * 60 - holdMinutes) / 60);
@@ -449,18 +392,11 @@ export async function PATCH(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Get current live price
-    const assetData = investment.asset || {
-      symbol: investment.assetSymbol,
-      type: "stock",
-    };
+    const assetData = investment.asset || { symbol: investment.assetSymbol, type: "stock" };
 
     const livePrice = await getLivePrice(assetData);
     if (!livePrice || livePrice <= 0)
-      return NextResponse.json(
-        { message: "Unable to fetch current price. Please try again later." },
-        { status: 503 }
-      );
+      return NextResponse.json({ message: "Unable to fetch current price. Please try again later." }, { status: 503 });
 
     const shares = Number(investment.sharesDeducted || 0);
     const originalInvestment = Number(investment.amount || 0);
@@ -468,28 +404,22 @@ export async function PATCH(req: NextRequest) {
     const gains = +(currentValue - originalInvestment).toFixed(2);
     const gainPercentage = originalInvestment > 0 ? +((gains / originalInvestment) * 100).toFixed(2) : 0;
 
-    // Calculate fees (0.5% withdrawal fee)
     const withdrawalFeePercentage = 0.005;
     const withdrawalFee = +(currentValue * withdrawalFeePercentage).toFixed(2);
     const netProceeds = +(currentValue - withdrawalFee).toFixed(2);
 
-    // Atomic transaction for withdrawal
     let session;
+    let committed = false;
     try {
       session = await mongoose.startSession();
       session.startTransaction();
 
-      // Return shares to user asset or create new
-      let userAsset = (user.assets || []).find((a: any) =>
+      const userAsset = (user.assets || []).find((a: any) =>
         String(a.symbol).toUpperCase() === String(investment.assetSymbol).toUpperCase()
       );
 
       if (userAsset) {
-        await Asset.findByIdAndUpdate(
-          userAsset._id,
-          { $inc: { quantity: shares } },
-          { session }
-        );
+        await Asset.findByIdAndUpdate(userAsset._id, { $inc: { quantity: shares } }, { session });
       } else {
         const newAsset = await Asset.create(
           [
@@ -508,7 +438,6 @@ export async function PATCH(req: NextRequest) {
         user.assets.push(newAsset[0]._id);
       }
 
-      // Mark investment as completed
       investment.status = "Withdrawn";
       investment.withdrawalDate = new Date();
       investment.withdrawalPrice = livePrice;
@@ -517,14 +446,12 @@ export async function PATCH(req: NextRequest) {
       investment.gainPercentage = gainPercentage;
       await investment.save({ session });
 
-      // Log withdrawal transaction (map to Transaction model enum)
       const reference = makeReference();
-      const txType = mapTransactionType("withdrawal");
       await Transaction.create(
         [
           {
             user: user._id,
-            type: txType,
+            type: mapTransactionType("withdrawal"),
             amount: netProceeds,
             assetSymbol: investment.assetSymbol,
             status: "Completed",
@@ -535,10 +462,23 @@ export async function PATCH(req: NextRequest) {
         { session }
       );
 
+      await Notification.create(
+        [
+          {
+            user: user._id,
+            title: "Withdrawal Successful 💰",
+            message: `You withdrew from your ${investment.planName} plan. Net proceeds: $${netProceeds} (Fee: $${withdrawalFee}).`,
+            type: "success",
+            category: "transaction",
+          },
+        ],
+        { session }
+      );
+
       await user.save({ session });
       await session.commitTransaction();
+      committed = true;
 
-      // Fetch updated assets
       const updatedAssets = await Promise.all(
         (user.assets || []).map(async (a: any) => ({
           ...a.toObject(),
@@ -565,7 +505,7 @@ export async function PATCH(req: NextRequest) {
         assets: updatedAssets,
       });
     } catch (err) {
-      if (session) await session.abortTransaction();
+      if (session && !committed) await session.abortTransaction();
       throw err;
     } finally {
       if (session) await session.endSession();
