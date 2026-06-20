@@ -362,11 +362,7 @@ export async function POST(req: NextRequest) {
       await session.commitTransaction();
 
       await Notification.create({
-        user: user._id,
-        title: "Withdrawal Successful 💰",
-        message: `You received $${netProceeds} after withdrawal (Fee: $${withdrawalFee}).`,
-        type: "success",
-        category: "transaction",
+      
       });
 
       // Fetch updated assets with live prices
