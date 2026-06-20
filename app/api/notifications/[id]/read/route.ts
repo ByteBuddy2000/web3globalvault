@@ -4,11 +4,13 @@ import Notification from "@/models/Notification";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   await connectDB();
 
-  await Notification.findByIdAndUpdate(params.id, {
+  const { id } = context.params;
+
+  await Notification.findByIdAndUpdate(id, {
     isRead: true,
   });
 
