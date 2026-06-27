@@ -16,10 +16,10 @@ type Asset = {
   changePercent?: number;
 };
 
-const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL'];
+const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL', 'XRP'];
 
 const CRYPTO_ICONS: Record<string, string> = {
-  BTC: '₿', ETH: 'Ξ', USDT: '₮', SOL: '◎',
+  BTC: '₿', ETH: 'Ξ', USDT: '₮', SOL: '◎', XRP: '✕',
 };
 
 async function fetchLivePrices(assets: Asset[]): Promise<Record<string, { price: number; change: number; changePercent: number }>> {
