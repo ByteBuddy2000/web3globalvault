@@ -44,17 +44,17 @@ const partners = [
 
 const testimonials = [
   {
-    name: "Jane Doe",
+    name: "Mary Talley Bowden ",
     role: "Entrepreneur",
     text: "Web3GlobalVault helped us scale globally with seamless payments and smart investment tools.",
     avatar: "/asset/user1.jpg",
     rating: 5,
   },
   {
-    name: "Michael Lee",
+    name: "Elon Musk",
     role: "Freelancer",
     text: "The dashboard is intuitive and the support team is always responsive. Highly recommended!",
-    avatar: "/asset/user2.jpg",
+    avatar: "/asset/elon.jfif",
     rating: 5,
   },
   {
