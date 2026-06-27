@@ -54,7 +54,7 @@ const testimonials = [
     name: "Elon Musk",
     role: "CEO SPACEX",
     text: "The dashboard is intuitive and the support team is always responsive. Highly recommended!",
-    avatar: "/asset/elon.jpg",
+    avatar: "/asset/elonmusk.jpg",
     rating: 5,
   },
   {
