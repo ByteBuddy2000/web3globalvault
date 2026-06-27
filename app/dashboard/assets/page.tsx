@@ -16,7 +16,7 @@ type Asset = {
   changePercent?: number;
 };
 
-const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL', 'XRP','SHIBA','AVAX','DOGE'];
+const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL', 'XRP','SHIBA','AVAX','DOGE','ADA'];
 
 const CRYPTO_ICONS: Record<string, string> = {
   BTC: '₿', ETH: 'Ξ', USDT: '₮', SOL: '◎', XRP: '✕',
@@ -32,7 +32,7 @@ async function fetchLivePrices(assets: Asset[]): Promise<Record<string, { price:
     // Crypto prices
     (async () => {
       if (!cryptos.length) return;
-      const idsMap: Record<string, string> = { BTC: 'bitcoin', ETH: 'ethereum', USDT: 'tether', SOL: 'solana', XRP: 'ripple', SHIBA: 'shiba-inu', AVAX: 'avalanche', DOGE: 'dogecoin' };
+      const idsMap: Record<string, string> = { BTC: 'bitcoin', ETH: 'ethereum', USDT: 'tether', SOL: 'solana', XRP: 'ripple', SHIBA: 'shiba-inu', AVAX: 'avalanche', DOGE: 'dogecoin', ADA: 'cardano' };
       const ids = cryptos.map(a => idsMap[a.symbol]).filter(Boolean).join(',');
       const res = await fetch(`/api/coingecko?ids=${encodeURIComponent(ids)}`);
       if (!res.ok) return;
