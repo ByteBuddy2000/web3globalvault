@@ -16,7 +16,7 @@ type Asset = {
   changePercent?: number;
 };
 
-const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL', 'XRP'];
+const CRYPTO_SYMBOLS = ['BTC', 'ETH', 'USDT', 'SOL', 'XRP','SHIBA','AVAX','DOGE'];
 
 const CRYPTO_ICONS: Record<string, string> = {
   BTC: '₿', ETH: 'Ξ', USDT: '₮', SOL: '◎', XRP: '✕',
