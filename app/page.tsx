@@ -52,14 +52,14 @@ const testimonials = [
   },
   {
     name: "Elon Musk",
-    role: "Freelancer",
+    role: "CEO SPACEX",
     text: "The dashboard is intuitive and the support team is always responsive. Highly recommended!",
     avatar: "/asset/elon.jpg",
     rating: 5,
   },
   {
     name: "Xi Jinping",
-    role: "Entrpreneur",
+    role: "Enterpreneur",
     text: "I love the security features and the cashback offers provided. GlobalVault is my go-to bank.",
     avatar: "/asset/jinping.jpg",
     rating: 5,
