@@ -54,14 +54,14 @@ const testimonials = [
     name: "Elon Musk",
     role: "Freelancer",
     text: "The dashboard is intuitive and the support team is always responsive. Highly recommended!",
-    avatar: "/asset/elon.jfif",
+    avatar: "/asset/elon.jpg",
     rating: 5,
   },
   {
-    name: "Natasha Smith",
-    role: "Business Owner",
+    name: "Xi Jinping",
+    role: "Entrpreneur",
     text: "I love the security features and the cashback offers provided. GlobalVault is my go-to bank.",
-    avatar: "/asset/user3.jpg",
+    avatar: "/asset/jinping.jpg",
     rating: 5,
   },
 ];
