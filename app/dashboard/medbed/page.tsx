@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Copy, CheckCircle2, Loader2 } from "lucide-react";
@@ -9,6 +9,8 @@ interface PaymentInfo {
   registrationId: string;
   amountXrp: number;
   receiverAddress: string;
+  usdAmount?: number;
+  xrpPrice?: number;
 }
 
 interface RegisterResponse {
@@ -16,9 +18,10 @@ interface RegisterResponse {
   registrationId: string;
   amountXrp: number;
   receiverAddress?: string;
+  usdAmount?: number;
+  xrpPrice?: number;
   error?: string;
 }
-
 interface ConfirmResponse {
   success: boolean;
   error?: string;
@@ -42,14 +45,42 @@ export default function MedbedSignupPage() {
   const [step, setStep] = useState<number>(1);
   const [copyStatus, setCopyStatus] = useState<string>("");
 
-  const fee = 10000;
-
+const [livePrice, setLivePrice] = useState<{
+  usdAmount: number;
+  amountXrp: number;
+  xrpPrice: number;
+} | null>(null);
   const RECEIVER_ADDRESS: string =
     process.env.NEXT_PUBLIC_XRP_RECEIVER_ADDRESS ||
     "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt";
+  useEffect(() => {
+  const loadPrice = async () => {
+    try {
+      const res = await fetch("/api/medbed/price", {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setLivePrice(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  loadPrice();
+
+  // Refresh every minute
+  const interval = setInterval(loadPrice, 60000);
+
+  return () => clearInterval(interval);
+}, []);
 
   const handleCopyAddress = async (): Promise<void> => {
     if (!paymentInfo) return;
+
 
     try {
       await navigator.clipboard.writeText(paymentInfo.receiverAddress);
@@ -95,11 +126,13 @@ export default function MedbedSignupPage() {
 
       if (res.ok && data.success) {
         setPaymentInfo({
-          registrationId: data.registrationId,
-          amountXrp: data.amountXrp,
-          receiverAddress:
-            data.receiverAddress || RECEIVER_ADDRESS,
-        });
+  registrationId: data.registrationId,
+  amountXrp: data.amountXrp,
+  receiverAddress:
+    data.receiverAddress || RECEIVER_ADDRESS,
+  usdAmount: data.usdAmount,
+  xrpPrice: data.xrpPrice,
+});
 
         setStep(2);
 
@@ -262,13 +295,27 @@ export default function MedbedSignupPage() {
                 />
               </div>
 
-              <div className="rounded-lg bg-card p-4 border border-border text-sm flex items-center justify-between">
-                <span>Registration fee</span>
+              <div className="rounded-lg bg-card p-4 border border-border">
+  <div className="flex items-center justify-between">
+    <span className="text-sm">Registration fee</span>
 
-                <strong className="text-primary">
-                  ${fee.toLocaleString()} USD
-                </strong>
-              </div>
+    <strong className="text-primary text-lg">
+      {livePrice
+        ? `${livePrice.amountXrp.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 6,
+          })} XRP`
+        : "Loading..."}
+    </strong>
+  </div>
+
+  {livePrice && (
+    <div className="mt-2 text-xs text-muted-foreground">
+      ≈ ${livePrice.usdAmount.toLocaleString()} USD • 1 XRP =
+      ${livePrice.xrpPrice.toFixed(4)}
+    </div>
+  )}
+</div>
 
               <button
                 type="submit"
@@ -296,9 +343,10 @@ export default function MedbedSignupPage() {
               <div className="grid gap-2 sm:grid-cols-2">
                 <StatCard
                   label="Invoice"
-                  value={`#${paymentInfo.registrationId?.slice(
-                    -8
-                  )}`}
+                  value={`${paymentInfo.amountXrp.toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 6,
+})} XRP`}
                 />
 
                 <StatCard
