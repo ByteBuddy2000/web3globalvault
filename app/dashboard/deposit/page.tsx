@@ -45,7 +45,7 @@ function DepositContent() {
 
   const cryptoAddresses: Record<string, Record<string, string>> = {
     BTC: {
-      Bitcoin: "bc1q876w5vxqlpgzyyxzhxr2",
+      Bitcoin: "bc1q876w5vxqlpgzyyxzhxr24chalg5z74ztvp75dp",
     },
     ETH: {
       ERC20: "0xfE09a5D6Cd24f4E6172627011b85866DE3fBf447",
@@ -61,6 +61,9 @@ function DepositContent() {
     SOL: {
       Solana: "GtVu1NbCoowWyfknjrWe9ajL4BDF74MjkcitryVpa3bh",
     },
+    XRP:{
+      Xrp: "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt"
+    }
   };
 
   const networks = Object.keys(cryptoAddresses[crypto]);
