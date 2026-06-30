@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";  // ✅ Correct import
 import { getToken } from "next-auth/jwt";
@@ -63,6 +64,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       fullName: user.fullName,
+
       accountNumber: user.accountNumber,
       balance: user.balance,
       totalValue: marketValue,
@@ -77,6 +79,7 @@ export async function GET(req: NextRequest) {
       portfolioGrowthChange,
       portfolio,
       profileImage: user.profileImage,
+      kyc: user.kycVerified,
     });
   } catch (error) {
     console.error("Dashboard API error:", error);

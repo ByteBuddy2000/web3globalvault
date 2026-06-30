@@ -14,9 +14,11 @@ export default function HeroSection({
 }: Props) {
   const kycStatus = userData?.kyc?.status || "pending";
 
-  const isVerified = kycStatus === "verified";
-  const isPending = kycStatus === "pending";
-  const isRejected = kycStatus === "rejected";
+ 
+
+ const isVerified = userData?.kyc === true;
+  const isPending = userData?.kyc === false;
+  const isRejected = false;
 
   return (
     <motion.div

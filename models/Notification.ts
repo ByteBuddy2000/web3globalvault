@@ -37,10 +37,19 @@ const NotificationSchema = new mongoose.Schema(
 
     // optional categorization
     category: {
-      type: String,
-      enum: ["transaction", "kyc", "system", "security"],
-      default: "system",
-    },
+  type: String,
+  enum: [
+    "transaction",
+    "investment",
+    "withdrawal",
+    "deposit",
+    "kyc",
+    "medbed",
+    "security",
+    "system",
+  ],
+  default: "system",
+},
   },
   { timestamps: true }
 );

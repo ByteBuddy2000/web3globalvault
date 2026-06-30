@@ -3,7 +3,8 @@ import { getToken } from "next-auth/jwt";
 import connectDB from "@/lib/mongodb";
 import MedbedRegistration from "@/models/MedbedRegistration";
 import { sendEmail } from "@/lib/mailer";
-
+import User from "@/models/User";
+import Notification from "@/models/Notification";
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@GlobalVaultbank.com";
 
 export async function POST(request: NextRequest) {
