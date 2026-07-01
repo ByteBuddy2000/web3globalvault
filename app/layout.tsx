@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Web3GlobalVault-Investment",
+  title: "Web3GlobalVault",
   description: "Financial Freedom and Independence",
 };
 
