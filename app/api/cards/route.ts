@@ -90,17 +90,18 @@ export async function POST(req: NextRequest) {
     const { tierLevel = "BASIC", cardType = "VIRTUAL" } = body;
 
     // ══════════════════════════════════════════════════════════
-    // VALIDATION: User can only have ONE active/pending card
-    // Exception: Previous card must be BLOCKED or FROZEN
+    // VALIDATION: User can only have ONE active/working card
+    // Allowed: BLOCKED, INACTIVE cards (users can create new)
+    // Blocked: ACTIVE, PENDING cards or incomplete applications
     // ══════════════════════════════════════════════════════════
     const existingCards = await Card.find({ user: user._id });
     
     for (const card of existingCards) {
-      // Allow only if card is BLOCKED or INACTIVE
-      if (card.status === "ACTIVE" || card.status === "PENDING") {
+      // Do not allow if card is ACTIVE
+      if (card.status === "ACTIVE") {
         return NextResponse.json(
           {
-            message: "You already have an active or pending card. Please block or delete it first.",
+            message: "You already have an active card. Please block or delete it first.",
             existingCard: {
               _id: card._id,
               tierLevel: card.tierLevel,
@@ -112,8 +113,8 @@ export async function POST(req: NextRequest) {
         );
       }
       
-      // Check if there's a pending payment
-      if (["DRAFT", "PAYMENT_PENDING"].includes(card.requestStatus)) {
+      // Do not allow if card is PENDING with an incomplete/pending application
+      if (card.status === "PENDING" && ["DRAFT", "PAYMENT_PENDING", "PAYMENT_RECEIVED"].includes(card.requestStatus)) {
         return NextResponse.json(
           {
             message: "You have a pending card application. Complete or cancel it first.",

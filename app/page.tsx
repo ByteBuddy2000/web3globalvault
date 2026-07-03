@@ -59,7 +59,7 @@ const testimonials = [
   },
   {
     name: "Xi Jinping",
-    role: "Enterpreneur",
+    role: "President of China",
     text: "I love the security features and the cashback offers provided. GlobalVault is my go-to bank.",
     avatar: "/asset/jinping.jpg",
     rating: 5,

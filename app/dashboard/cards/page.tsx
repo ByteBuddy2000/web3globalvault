@@ -182,6 +182,9 @@ export default function CardsPage() {
   const [txHash, setTxHash] = useState("");
   const [submittingTx, setSubmittingTx] = useState(false);
   const [txHashError, setTxHashError] = useState("");
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [actioning, setActioning] = useState(false);
 
   useEffect(() => {
     fetchCards();
@@ -347,6 +350,61 @@ export default function CardsPage() {
       setTimeout(() => setCopiedCVV(false), 2000);
     }
     toast.success("Copied!");
+  };
+
+  /* ─── Cancel/Delete Card ────────────────────────────────────────────── */
+  const handleCancelCard = async (cardId: string) => {
+    setActioning(true);
+    try {
+      const res = await fetch(`/api/cards/${cardId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setCards(cards.filter(c => c._id !== cardId));
+        setShowDetails(false);
+        setSelectedCard(null);
+        setShowCancelConfirm(false);
+        toast.success("Card canceled successfully. You can now create a new card.");
+      } else {
+        const err = await res.json();
+        toast.error(err.message || "Failed to cancel card");
+      }
+    } catch {
+      toast.error("Error canceling card");
+    } finally {
+      setActioning(false);
+    }
+  };
+
+  /* ─── Block Card ────────────────────────────────────────────── */
+  const handleBlockCard = async (cardId: string) => {
+    setActioning(true);
+    try {
+      const res = await fetch(`/api/cards/${cardId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "BLOCKED" }),
+      });
+
+      if (res.ok) {
+        const d = await res.json();
+        const updated = d.card;
+        setCards(cards.map(c => c._id === cardId ? updated : c));
+        setSelectedCard(updated);
+        setShowBlockConfirm(false);
+        toast.success("Card blocked successfully. You can create a new card if needed.");
+      } else {
+        const err = await res.json();
+        toast.error(err.message || "Failed to block card");
+      }
+    } catch {
+      toast.error("Error blocking card");
+    } finally {
+      setActioning(false);
+    }
   };
 
   if (loading) {
@@ -721,15 +779,124 @@ export default function CardsPage() {
 
             <StatusBadge status={selectedCard.status} requestStatus={selectedCard.requestStatus} />
 
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 24 }}>
+              {selectedCard.status !== "BLOCKED" && selectedCard.status !== "INACTIVE" && (
+                <>
+                  <button
+                    onClick={() => setShowBlockConfirm(true)}
+                    style={{
+                      padding: "12px 16px", borderRadius: 10, border: "1px solid #f59e0b",
+                      background: "transparent", color: "#f59e0b", fontWeight: 600, fontSize: 14, cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    Block Card
+                  </button>
+                  <button
+                    onClick={() => setShowCancelConfirm(true)}
+                    style={{
+                      padding: "12px 16px", borderRadius: 10, border: "1px solid #f43f5e",
+                      background: "transparent", color: "#f43f5e", fontWeight: 600, fontSize: 14, cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    Cancel Card
+                  </button>
+                </>
+              )}
+            </div>
+
             <button
               onClick={() => setShowDetails(false)}
               style={{
-                width: "100%", marginTop: 24, padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
+                width: "100%", marginTop: 12, padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
                 background: "transparent", color: "#fff", fontWeight: 600, cursor: "pointer",
               }}
             >
               Close
             </button>
+          </Modal>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════════════════════════════════════════════
+          MODAL: CONFIRM BLOCK CARD
+      ═══════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showBlockConfirm && selectedCard && (
+          <Modal onClose={() => setShowBlockConfirm(false)}>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 16 }}>Block Card</h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginBottom: 24 }}>
+              Are you sure you want to block this card? You'll be able to create a new card after blocking it.
+            </p>
+            <div style={{ padding: 16, borderRadius: 12, background: "rgba(245,63,94,0.1)", border: "1px solid #f43f5e", marginBottom: 24 }}>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0 }}>
+                <strong>Card Tier:</strong> {TIERS[selectedCard.tierLevel].label} • <strong>Type:</strong> {selectedCard.cardType}
+              </p>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                style={{
+                  padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
+                  background: "transparent", color: "#fff", fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                Keep Card
+              </button>
+              <button
+                onClick={() => handleBlockCard(selectedCard._id)}
+                disabled={actioning}
+                style={{
+                  padding: "12px 20px", borderRadius: 10, border: "none",
+                  background: "#f59e0b", color: "#fff", fontWeight: 600, cursor: actioning ? "not-allowed" : "pointer",
+                  opacity: actioning ? 0.5 : 1,
+                }}
+              >
+                {actioning ? "Blocking..." : "Block Card"}
+              </button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════════════════════════════════════════════
+          MODAL: CONFIRM CANCEL CARD
+      ═══════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showCancelConfirm && selectedCard && (
+          <Modal onClose={() => setShowCancelConfirm(false)}>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 16 }}>Cancel Card</h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginBottom: 24 }}>
+              Are you sure you want to cancel this card? This action cannot be undone, and the card will be permanently deleted. You'll be able to create a new card immediately after.
+            </p>
+            <div style={{ padding: 16, borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid #f43f5e", marginBottom: 24 }}>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0 }}>
+                <strong>Card Tier:</strong> {TIERS[selectedCard.tierLevel].label} • <strong>Type:</strong> {selectedCard.cardType}
+              </p>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                style={{
+                  padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
+                  background: "transparent", color: "#fff", fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                Keep Card
+              </button>
+              <button
+                onClick={() => handleCancelCard(selectedCard._id)}
+                disabled={actioning}
+                style={{
+                  padding: "12px 20px", borderRadius: 10, border: "none",
+                  background: "#f43f5e", color: "#fff", fontWeight: 600, cursor: actioning ? "not-allowed" : "pointer",
+                  opacity: actioning ? 0.5 : 1,
+                }}
+              >
+                {actioning ? "Canceling..." : "Cancel Card"}
+              </button>
+            </div>
           </Modal>
         )}
       </AnimatePresence>
