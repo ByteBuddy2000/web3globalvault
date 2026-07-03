@@ -230,6 +230,18 @@ const Dashboardnavbar = ({ onMenu }: { onMenu?: () => void }) => {
                           Transaction update
                         </p>
                       )}
+
+                      {n.category === 'card' && (
+                        <p className="text-[9px] text-blue-400 mt-1">
+                          💳 Card update
+                        </p>
+                      )}
+
+                      {n.category === 'kyc' && (
+                        <p className="text-[9px] text-purple-400 mt-1">
+                          ✓ KYC update
+                        </p>
+                      )}
                     </div>
                   ))
                 )}

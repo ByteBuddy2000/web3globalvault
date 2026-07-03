@@ -50,7 +50,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const cards = await Card.find({ user: user._id }).sort({ createdAt: -1 });
+    // Get only non-archived cards (following bank standards - archived cards are in history)
+    const cards = await Card.find({ user: user._id, archived: { $ne: true } }).sort({ createdAt: -1 });
 
     return NextResponse.json({
       cards,
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     // ══════════════════════════════════════════════════════════
     // VALIDATION: User can only have ONE active/working card
-    // Allowed: BLOCKED, INACTIVE cards (users can create new)
+    // Allowed: BLOCKED, INACTIVE, ARCHIVED cards (users can create new)
     // Blocked: ACTIVE, PENDING cards or incomplete applications
     // ══════════════════════════════════════════════════════════
     const existingCards = await Card.find({ user: user._id });

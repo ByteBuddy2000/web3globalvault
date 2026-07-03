@@ -45,11 +45,18 @@ const NotificationSchema = new mongoose.Schema(
     "deposit",
     "kyc",
     "medbed",
+    "card",
     "security",
     "system",
   ],
   default: "system",
 },
+    
+    // 🔥 Link to card (for card-related notifications)
+    card: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Card",
+    },
   },
   { timestamps: true }
 );

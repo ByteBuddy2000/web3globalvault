@@ -3,6 +3,8 @@ import { getToken } from "next-auth/jwt";
 import connectDB from "@/lib/mongodb";
 import Card from "@/models/Card";
 import User from "@/models/User";
+import Notification from "@/models/Notification";
+import { notifyCardBlocked, notifyCardCanceled } from "@/lib/notificationHelpers";
 
 export async function DELETE(
   req: NextRequest,
@@ -36,7 +38,15 @@ export async function DELETE(
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
+    const cardTier = card.tierLevel;
+    const cardType = card.cardType;
+    const cardId = card._id;
+    const userId = card.user;
+
     await Card.findByIdAndDelete(id);
+
+    // Create notification for card cancellation
+    await notifyCardCanceled(userId, cardTier, cardType, cardId);
 
     return NextResponse.json({
       message: "Card deleted successfully",
@@ -94,9 +104,23 @@ export async function PATCH(
       );
     }
 
+    const previousStatus = card.status;
     card.status = status;
     card.updatedAt = new Date();
+    
+    // If blocking a card, archive it (following bank standards)
+    if (status === "BLOCKED") {
+      card.archived = true;
+      card.archivedAt = new Date();
+      card.archivedReason = "Card blocked by user";
+    }
+    
     await card.save();
+
+    // Create notification for blocking
+    if (status === "BLOCKED") {
+      await notifyCardBlocked(card.user, card.tierLevel, card.cardType, card._id);
+    }
 
     return NextResponse.json({
       message: `Card updated`,

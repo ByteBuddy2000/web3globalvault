@@ -13,7 +13,13 @@ const CardSchema = new mongoose.Schema({
   monthlyLimit: { type: Number, default: 50000 },
   dailySpent: { type: Number, default: 0 },
   monthlySpent: { type: Number, default: 0 },
-  status: { type: String, enum: ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING"], default: "PENDING" },
+  status: { type: String, enum: ["ACTIVE", "INACTIVE", "BLOCKED", "PENDING", "ARCHIVED"], default: "PENDING" },
+  
+  /* ─── Card Lifecycle & Archiving ─── */
+  archived: { type: Boolean, default: false }, // Soft delete flag for bank-standard archiving
+  archivedAt: { type: Date }, // When the card was archived
+  archivedReason: { type: String, default: "" }, // Why it was archived (e.g., "Replaced by new card")
+  replacedByCardId: { type: mongoose.Schema.Types.ObjectId, ref: "Card" }, // Reference to replacement card
   
   /* ─── Payment & Verification Flow ─── */
   requestStatus: { type: String, enum: ["DRAFT", "PAYMENT_PENDING", "PAYMENT_RECEIVED", "ADMIN_APPROVED", "ADMIN_REJECTED"], default: "DRAFT" },

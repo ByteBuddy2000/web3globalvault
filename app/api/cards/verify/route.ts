@@ -3,6 +3,8 @@ import { getToken } from "next-auth/jwt";
 import connectDB from "@/lib/mongodb";
 import Card from "@/models/Card";
 import User from "@/models/User";
+import Notification from "@/models/Notification";
+import { notifyCardApproved, notifyCardRejected } from "@/lib/notificationHelpers";
 
 /**
  * GET /api/cards/verify
@@ -108,6 +110,25 @@ export async function POST(req: NextRequest) {
       card.verifiedBy = admin._id;
       card.verificationDate = new Date();
       card.verificationNotes = notes || "Payment verified and approved";
+      
+      // Archive any previous ACTIVE or BLOCKED cards from this user (bank-standard practice)
+      const previousCards = await Card.find({
+        user: card.user,
+        _id: { $ne: card._id },
+        status: { $in: ["ACTIVE", "BLOCKED"] },
+      });
+
+      for (const prevCard of previousCards) {
+        prevCard.archived = true;
+        prevCard.status = "ARCHIVED";
+        prevCard.archivedAt = new Date();
+        prevCard.archivedReason = "Replaced by new card";
+        prevCard.replacedByCardId = card._id;
+        await prevCard.save();
+      }
+      
+      // Create notification for approval
+      await notifyCardApproved(card.user, card.tierLevel, card.cardType, card._id);
     }
 
     if (action === "REJECT") {
@@ -118,6 +139,15 @@ export async function POST(req: NextRequest) {
       card.verificationDate = new Date();
       card.rejectionReason = notes || "Payment rejected";
       card.verificationNotes = notes || "Payment rejected by admin";
+      
+      // Create notification for rejection
+      await notifyCardRejected(
+        card.user,
+        card.tierLevel,
+        card.cardType,
+        notes || "Payment verification failed",
+        card._id
+      );
     }
 
     card.updatedAt = new Date();
