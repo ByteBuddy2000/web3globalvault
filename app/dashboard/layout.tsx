@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             }}
           />
 
-          <main className="absolute inset-0 z-10 overflow-y-auto p-3 sm:p-4 md:p-6">
+          <main className="relative w-full h-full z-10 overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-6">
             <div className="w-full max-w-7xl mx-auto">
               {children}
             </div>

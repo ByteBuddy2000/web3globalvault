@@ -33,9 +33,9 @@ type Card = {
 
 /* ─── Tier config ────────────────────────────────────────────── */
 const TIERS: Record<string, any> = {
-  BASIC: { label: "Basic", daily: "$5K", monthly: "$50K", fee: "Free", feeNum: 0, accent: "#888a96", accentDim: "rgba(136,138,150,0.12)", cardBg: "linear-gradient(135deg,#1a1a24 0%,#13131c 100%)", cardLine: "rgba(136,138,150,0.25)", rank: 0 },
-  SILVER: { label: "Silver", daily: "$10K", monthly: "$100K", fee: "$5", feeNum: 5, accent: "#b0b8c8", accentDim: "rgba(176,184,200,0.12)", cardBg: "linear-gradient(135deg,#1c1e26 0%,#14151f 100%)", cardLine: "rgba(176,184,200,0.3)", rank: 1 },
-  GOLD: { label: "Gold", daily: "$25K", monthly: "$250K", fee: "$15", feeNum: 15, accent: "#c9a84c", accentDim: "rgba(201,168,76,0.12)", cardBg: "linear-gradient(135deg,#1e1a0e 0%,#141108 100%)", cardLine: "rgba(201,168,76,0.35)", rank: 2 },
+  BASIC: { label: "Basic", daily: "$5K", monthly: "$50K", fee: "15", feeNum: 15, accent: "#888a96", accentDim: "rgba(136,138,150,0.12)", cardBg: "linear-gradient(135deg,#1a1a24 0%,#13131c 100%)", cardLine: "rgba(136,138,150,0.25)", rank: 0 },
+  SILVER: { label: "Silver", daily: "$10K", monthly: "$100K", fee: "$20", feeNum: 20, accent: "#b0b8c8", accentDim: "rgba(176,184,200,0.12)", cardBg: "linear-gradient(135deg,#1c1e26 0%,#14151f 100%)", cardLine: "rgba(176,184,200,0.3)", rank: 1 },
+  GOLD: { label: "Gold", daily: "$25K", monthly: "$250K", fee: "$25", feeNum: 25, accent: "#c9a84c", accentDim: "rgba(201,168,76,0.12)", cardBg: "linear-gradient(135deg,#1e1a0e 0%,#141108 100%)", cardLine: "rgba(201,168,76,0.35)", rank: 2 },
   PLATINUM: { label: "Platinum", daily: "$50K", monthly: "$500K", fee: "$30", feeNum: 30, accent: "#818cf8", accentDim: "rgba(129,140,248,0.12)", cardBg: "linear-gradient(135deg,#0f0e1a 0%,#0a0914 100%)", cardLine: "rgba(129,140,248,0.35)", rank: 3 },
 };
 
