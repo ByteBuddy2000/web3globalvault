@@ -617,7 +617,7 @@ export default function HomePage() {
             style={{ border: "1px solid var(--border-brand)" }}
           >
             <Image
-              src="/asset/mps.jpeg"
+              src="/asset/trumpmedbed.jpeg"
               alt="Mobile Payment System"
               width={600}
               height={450}
