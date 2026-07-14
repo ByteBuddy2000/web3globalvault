@@ -1038,7 +1038,7 @@ export default function HomePage() {
         </div>
         <div className="flex justify-center">
           <Image
-            src="/asset/vrshot.png"
+            src="/asset/bodyy.jpeg"
             alt="VR Experience"
             width={500}
             height={500}
