@@ -6,10 +6,10 @@ import User from "@/models/User";
 
 // Define USDT wallet addresses for each tier (you should configure these)
 const TIER_PAYMENT_ADDRESSES: Record<string, { address: string; amount: number }> = {
-  BASIC: { address: process.env.USDT_WALLET_BASIC || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 0 },
-  SILVER: { address: process.env.USDT_WALLET_SILVER || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 5 },
-  GOLD: { address: process.env.USDT_WALLET_GOLD || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 15 },
-  PLATINUM: { address: process.env.USDT_WALLET_PLATINUM || "0xfedcbafedcbafedcbafedcbafedcbafedcbafed", amount: 30 },
+  BASIC: { address: process.env.USDT_WALLET_BASIC || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 15 },
+  SILVER: { address: process.env.USDT_WALLET_SILVER || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 20 },
+  GOLD: { address: process.env.USDT_WALLET_GOLD || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 25 },
+  PLATINUM: { address: process.env.USDT_WALLET_PLATINUM || "rp5PMThCE9FtANy7ULtN4X43fNf7oXW6mt", amount: 30 },
 };
 
 /**
