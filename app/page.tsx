@@ -1174,7 +1174,7 @@ export default function HomePage() {
               >
                 Join over 2 million customers who trust Web3GlobalVault for seamless, secure, and smart banking.
               </p>
-              <div className="w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
                 <a
                   href="/signup"
                   className="btn-primary btn-lg inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[52px] px-6 sm:px-8 text-sm sm:text-base"
@@ -1182,6 +1182,13 @@ export default function HomePage() {
                   Open Your Free Account
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </a>
+                <Link
+                  href="/medbed-appointment"
+                  className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[52px] px-6 sm:px-8 text-sm sm:text-base"
+                >
+                  Medbed Appointment
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                </Link>
               </div>
             </div>
           </div>
