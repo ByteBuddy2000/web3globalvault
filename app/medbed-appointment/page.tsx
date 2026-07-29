@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -131,6 +132,14 @@ export default function MedbedAppointmentPage() {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 rounded-2xl border border-brand-400/20 bg-brand-400/10 p-4 text-sm text-muted-foreground">
+                <p className="font-semibold text-brand-200">Support email</p>
+                <a href="mailto:support@web3globalvault.com" className="mt-1 inline-flex items-center gap-2 text-brand-300 transition hover:text-brand-200">
+                  <Mail className="h-4 w-4" />
+                  support@web3globalvault.com
+                </a>
+              </div>
             </motion.div>
 
             <motion.div
@@ -139,29 +148,42 @@ export default function MedbedAppointmentPage() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="w-full max-w-xl"
             >
-              <div className="card p-8 rounded-3xl">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-2xl bg-brand-400/15 p-3 text-brand-300">
-                    <CalendarDays className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-brand-300">Appointment concierge</p>
-                    <h2 className="text-2xl font-semibold">Everything you need in one place</h2>
-                  </div>
+              <div className="card overflow-hidden rounded-3xl">
+                <div className="relative h-56 w-full">
+                  <Image
+                    src="/asset/trumpmedbed.jpeg"
+                    alt="Care and medical support illustration"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 </div>
 
-                <div className="mt-6 space-y-4">
-                  {highlights.map((item) => (
-                    <div key={item.title} className="rounded-2xl border border-border/70 bg-background/50 p-4">
-                      <div className="flex items-start gap-3">
-                        <ShieldCheck className="mt-0.5 h-5 w-5 text-brand-300" />
-                        <div>
-                          <h3 className="font-semibold text-foreground">{item.title}</h3>
-                          <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
+                <div className="p-8">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-2xl bg-brand-400/15 p-3 text-brand-300">
+                      <CalendarDays className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.3em] text-brand-300">Appointment concierge</p>
+                      <h2 className="text-2xl font-semibold">Everything you need in one place</h2>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    {highlights.map((item) => (
+                      <div key={item.title} className="rounded-2xl border border-border/70 bg-background/50 p-4">
+                        <div className="flex items-start gap-3">
+                          <ShieldCheck className="mt-0.5 h-5 w-5 text-brand-300" />
+                          <div>
+                            <h3 className="font-semibold text-foreground">{item.title}</h3>
+                            <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
