@@ -643,7 +643,7 @@ export default function CardsPage() {
 
                 <div style={{ padding: 16, borderRadius: 12, background: "#10b98120", border: "1px solid #10b981", marginBottom: 24 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#10b981", marginBottom: 8 }}>Payment Amount</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>${selectedCard.paymentAmount} USDT</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>${selectedCard.paymentAmount} XRP</div>
                 </div>
 
                 <div style={{ marginBottom: 24 }}>
