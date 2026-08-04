@@ -390,6 +390,7 @@ function TestimonialCard({ t, delay }: { t: (typeof testimonials)[0]; delay: num
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
+      exit={{ opacity: 0, y: -20 }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.02 }}
     >
@@ -486,6 +487,7 @@ const GlobeVisual = () => (
 export default function HomePage() {
   const [typingIndex, setTypingIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const heroRef = useRef(null);
@@ -515,6 +517,21 @@ export default function HomePage() {
     }, 70);
     return () => clearInterval(iv);
   }, [typingIndex]);
+
+  useEffect(() => {
+    const ticket = setInterval(() => {
+      setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+    }, 7000);
+    return () => clearInterval(ticket);
+  }, []);
+
+  const handlePrevTestimonial = () =>
+    setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+
+  const handleNextTestimonial = () =>
+    setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+
+  const activeTestimonial = testimonials[testimonialIndex];
 
   return (
     <div
@@ -1124,7 +1141,7 @@ export default function HomePage() {
           TESTIMONIALS
       ══════════════════════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-6 py-20 z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <p
             className="text-xs font-semibold tracking-wider uppercase mb-2"
             style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
@@ -1135,10 +1152,36 @@ export default function HomePage() {
             What Our Clients Say
           </h3>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <TestimonialCard key={t.name} t={t} delay={i * 0.1} />
-          ))}
+
+        <div className="flex flex-col items-center gap-4 mb-10 sm:flex-row sm:justify-center">
+          <button
+            onClick={handlePrevTestimonial}
+            className="btn-secondary rounded-full px-5 py-3 text-sm"
+          >
+            Previous
+          </button>
+          <div
+            className="rounded-full px-4 py-2 text-sm font-semibold"
+            style={{ background: "rgba(255,255,255,0.08)", color: "var(--text-0)" }}
+          >
+            {testimonialIndex + 1} / {testimonials.length}
+          </div>
+          <button
+            onClick={handleNextTestimonial}
+            className="btn-secondary rounded-full px-5 py-3 text-sm"
+          >
+            Next
+          </button>
+        </div>
+
+        <div className="relative max-w-3xl mx-auto">
+          <AnimatePresence mode="wait">
+            <TestimonialCard
+              key={activeTestimonial.name}
+              t={activeTestimonial}
+              delay={0}
+            />
+          </AnimatePresence>
         </div>
       </section>
 
