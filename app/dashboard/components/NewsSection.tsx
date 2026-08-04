@@ -198,16 +198,18 @@ export default function NewsSection() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch('/api/news');
+      const response = await fetch('/api/news', { cache: 'no-store' });
       const data = await response.json();
+
       if (response.ok) {
         setNews(data.articles || []);
       } else {
-        setError(data.message || 'Failed to load news');
+        setError(data.message || `Failed to load news (${response.status})`);
+        setNews(data.articles || []);
       }
     } catch (err) {
       setError('Error fetching news. Please try again later.');
-      console.error(err);
+      console.error('News fetch error:', err);
     } finally {
       setLoading(false);
     }

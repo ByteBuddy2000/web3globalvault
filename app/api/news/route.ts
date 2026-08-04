@@ -37,6 +37,9 @@ export async function GET(request: NextRequest) {
 
           return NextResponse.json({ articles, source: "newsapi" }, { status: 200 });
         }
+
+        const errorBody = await response.text();
+        console.warn("NewsAPI returned non-ok status:", response.status, errorBody);
       } catch (error) {
         console.warn("NewsAPI fetch failed, falling back to mock data:", error);
       }
