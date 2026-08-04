@@ -80,6 +80,64 @@ type Video = {
   label: string;
 };
 
+type HighlightCard = {
+  icon: any;
+  title: string;
+  desc: string;
+  delay: number;
+};
+
+type Step = {
+  number: string;
+  title: string;
+  desc: string;
+};
+
+const platformHighlights: HighlightCard[] = [
+  {
+    icon: Wifi,
+    title: "Instant Wallet Setup",
+    desc: "Open your account in minutes with secure verification and smart onboarding.",
+    delay: 0,
+  },
+  {
+    icon: Send,
+    title: "Global Transfers",
+    desc: "Send funds across borders with low fees and fast FX settlement.",
+    delay: 0.12,
+  },
+  {
+    icon: Users2,
+    title: "24/7 Support",
+    desc: "Chat with experts anytime and get help across dashboards, cards, and payments.",
+    delay: 0.24,
+  },
+  {
+    icon: Building2,
+    title: "Business Banking",
+    desc: "Manage corporate accounts, payroll, and international treasury operations.",
+    delay: 0.36,
+  },
+];
+
+const workflowSteps: Step[] = [
+  {
+    number: "01",
+    title: "Open your account",
+    desc: "Sign up online, complete KYC fast, and start using your Web3GlobalVault wallet.",
+  },
+  {
+    number: "02",
+    title: "Fund with ease",
+    desc: "Top up using cards, bank transfers, or crypto — all from one secure dashboard.",
+  },
+  {
+    number: "03",
+    title: "Grow with confidence",
+    desc: "Invest, track, and protect your money with AI insights, lending, and global coverage.",
+  },
+];
+
 /* ─── Video Player ──────────────────────────────────────────── */
 function VideoPlayer({ videos }: { videos: Video[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -296,6 +354,31 @@ function FeatureCard({
         Learn more <ArrowRight className="w-3 h-3" />
       </div>
     </motion.div>
+  );
+}
+
+function StepCard({ step }: { step: Step }) {
+  return (
+    <div className="card card-elevated rounded-[2rem] p-6 border border-white/10">
+      <div
+        className="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-5 text-sm font-semibold"
+        style={{
+          background: "rgba(59, 130, 246, 0.12)",
+          color: "var(--brand-400)",
+        }}
+      >
+        {step.number}
+      </div>
+      <h4
+        className="text-lg font-semibold mb-3"
+        style={{ color: "var(--text-0)", fontFamily: "var(--font-display)" }}
+      >
+        {step.title}
+      </h4>
+      <p className="text-sm leading-relaxed" style={{ color: "var(--text-200)" }}>
+        {step.desc}
+      </p>
+    </div>
   );
 }
 
@@ -802,6 +885,83 @@ export default function HomePage() {
             },
           ].map((f) => (
             <FeatureCard key={f.title} {...f} />
+          ))}
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ══════════════════════════════════════════════════════
+          PLATFORM HIGHLIGHTS
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Platform
+          </p>
+          <h3 className="section-header" style={{ fontFamily: "var(--font-display)" }}>
+            Built for modern finance
+          </h3>
+          <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: "var(--text-200)" }}>
+            Discover the core capabilities that help businesses and individuals move faster, stay secure, and innovate with confidence.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-4 gap-6">
+          {platformHighlights.map((item) => (
+            <motion.div
+              key={item.title}
+              className="card group p-6 rounded-3xl border border-white/10 bg-black/10"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: item.delay }}
+              viewport={{ once: true }}
+              whileHover={{ y: -4 }}
+            >
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: "rgba(59, 130, 246, 0.12)" }}
+              >
+                <item.icon className="w-6 h-6" style={{ color: "var(--brand-400)" }} />
+              </div>
+              <h4 className="text-lg font-semibold mb-3" style={{ color: "var(--text-0)", fontFamily: "var(--font-display)" }}>
+                {item.title}
+              </h4>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-200)" }}>
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ══════════════════════════════════════════════════════
+          HOW IT WORKS
+      ══════════════════════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-6 py-20 z-10">
+        <div className="text-center mb-16">
+          <p
+            className="text-xs font-semibold tracking-wider uppercase mb-2"
+            style={{ color: "var(--brand-400)", letterSpacing: "var(--tracking-wider)" }}
+          >
+            Start in 3 steps
+          </p>
+          <h3 className="section-header" style={{ fontFamily: "var(--font-display)" }}>
+            How Web3GlobalVault works
+          </h3>
+          <p className="max-w-2xl mx-auto text-lg leading-relaxed" style={{ color: "var(--text-200)" }}>
+            From account creation to growth, these are the steps most customers follow to unlock their financial potential.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {workflowSteps.map((step) => (
+            <StepCard key={step.number} step={step} />
           ))}
         </div>
       </section>

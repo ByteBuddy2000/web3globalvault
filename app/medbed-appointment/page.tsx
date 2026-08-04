@@ -138,7 +138,7 @@ export default function MedbedAppointmentPage() {
                     <Mail className="h-4 w-4" />
                   </button>
 
-                  <Link href="/" className="btn-secondary inline-flex items-center gap-2">
+                  <Link href="/" className="btn-secondar/y inline-flex items-center gap-2">
                     Explore Home
                     <ArrowRight className="h-4 w-4" />
                   </Link>
