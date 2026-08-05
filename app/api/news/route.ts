@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
         title: "Ethereum ETF Flows Pick Up as Crypto Adoption Continues",
         description:
           "Institutional demand for Ethereum ETFs rose this week, supporting price momentum and confidence in the broader crypto sector.",
-        image: "/asset/hot.jpeg",
+        image: "/asset/trend.jpg",
         source: "Market Digest",
         url: "https://marketdigest.com/ethereum-etf-flows",
         publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
         title: "Major Exchange Lists New Layer-2 Crypto Asset",
         description:
           "A top crypto exchange announced support for a new layer-2 token, expanding options for low-cost, high-speed decentralized transactions.",
-        image: "/asset/web3.png",
+        image: "/asset/btccoin.jpg",
         source: "Digital Asset News",
         url: "https://digitalassetnews.com/layer2-listing",
         publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(),
