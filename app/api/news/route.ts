@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         title: "Crypto Markets Stabilize After Bitcoin Rally",
         description:
           "Bitcoin and leading altcoins saw modest gains overnight as traders weighed macroeconomic data and renewed investor interest in decentralized finance.",
-        image: "/asset/web3.png",
+        image: "/asset/web3jpg",
         source: "Crypto Pulse",
         url: "https://cryptopulse.com/market-update",
         publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
