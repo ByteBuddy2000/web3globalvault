@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (newsApiKey) {
       try {
         const response = await fetch(
-          `https://newsapi.org/v2/everything?q=crypto+OR+banking+OR+finance&sortBy=publishedAt&language=en&pageSize=6`,
+          `https://newsapi.org/v2/everything?q=medbed+OR+crypto&sortBy=publishedAt&language=en&pageSize=6`,
           {
             headers: {
               "X-API-Key": newsApiKey,
@@ -49,63 +49,63 @@ export async function GET(request: NextRequest) {
     const mockNews = [
       {
         id: "1",
-        title: "Bitcoin Reaches New All-Time High as Institutional Adoption Accelerates",
+        title: "Medbed Clinics Expand Access to Regenerative Care",
         description:
-          "Bitcoin surged past $70,000 as major financial institutions continue to increase their holdings and integrate cryptocurrency into their portfolios.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "Crypto News Daily",
-        url: "https://cryptonewsdaily.com",
-        publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          "New medbed clinics are opening nationwide, offering advanced wellness treatments aimed at improving recovery and reducing chronic pain.",
+        image: "/asset/medbed1.jpeg",
+        source: "HealthTech Today",
+        url: "https://healthtechtoday.com/medbed-expansion",
+        publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "2",
-        title: "Fed Signals Possible Interest Rate Cuts in 2025",
+        title: "Crypto Markets Stabilize After Bitcoin Rally",
         description:
-          "Federal Reserve officials hinted at potential interest rate reductions, signaling a shift in monetary policy direction to support economic growth.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "Financial Times",
-        url: "https://ft.com",
-        publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          "Bitcoin and leading altcoins saw modest gains overnight as traders weighed macroeconomic data and renewed investor interest in decentralized finance.",
+        image: "/asset/web3.png",
+        source: "Crypto Pulse",
+        url: "https://cryptopulse.com/market-update",
+        publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "3",
-        title: "Ethereum Upgrade Improves Network Efficiency by 40%",
+        title: "Medbed Research Shows Promising Recovery Results",
         description:
-          "The latest Ethereum network upgrade rolled out successfully, delivering significant improvements to transaction throughput and reducing gas fees.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "Blockchain Insider",
-        url: "https://blockchaininsider.com",
-        publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          "Early clinical reports indicate medbed therapies may help accelerate healing times for patients recovering from surgery and injury.",
+        image: "/asset/trumpmedbed.jpeg",
+        source: "Wellness Journal",
+        url: "https://wellnessjournal.com/medbed-recovery-study",
+        publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "4",
-        title: "Goldman Sachs Opens New Digital Banking Division",
+        title: "Ethereum ETF Flows Pick Up as Crypto Adoption Continues",
         description:
-          "Goldman Sachs announced the launch of its new digital-first banking division, targeting millennial and Gen Z customers with modern financial products.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "Banking News",
-        url: "https://bankingnews.com",
-        publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+          "Institutional demand for Ethereum ETFs rose this week, supporting price momentum and confidence in the broader crypto sector.",
+        image: "/asset/hot.jpeg",
+        source: "Market Digest",
+        url: "https://marketdigest.com/ethereum-etf-flows",
+        publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "5",
-        title: "Global Remittance Market Grows 15% YoY with Blockchain Technology",
+        title: "Medbed Wellness Retreats Attract Health-Conscious Travelers",
         description:
-          "International money transfers via blockchain platforms have surged, offering faster and cheaper alternatives to traditional banking channels.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "FinTech Today",
-        url: "https://fintechtoday.com",
-        publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+          "Medical wellness resorts are adding medbed sessions to their services, appealing to travelers seeking proactive health optimization.",
+        image: "/asset/medbed2.jpeg",
+        source: "Travel & Health",
+        url: "https://travelhealth.com/medbed-retreats",
+        publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "6",
-        title: "Stock Market Reaches Record High as Tech Stocks Lead Rally",
+        title: "Major Exchange Lists New Layer-2 Crypto Asset",
         description:
-          "Major iFederal Reservees closed at record highs, driven by strong earnings reports from technology companies and positive economic iFederal Reserveators.",
-        image: "https://via.placeholder.com/400x200.png?text=News+Image",
-        source: "Market Watch",
-        url: "https://marketwatch.com",
-        publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+          "A top crypto exchange announced support for a new layer-2 token, expanding options for low-cost, high-speed decentralized transactions.",
+        image: "/asset/web3.png",
+        source: "Digital Asset News",
+        url: "https://digitalassetnews.com/layer2-listing",
+        publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(),
       },
     ];
 
