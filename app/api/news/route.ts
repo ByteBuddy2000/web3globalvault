@@ -107,6 +107,36 @@ export async function GET(request: NextRequest) {
         url: "https://digitalassetnews.com/layer2-listing",
         publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(),
       },
+      {
+        id: "7",
+        title: "Medbed Technology Approved for At-Home Recovery Programs",
+        description:
+          "Regulators have cleared a new medbed device for supervised at-home recovery, opening doors for patients to continue advanced therapy outside clinical settings.",
+        image: "/asset/medbed3.jpeg",
+        source: "BioHealth News",
+        url: "https://biohealthnews.com/medbed-home-approval",
+        publishedAt: new Date(Date.now() - 13 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "8",
+        title: "Global Wellness Centers Partner on Expanded Medbed Access",
+        description:
+          "A coalition of wellness centers announced partnerships to bring medbed treatments to more cities, increasing availability for preventive and recovery care.",
+        image: "/asset/medbed4.jpeg",
+        source: "Global Health Review",
+        url: "https://globalhealthreview.com/medbed-partnerships",
+        publishedAt: new Date(Date.now() - 15 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "9",
+        title: "XRP Gains Momentum After New Cross-Border Payment Deal",
+        description:
+          "XRP saw renewed investor interest after a major payments provider announced a pilot using the token for faster, lower-cost international transfers.",
+        image: "/asset/xrpp.jpg",
+        source: "Fintech Today",
+        url: "https://fintechtoday.com/xrp-cross-border-deal",
+        publishedAt: new Date(Date.now() - 17 * 60 * 60 * 1000).toISOString(),
+      },
     ];
 
     return NextResponse.json(
