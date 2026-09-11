@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Banknote, Bitcoin, ChevronRight, X, AlertCircle, Zap, TrendingUp, Copy, CheckCircle2, ShieldCheck } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Banknote, Bitcoin, ChevronRight, X, AlertCircle, Zap, TrendingUp, CheckCircle2 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { submitWithdrawal } from "./actions";
 import { KYCGuard } from "@/components/KYCGuard";
@@ -8,19 +8,15 @@ import { KYCGuard } from "@/components/KYCGuard";
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WithdrawMethod = "bank" | "crypto";
 type HighlightColor  = "green" | "red";
-type ModalStep       = "review" | "pay-fee" | "done";
 
-interface FeeTier    { upTo: number; rate: number; label: string; }
-interface FeeInfo    { rate: number; label: string; fee: number; youReceive: number; }
 interface Network    { value: string; label: string; }
-interface CryptoCoin { value: string; label: string; networks: Network[]; feeWallet: string; }
+interface CryptoCoin { value: string; label: string; networks: Network[]; }
 interface Asset      { _id?: string; symbol: string; quantity: number; }
 
 interface WithdrawDetails {
   method: WithdrawMethod;
   amount: string;
   fee: number;
-  feeLabel: string;
   youReceive: number;
   bankName: string;
   accountNumber: string;
@@ -37,91 +33,28 @@ interface ConfirmModalProps {
   details: WithdrawDetails;
 }
 
-interface RowProps         { label: string; value: string; highlight?: HighlightColor; }
-interface FeeBreakdownProps { amount: string; }
-interface FeeTierBadgesProps { currentAmount: string; }
+interface RowProps { label: string; value: string; highlight?: HighlightColor; }
 
-// ── Fee tiers ─────────────────────────────────────────────────────────────────
-const FEE_TIERS: FeeTier[] = [
-  { upTo: 1_000,    rate: 0.10, label: "0.2%"  },
-  { upTo: 10_000,   rate: 0.16, label: "0.34%"  },
-  { upTo: Infinity, rate: 0.24, label: "0.46%"  },
-];
-
-function gCryptoeeInfo(amount: string): FeeInfo {
-  const num = Number(amount);
-  if (!num || num <= 0) return { rate: 0, label: "—", fee: 0, youReceive: 0 };
-  const tier = FEE_TIERS.find((t) => num <= t.upTo)!;
-  const fee       = parseFloat((num * tier.rate).toFixed(2));
-  const youReceive = parseFloat((num - fee).toFixed(2));
-  return { rate: tier.rate, label: tier.label, fee, youReceive };
-}
-
-// ── Bank fee wallet (USDT ERC20 placeholder — replace with real address) ──────
-const BANK_FEE_WALLET = "0xD41DCAc22335d26a391F97C4a9DdE1b2745936b3"; // ERC20 placeholder
-
-// ── Coins, networks & fee-collection wallets ──────────────────────────────────
-// feeWallet: the platform address users send the withdrawal fee TO before release
+// ── Coins & networks ───────────────────────────────────────────────────────────
 const cryptoCoins: CryptoCoin[] = [
-  {
-    value: "BTC",  label: "Bitcoin",
-    feeWallet: "bc1qpycmsxnlarnay4jgwa3y535m802qevq7ffnp5x", // placeholder
-    networks: [{ value: "BTC",   label: "Bitcoin Network" }],
-  },
-  {
-    value: "ETH",  label: "Ethereum",
-    feeWallet: "0xD41DCAc22335d26a391F97C4a9DdE1b2745936b3", // placeholder
-    networks: [{ value: "ERC20", label: "Ethereum Mainnet (ERC-20)" }],
-  },
+  { value: "BTC",  label: "Bitcoin",         networks: [{ value: "BTC",   label: "Bitcoin Network" }] },
+  { value: "ETH",  label: "Ethereum",        networks: [{ value: "ERC20", label: "Ethereum Mainnet (ERC-20)" }] },
   {
     value: "USDT", label: "Tether (USDT)",
-    feeWallet: "0xD41DCAc22335d26a391F97C4a9DdE1b2745936b3", // placeholder
     networks: [
-      { value: "ERC20", label: "Ethereum Mainnet (ERC-20)"       },
-      { value: "TRC20", label: "Tron Network (TRC-20)"           },
-      { value: "BEP20", label: "BNB Smart Chain (BEP-20)"        },
+      { value: "ERC20", label: "Ethereum Mainnet (ERC-20)" },
+      { value: "TRC20", label: "Tron Network (TRC-20)"     },
+      { value: "BEP20", label: "BNB Smart Chain (BEP-20)"  },
     ],
   },
-  {
-    value: "BNB",  label: "BNB",
-    feeWallet: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F", // placeholder
-    networks: [{ value: "BEP20", label: "BNB Smart Chain (BEP-20)" }],
-  },
-  {
-    value: "SOL",  label: "Solana",
-    feeWallet: "2pSEfZG1SrVRzoVLwMkUGhnRABRiMGa6ycAPLaX8LkAQ", // placeholder
-    networks: [{ value: "SOL",   label: "Solana Network"            }],
-  },
-  {
-    value: "ADA",  label: "Cardano",
-    feeWallet: "addr1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh00000000000", // placeholder
-    networks: [{ value: "ADA",   label: "Cardano Mainnet"           }],
-  },
-  {
-    value: "XRP",  label: "Ripple (XRP)",
-    feeWallet: "rN7n3473SaZBCG4dFL83w7PB6fAUhVCJuS", // placeholder
-    networks: [{ value: "XRP",   label: "XRP Ledger"                }],
-  },
-  {
-    value: "DOGE", label: "Dogecoin",
-    feeWallet: "DHFxZNM3dBrzaKNZxq8fYo8VeqUNtjBKqV", // placeholder
-    networks: [{ value: "DOGE",  label: "Dogecoin Network"          }],
-  },
-  {
-    value: "TRX",  label: "TRON (TRX)",
-    feeWallet: "TNvmBLTBREMVRaJGcnPF3jcFtdPxKGTkC7", // placeholder
-    networks: [{ value: "TRC20", label: "Tron Network (TRC-20)"     }],
-  },
-  {
-    value: "DOT",  label: "Polkadot",
-    feeWallet: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5", // placeholder
-    networks: [{ value: "DOT",   label: "Polkadot Network"          }],
-  },
-  {
-    value: "SHIB", label: "Shiba Inu (SHIB)",
-    feeWallet: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F", // placeholder
-    networks: [{ value: "ERC20", label: "Ethereum Mainnet (ERC-20)" }],
-  },
+  { value: "BNB",  label: "BNB",             networks: [{ value: "BEP20", label: "BNB Smart Chain (BEP-20)" }] },
+  { value: "SOL",  label: "Solana",          networks: [{ value: "SOL",   label: "Solana Network"            }] },
+  { value: "ADA",  label: "Cardano",         networks: [{ value: "ADA",   label: "Cardano Mainnet"           }] },
+  { value: "XRP",  label: "Ripple (XRP)",    networks: [{ value: "XRP",   label: "XRP Ledger"                }] },
+  { value: "DOGE", label: "Dogecoin",        networks: [{ value: "DOGE",  label: "Dogecoin Network"          }] },
+  { value: "TRX",  label: "TRON (TRX)",      networks: [{ value: "TRC20", label: "Tron Network (TRC-20)"     }] },
+  { value: "DOT",  label: "Polkadot",        networks: [{ value: "DOT",   label: "Polkadot Network"          }] },
+  { value: "SHIB", label: "Shiba Inu (SHIB)",networks: [{ value: "ERC20", label: "Ethereum Mainnet (ERC-20)" }] },
 ];
 
 // ── Wallet address validation ─────────────────────────────────────────────────
@@ -131,7 +64,6 @@ function validateWalletAddress(coin: string, network: string, address: string): 
   const addr = address.trim();
   if (!addr) return { valid: false, message: "Wallet address is required." };
 
-  // Regex helpers
   const ETH_RE   = /^0x[0-9a-fA-F]{40}$/;
   const TRON_RE  = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
   const BTC_LEG  = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
@@ -218,55 +150,13 @@ function Row({ label, value, highlight }: RowProps) {
   );
 }
 
-// ── Copy button ───────────────────────────────────────────────────────────────
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <button
-      onClick={handleCopy}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border transition-all cursor-pointer text-xs font-mono font-semibold tracking-wider flex-shrink-0 ${
-        copied
-          ? 'bg-success/10 border-success text-success'
-          : 'bg-surface-200/50 border-border-default text-slate-400 hover:bg-surface-300 hover:border-slate-500'
-      }`}
-    >
-      {copied ? <CheckCircle2 size={11} /> : <Copy size={11} />}
-      {copied ? "COPIED" : "COPY"}
-    </button>
-  );
-}
-
-// ── Confirm Modal (3-step: review → pay fee → confirmed) ──────────────────────
+// ── Confirm Modal (single-step: review → confirm) ──────────────────────────────
 function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmModalProps) {
-  const [step, setStep] = useState<ModalStep>("review");
-  const [feePaid, sCryptoeePaid]   = useState(false);
-
-  // Reset when modal opens/closes
-  useEffect(() => {
-    if (open) { setStep("review"); sCryptoeePaid(false); }
-  }, [open]);
-
   if (!open) return null;
-
-  // Determine fee wallet address
-  const feeWallet = details.method === "bank"
-    ? BANK_FEE_WALLET
-    : (cryptoCoins.find(c => c.value === details.coin)?.feeWallet ?? BANK_FEE_WALLET);
-
-  const feeNetworkLabel = details.method === "bank"
-    ? "USDT · TRC-20 Network"
-    : `${details.coin} · ${details.network || "Network"}`;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
       <div className="relative w-full max-w-md bg-card border border-border-default rounded-xl p-6 shadow-xl">
-        {/* Close */}
         <button
           onClick={onClose}
           disabled={loading}
@@ -275,200 +165,78 @@ function ConfirmModal({ open, onClose, onConfirm, loading, details }: ConfirmMod
           <X size={14} />
         </button>
 
-        {/* Step indicator */}
-        <div className="flex gap-1.5 items-center mb-6">
-          {(["review", "pay-fee"] as ModalStep[]).map((s, i) => (
-            <div key={s} className="flex items-center gap-1.5">
-              <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono transition-all ${
-                  step === s ? 'bg-yellow-500/20 border border-yellow-500 text-yellow-400' :
-                  (step === "pay-fee" && s === "review") || step === "done" ? 'bg-success/10 border border-success text-success' : 'bg-surface-200/50 border border-border-default text-slate-400'
-                }`}
-              >
-                {(step === "pay-fee" && s === "review") ? <CheckCircle2 size={11} /> : i + 1}
-              </div>
-              {i < 1 && (
-                <div className={`w-6 h-px transition-all ${
-                  step !== "review" ? 'bg-success' : 'bg-border-default'
-                }`} />
-              )}
-            </div>
-          ))}
-          <span className="font-mono text-xs text-slate-400 ml-2 tracking-wider uppercase">
-            {step === "review" ? "Review Details" : "Pay Fee"}
-          </span>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+            <Zap size={13} className="text-yellow-400" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">
+            Review Withdrawal
+          </h3>
         </div>
 
-        {/* ── STEP 1: Review ── */}
-        {step === "review" && (
-          <>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
-                <Zap size={13} className="text-yellow-400" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground">
-                Review Withdrawal
-              </h3>
-            </div>
+        <div className="space-y-3 mb-6">
+          <Row label="Method" value={details.method === "bank" ? "Bank Transfer" : "Crypto"} />
 
-            <div className="space-y-3 mb-6">
-              <Row label="Method" value={details.method === "bank" ? "Bank Transfer" : "Crypto"} />
+          {details.method === "bank" && (
+            <>
+              <Row label="Bank Name"      value={details.bankName} />
+              <Row label="Account Number" value={`****${details.accountNumber.slice(-4)}`} />
+            </>
+          )}
+          {details.method === "crypto" && (
+            <>
+              <Row label="Coin"    value={details.coin} />
+              <Row label="Network" value={details.network} />
+              <Row label="Address" value={`${details.walletAddress.slice(0, 10)}...${details.walletAddress.slice(-6)}`} />
+            </>
+          )}
 
-              {details.method === "bank" && (
-                <>
-                  <Row label="Bank Name"      value={details.bankName} />
-                  <Row label="Account Number" value={`****${details.accountNumber.slice(-4)}`} />
-                </>
-              )}
-              {details.method === "crypto" && (
-                <>
-                  <Row label="Coin"    value={details.coin} />
-                  <Row label="Network" value={details.network} />
-                  <Row label="Address" value={`${details.walletAddress.slice(0, 10)}...${details.walletAddress.slice(-6)}`} />
-                </>
-              )}
+          <div className="border-t border-border-default my-3" />
+          <Row label="Withdrawal Amount" value={`$${Number(details.amount).toLocaleString()}`} />
+          <Row label="Fee" value="$0.00" />
 
-              <div className="border-t border-border-default my-3" />
-              <Row label="Withdrawal Amount" value={`$${Number(details.amount).toLocaleString()}`} />
-              <Row label={`Fee (${details.feeLabel})`} value={`$${details.fee.toLocaleString()}`} highlight="red" />
+          <div className="bg-yellow-500/5 border border-yellow-500/20 p-3 rounded-lg flex justify-between items-center">
+            <span className="font-mono text-xs text-slate-400 uppercase tracking-wider">You Receive</span>
+            <span className="font-mono text-xl font-bold text-yellow-400">
+              ${details.youReceive.toLocaleString()}
+            </span>
+          </div>
+        </div>
 
-              <div className="bg-yellow-500/5 border border-yellow-500/20 p-3 rounded-lg flex justify-between items-center">
-                <span className="font-mono text-xs text-slate-400 uppercase tracking-wider">You Receive</span>
-                <span className="font-mono text-xl font-bold text-yellow-400">
-                  ${details.youReceive.toLocaleString()}
-                </span>
-              </div>
-
-              {/* Fee notice */}
-              <div className="flex gap-2 items-start bg-yellow-500/5 border border-yellow-500/15 p-3 rounded-lg">
-                <AlertCircle size={12} className="text-yellow-400 mt-0.5 flex-shrink-0" />
-                <span className="font-mono text-xs text-slate-400 leading-relaxed">
-                  A withdrawal fee of <span className="text-yellow-400 font-bold">${details.fee.toLocaleString()}</span> must be paid separately before your withdrawal is processed.
-                </span>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <button onClick={onClose} className="flex-1 px-4 py-3 rounded-lg bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition font-mono text-xs font-semibold tracking-wider uppercase">
-                Cancel
-              </button>
-              <button
-                onClick={() => setStep("pay-fee")}
-                className="flex-1 px-4 py-3 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 transition font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2"
-              >
-                Pay Fee & Continue <ChevronRight size={13} />
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* ── STEP 2: Pay Fee ── */}
-        {step === "pay-fee" && (
-          <>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
-                <ShieldCheck size={13} className="text-yellow-400" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground">
-                Pay Withdrawal Fee
-              </h3>
-            </div>
-
-            {/* Fee amount badge */}
-            <div className="text-center bg-yellow-500/5 border border-yellow-500/15 p-4 rounded-lg mb-5">
-              <p className="font-mono text-xs text-slate-400 uppercase tracking-wider mb-1">
-                Amount Due
-              </p>
-              <p className="text-3xl font-bold text-yellow-400 mb-1">
-                ${details.fee.toLocaleString()}
-              </p>
-              <p className="font-mono text-xs text-slate-500 tracking-wider">
-                {feeNetworkLabel}
-              </p>
-            </div>
-
-            {/* QR Code */}
-            <div className="flex justify-center mb-5">
-              <div className="relative w-32 h-32 border border-border-default rounded-lg overflow-hidden bg-surface-200/50 shadow-lg">
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(feeWallet)}&bgcolor=1f2937&color=f3f4f6&margin=8`}
-                  alt="fee wallet QR"
-                  className="w-full h-full"
-                />
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-surface-200/90 border-2 border-yellow-500 rounded-sm flex items-center justify-center text-xs font-bold text-yellow-400">
-                  GB
-                </div>
-              </div>
-            </div>
-
-            {/* Wallet address */}
-            <div className="mb-5">
-              <p className="font-mono text-xs text-slate-400 uppercase tracking-wider mb-2">
-                Send fee to this address
-              </p>
-              <div className="flex items-center gap-3 bg-surface-200/50 border border-border-default p-3 rounded-lg">
-                <span className="flex-1 font-mono text-xs text-slate-300 break-all">
-                  {feeWallet}
-                </span>
-                <CopyButton text={feeWallet} />
-              </div>
-            </div>
-
-            {/* Confirmation checkbox */}
-            <label
-              className="flex gap-3 items-start bg-surface-200/50 border border-border-default p-3 rounded-lg cursor-pointer mb-5 transition hover:bg-surface-300/50"
-            >
-              <input
-                type="checkbox"
-                checked={feePaid}
-                onChange={(e) => sCryptoeePaid(e.target.checked)}
-                className="mt-1 cursor-pointer accent-success"
-              />
-              <span className="font-mono text-xs text-slate-400">
-                I confirm I have sent the fee of <span className="text-yellow-400 font-bold">${details.fee.toLocaleString()}</span> to the address above and understand my withdrawal will be processed after verification.
-              </span>
-            </label>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setStep("review")}
-                className="flex-1 px-4 py-3 rounded-lg bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition font-mono text-xs font-semibold tracking-wider uppercase"
-              >
-                Back
-              </button>
-              <button
-                onClick={onConfirm}
-                disabled={!feePaid || loading}
-                className={`flex-1 px-4 py-3 rounded-lg font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition ${
-                  feePaid && !loading
-                    ? 'bg-success/20 border border-success text-success hover:bg-success/30'
-                    : 'bg-surface-200/50 border border-border-default text-slate-500 cursor-not-allowed opacity-50'
-                }`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-3 h-3 border-2 border-success border-t-transparent rounded-full animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <><CheckCircle2 size={13} /> Confirm Withdrawal</>
-                )}
-              </button>
-            </div>
-          </>
-        )}
+        <div className="flex gap-3 mt-6">
+          <button onClick={onClose} disabled={loading} className="flex-1 px-4 py-3 rounded-lg bg-surface-200/50 border border-border-default text-slate-400 hover:bg-surface-300 transition font-mono text-xs font-semibold tracking-wider uppercase disabled:opacity-50">
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className={`flex-1 px-4 py-3 rounded-lg font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition ${
+              !loading
+                ? 'bg-success/20 border border-success text-success hover:bg-success/30'
+                : 'bg-surface-200/50 border border-border-default text-slate-500 cursor-not-allowed opacity-50'
+            }`}
+          >
+            {loading ? (
+              <>
+                <div className="w-3 h-3 border-2 border-success border-t-transparent rounded-full animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <><CheckCircle2 size={13} /> Confirm Withdrawal</>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 // ── Fee Breakdown ─────────────────────────────────────────────────────────────
-function FeeBreakdown({ amount }: FeeBreakdownProps) {
-  const { label, fee, youReceive } = useMemo(() => gCryptoeeInfo(amount), [amount]);
+function FeeBreakdown({ amount }: { amount: string }) {
   if (!amount || Number(amount) <= 0) {
     return (
       <div className="mt-2 p-3 rounded-lg border border-border-default bg-surface-200/30 font-mono text-xs text-slate-400 tracking-wider">
-        Enter an amount to see fee breakdown.
+        Enter an amount to see breakdown.
       </div>
     );
   }
@@ -479,37 +247,14 @@ function FeeBreakdown({ amount }: FeeBreakdownProps) {
         <span className="font-mono text-xs text-foreground">${Number(amount).toLocaleString()}</span>
       </div>
       <div className="flex justify-between">
-        <span className="font-mono text-xs text-slate-400">Fee ({label})</span>
-        <span className="font-mono text-xs text-danger">+${fee.toLocaleString()} (paid separately)</span>
+        <span className="font-mono text-xs text-slate-400">Fee</span>
+        <span className="font-mono text-xs text-success">$0.00</span>
       </div>
       <div className="border-t border-border-default" />
       <div className="flex justify-between">
         <span className="font-mono text-xs text-slate-400">You Receive</span>
-        <span className="font-mono text-xs text-yellow-400 font-bold">${youReceive.toLocaleString()}</span>
+        <span className="font-mono text-xs text-yellow-400 font-bold">${Number(amount).toLocaleString()}</span>
       </div>
-    </div>
-  );
-}
-
-// ── Tier Badges ───────────────────────────────────────────────────────────────
-function FeeTierBadges({ currentAmount }: FeeTierBadgesProps) {
-  const num = Number(currentAmount);
-  const tiers = [
-    { range: "$0–$1K",   rate: "1%", active: num > 0 && num <= 1_000 },
-    { range: "$1K–$10K", rate: "2%", active: num > 1_000 && num <= 10_000 },
-    { range: "$10K+",    rate: "3%", active: num > 10_000 },
-  ];
-  return (
-    <div className="flex gap-2 mt-2 flex-wrap">
-      {tiers.map((tier) => (
-        <span key={tier.range} className={`text-xs font-mono font-semibold tracking-wider px-2 py-1 rounded-md transition ${
-          tier.active 
-            ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-400' 
-            : 'bg-surface-200/50 border border-border-default text-slate-400'
-        }`}>
-          {tier.range} → {tier.rate}
-        </span>
-      ))}
     </div>
   );
 }
@@ -521,11 +266,6 @@ const sharedInput: React.CSSProperties = {
   padding: "13px 16px", color: "#f9fafb", fontSize: "14px",
   fontFamily: "'DM Mono', monospace", outline: "none",
   boxSizing: "border-box", transition: "border-color 0.2s, box-shadow 0.2s",
-};
-const sharedSelect: React.CSSProperties = { ...sharedInput, appearance: "none" as const, cursor: "pointer" };
-const fieldLabel: React.CSSProperties = {
-  fontSize: "10px", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em",
-  color: "#6b7280", marginBottom: "8px", textTransform: "uppercase" as const, display: "block",
 };
 
 const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -552,15 +292,12 @@ function WithdrawContent() {
   const [showConfirm,    setShowConfirm]    = useState(false);
   const [loading,        setLoading]        = useState(false);
 
-  const amount  = method === "bank" ? bankAmount : cryptoAmount;
-  const feeInfo = useMemo(() => gCryptoeeInfo(amount), [amount]);
+  const amount = method === "bank" ? bankAmount : cryptoAmount;
 
-  // Address validation (live, after first blur)
   const addrValidation = useMemo(
     () => (coin && walletAddress ? validateWalletAddress(coin, network, walletAddress) : null),
     [coin, network, walletAddress]
   );
-  const addrError = walletTouched && addrValidation && !addrValidation.valid;
 
   const availableCryptoCoins = useMemo(() => {
     const owned = new Set(assets.filter(a => a.quantity > 0).map(a => a.symbol.toUpperCase()));
@@ -611,12 +348,12 @@ function WithdrawContent() {
   }, []);
 
   function buildDetails(): WithdrawDetails {
-    return { method, amount, fee: feeInfo.fee, feeLabel: feeInfo.label, youReceive: feeInfo.youReceive, bankName, accountNumber, coin, network, walletAddress };
+    const num = Number(amount) || 0;
+    return { method, amount, fee: 0, youReceive: num, bankName, accountNumber, coin, network, walletAddress };
   }
 
   function handleProceed(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Final address validation guard
     if (method === "crypto") {
       const v = validateWalletAddress(coin, network, walletAddress);
       if (!v.valid) { setWalletTouched(true); toast.error(v.message); return; }
@@ -664,7 +401,6 @@ function WithdrawContent() {
       <main className="min-h-screen bg-app font-body py-8 px-4 sm:px-6">
         <div className="mx-auto w-full max-w-md bg-card border border-border-default p-6 rounded-xl">
 
-          {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
@@ -675,13 +411,11 @@ function WithdrawContent() {
               </h1>
             </div>
             <p className="text-xs text-slate-400 tracking-wider">
-              Select your preferred withdrawal method · Fees paid separately
+              Select your preferred withdrawal method · No fees
             </p>
           </div>
 
-          {/* Card */}
           <div className="bg-surface-200/50 border border-border-default p-5 rounded-lg">
-            {/* Method Toggle */}
             <div className="flex gap-2 p-1 rounded-lg bg-surface-200/50 border border-border-default mb-6">
               {methods.map(m => {
                 const active = method === m.key;
@@ -696,7 +430,6 @@ function WithdrawContent() {
               })}
             </div>
 
-            {/* ── Bank Form ── */}
             {method === "bank" && (
               <form onSubmit={handleProceed} className="flex flex-col gap-4">
                 <div>
@@ -708,7 +441,6 @@ function WithdrawContent() {
                     style={sharedInput} onFocus={onFocus} onBlur={onBlur}
                   />
                   <FeeBreakdown amount={bankAmount} />
-                  <FeeTierBadges currentAmount={bankAmount} />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Bank Name</label>
@@ -723,7 +455,7 @@ function WithdrawContent() {
                 <div className="flex gap-2 items-start bg-yellow-500/5 border border-yellow-500/20 p-3 rounded-lg">
                   <AlertCircle size={13} className="text-yellow-400 mt-0.5 flex-shrink-0" />
                   <span className="text-xs text-slate-400 leading-relaxed">
-                    Bank withdrawals process within 1–3 business days. A separate fee payment is required before funds are released.
+                    Bank withdrawals process within 1–3 business days.
                   </span>
                 </div>
                 <button type="submit" disabled={!bankCanProceed} className="w-full px-4 py-3 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/30 disabled:opacity-50 transition font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2">
@@ -732,13 +464,12 @@ function WithdrawContent() {
               </form>
             )}
 
-            {/* ── Crypto Form ── */}
             {method === "crypto" && (
               <form onSubmit={handleProceed} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <div style={{ flex: 1 }}>
                     <label className="block text-xs text-slate-400 mb-2 font-mono uppercase tracking-wider">Coin</label>
-                    <select value={coin} onChange={handleCoinChange} required 
+                    <select value={coin} onChange={handleCoinChange} required
                       className="w-full bg-surface-200/50 border border-border-default rounded-lg px-3 py-3 text-foreground text-sm font-mono outline-none transition hover:border-slate-400 focus:border-yellow-500 focus:shadow-[0_0_0_3px_rgba(251,191,36,0.06)]"
                       onFocus={onFocus} onBlur={onBlur} disabled={availableCryptoCoins.length === 0}>
                       <option value="" disabled>
@@ -766,7 +497,6 @@ function WithdrawContent() {
                   </div>
                 </div>
 
-                {/* Selected network pill */}
                 {network && (
                   <div className="flex items-center gap-2 mt-2 -mb-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-success shadow-sm" />
@@ -782,7 +512,6 @@ function WithdrawContent() {
                     placeholder="0.00" min="0" step="any" required
                     style={sharedInput} onFocus={onFocus} onBlur={onBlur} />
                   <FeeBreakdown amount={cryptoAmount} />
-                  <FeeTierBadges currentAmount={cryptoAmount} />
                 </div>
 
                 <div>
@@ -805,11 +534,10 @@ function WithdrawContent() {
                     required
                     style={{...sharedInput, opacity: (!coin || !network) ? 0.45 : 1, cursor: (!coin || !network) ? "not-allowed" : "text"}}
                   />
-                  {/* Inline validation message */}
                   {walletTouched && walletAddress && addrValidation && (
                     <div className={`flex gap-2 items-center mt-2 p-2 rounded-lg border ${
-                      addrValidation.valid 
-                        ? 'bg-success/5 border-success/20' 
+                      addrValidation.valid
+                        ? 'bg-success/5 border-success/20'
                         : 'bg-danger/5 border-danger/20'
                     }`}>
                       {addrValidation.valid
@@ -841,11 +569,10 @@ function WithdrawContent() {
             )}
           </div>
 
-          {/* Footer */}
           <div className="mt-4 flex justify-center items-center gap-2">
             <TrendingUp size={10} className="text-slate-500" />
             <span className="text-xs text-slate-500 tracking-wider">
-              Secure withdrawals · Fee paid separately before release
+              Secure withdrawals · No fees
             </span>
           </div>
         </div>
