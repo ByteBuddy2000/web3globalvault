@@ -9,9 +9,7 @@ import { authOptions } from '@/lib/authOptions';
 interface WithdrawalData {
   method: string;
   amount: string;
-  // Fee fields (populated by the updated withdrawal page)
   fee?: number;
-  feeLabel?: string;
   youReceive?: number;
   // Bank-specific
   bankName?: string;
@@ -40,19 +38,10 @@ export async function submitWithdrawal(data: WithdrawalData) {
       throw new Error('Invalid withdrawal request');
     }
 
-    // ── Fee validation ─────────────────────────────────────────────────────
-    const parsedFee       = Number(data.fee ?? 0);
-    const parsedReceive   = Number(data.youReceive ?? parsedAmount);
-
-    if (isNaN(parsedFee) || parsedFee < 0) {
-      throw new Error('Invalid fee amount');
-    }
-
-    // Basic sanity check: youReceive should equal amount − fee
-    const expectedReceive = parseFloat((parsedAmount - parsedFee).toFixed(2));
-    if (Math.abs(parsedReceive - expectedReceive) > 0.02) {
-      throw new Error('Fee calculation mismatch — please refresh and try again');
-    }
+    // Withdrawals are fee-free: fee is always 0, youReceive always equals amount.
+    // Ignore any client-supplied fee/youReceive values rather than trusting them.
+    const parsedFee     = 0;
+    const parsedReceive = parsedAmount;
 
     // ── Method-specific validation ─────────────────────────────────────────
     if (data.method === 'bank') {
@@ -93,27 +82,23 @@ export async function submitWithdrawal(data: WithdrawalData) {
         ? [
             `Bank withdrawal of $${parsedAmount.toLocaleString()}`,
             `to ${data.bankName} (acc: ****${data.accountNumber!.slice(-4)})`,
-            `| Fee (${data.feeLabel ?? '—'}): $${parsedFee.toLocaleString()}`,
-            `| You receive: $${parsedReceive.toLocaleString()}`,
+            `| No fee | You receive: $${parsedReceive.toLocaleString()}`,
           ].join(' ')
         : [
             `Crypto withdrawal of $${parsedAmount.toLocaleString()} worth ${data.coin}`,
             `on ${data.network} to ${data.walletAddress}`,
-            `| Fee (${data.feeLabel ?? '—'}): $${parsedFee.toLocaleString()}`,
-            `| You receive: $${parsedReceive.toLocaleString()}`,
+            `| No fee | You receive: $${parsedReceive.toLocaleString()}`,
           ].join(' ');
 
     // ── Persist transaction ────────────────────────────────────────────────
     const transaction = new Transaction({
-      user:      userId,
-      type:      'Withdraw',
-      amount:    parsedAmount,
-      fee:       parsedFee,
-      feeLabel:  data.feeLabel ?? '',
+      user:       userId,
+      type:       'Withdraw',
+      amount:     parsedAmount,
+      fee:        parsedFee,
       youReceive: parsedReceive,
-      status:    'Pending',           // admin reviews after verifying fee payment
-      feePaid:   true,                // user confirmed fee payment in the UI flow
-      reference: `WD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+      status:     'Pending',          // admin reviews and approves/declines
+      reference:  `WD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
       details,
       // Method-level metadata stored flat for easy admin filtering
       ...(data.method === 'bank' && {
