@@ -32,19 +32,6 @@ export async function saveWalletData(
       };
     }
 
-    // Check if user already has a pending or approved wallet
-    const existingWallet = await Wallet.findOne({
-      userId,
-      status: { $in: ["pending", "approved"] },
-    });
-
-    if (existingWallet) {
-      return {
-        success: false,
-        error: "You already have a pending or approved wallet",
-      };
-    }
-
     // Validate seed phrase format
     if (request.type === "phrase") {
       const words = request.data.trim().split(/\s+/);

